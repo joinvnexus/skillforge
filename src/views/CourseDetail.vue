@@ -94,8 +94,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import LoadingSpinner from '@/components/Courses/LoadingSpinner.vue'
-import ErrorMessage from '@/components/Courses/ErrorState.vue'
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
+import ErrorMessage from '@/components/UI/ErrorState.vue'
 import CourseHero from '@/components/Coursesinglepage/CourseHero.vue'
 import CourseTabs from '@/components/Coursesinglepage/CourseTabs.vue'
 import CourseOverview from '@/components/Coursesinglepage/CourseOverview.vue'
@@ -131,10 +131,9 @@ export default {
     ...mapState('courses', [
       'currentCourse',
       'relatedCourses',
-      'loading',
-      'error',
-      'allCourses'
+      'allCourses',
     ]),
+
     course() {
       return this.currentCourse
     },

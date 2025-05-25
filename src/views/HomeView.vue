@@ -1,36 +1,47 @@
-
 <template>
-   
-  <main>
+  <main class="space-y-16"> <!-- Add spacing between sections -->
+    <!-- Hero Banner Section -->
     <HeroSection />
-    <FeaturesSection/>
-    <InstructorSpotlights/>
-    
-    <FeaturedCourses/>
-    <PopularCourses/>
-    <StudentTestimonials/>
-    <NewsletterSignup/>
-    <BlogCard/>
-    <CTASction/>
+
+    <!-- Features / Benefits Section -->
+    <FeaturesSection />
+
+    <!-- Spotlight on Instructors -->
+    <InstructorSpotlights />
+
+    <!-- Featured Courses -->
+    <FeaturedCourses />
+
+    <!-- Popular Courses Section -->
+    <PopularCourses />
+
+    <!-- Student Testimonials Section -->
+    <StudentTestimonials />
+
+    <!-- Newsletter Signup Form -->
+    <NewsletterSignup />
+
+    <!-- Latest Blog Posts -->
+    <BlogCard />
+
+    <!-- Call to Action Section -->
+    <CTASection />
   </main>
 </template>
+
 <script setup>
-
-import FeaturesSection from '@/components/FeaturesSection.vue';
-import HeroSection from '../components/HeroSection.vue';
-import InstructorSpotlights from '@/components/InstructorSpotlights.vue';
-import StudentTestimonials from '@/components/StudentTestimonials.vue';
-import FeaturedCourses from '@/components/FeaturedCourses.vue';
-import NewsletterSignup from '@/components/NewsletterSignup.vue';
-import BlogCard from '@/components/BlogCard.vue';
-import CTASction from '@/components/CTASction.vue';
-import PopularCourses from '@/components/PopularCourses.vue';
-
-
-
+// Import Home Page Sections
+import HeroSection from '@/components/Home/HeroSection.vue';
+import FeaturesSection from '@/components/Home/FeaturesSection.vue';
+import InstructorSpotlights from '@/components/Home/InstructorSpotlights.vue';
+import FeaturedCourses from '@/components/Home/FeaturedCourses.vue';
+import PopularCourses from '@/components/Home/PopularCourses.vue';
+import StudentTestimonials from '@/components/Home/StudentTestimonials.vue';
+import NewsletterSignup from '@/components/Home/NewsletterSignup.vue';
+import BlogCard from '@/components/Home/BlogCard.vue';
+import CTASection from '@/components/Home/CTASction.vue'; // Fixed typo
 </script>
 
 <style scoped>
-
-
+/* Add custom scoped styles here if needed */
 </style>

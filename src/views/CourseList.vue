@@ -64,9 +64,9 @@
   import SidebarFilters from '@/components/Courses/SidebarFilters.vue'
   import CourseGrid from '@/components/Courses/CourseGrid.vue'
   import Pagination from '@/components/Courses/Pagination.vue'
-  import ErrorState from '@/components/Courses/ErrorState.vue'
-  import NoResults from '@/components/Courses/NoResults.vue'
-  import LoadingSpinner from '@/components/Courses/LoadingSpinner.vue'
+  import ErrorState from '@/components/UI/ErrorState.vue'
+  import NoResults from '@/components/UI/NoResults.vue'
+  import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
 
   export default {
     components: {
@@ -85,6 +85,7 @@
       ...mapGetters('ui', ['paginatedCourses', 'totalPages', 'courseCount']),
       ...mapGetters('filters', ['hasFilters']),
       ...mapGetters('courses', ['allCategories']),
+
     },
 
     methods: {
