@@ -1,4 +1,3 @@
-<!-- src/views/Dashboard.vue -->
 <template>
   <div class="flex">
     <!-- Sidebar -->
@@ -16,9 +15,9 @@
     </main>
   </div>
 </template>
+
 <script>
 import { useStore } from 'vuex'
-
 export default {
   setup() {
     const store = useStore()

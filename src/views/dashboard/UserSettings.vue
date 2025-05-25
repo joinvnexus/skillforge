@@ -15,20 +15,26 @@
         Save Changes
       </button>
       <p v-if="success" class="text-green-500">✅ Profile updated!</p>
+      <p v-else class="text-gray-500">Make changes to your profile.</p>
+      <p class="text-sm text-gray-500">
+        Current User: {{ user?.displayName || 'Guest' }}
+      </p>
     </form>
   </div>
 </template>
 
 <script setup>
- import { useAuthStore } from '@/store/auth'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 
-const auth = useAuthStore()
-const name = ref(auth.user?.displayName || '')
+const store = useStore()
+const user = computed(() => store.getters['auth/currentUser'])
+const name = ref(user.value?.displayName || '')
 const success = ref(false)
 
 const update = async () => {
-  await auth.updateUserProfile(name.value)
+  // You need to implement an action to update the user profile in your Vuex module if not present
+  await store.dispatch('auth/updateUserProfile', { displayName: name.value })
   success.value = true
 }
 </script>

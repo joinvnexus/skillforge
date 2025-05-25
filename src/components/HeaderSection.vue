@@ -67,6 +67,8 @@
             </div>
             <router-link to="/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               @click="closeDropdown">Profile</router-link>
+            <router-link to="/dashboard" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              @click="closeDropdown">Dashboard</router-link>
             <router-link to="/notifications" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               @click="closeDropdown">Notifications</router-link>
             <button @click="handleLogout" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">

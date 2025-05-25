@@ -70,7 +70,7 @@ const router = createRouter({
     meta: { requiresAuth: true },
     children: [
       {
-        path: '',
+        path: 'profile',
         name: 'UserProfile',
         component: () => import('@/views/dashboard/UserProfile.vue'),
         meta: { title: 'User Profile' }
@@ -83,9 +83,15 @@ const router = createRouter({
       },
     ],
     },
+    // 404 Not Found
+    // {
+    //   path: '/:catchAll(.*)',
+    //   name: 'NotFound',
+    //   component: () => import('@/views/NotFound.vue')
+    // }
   ],
   // Scroll behavior to scroll to the top of the page on navigation
-    
+
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;

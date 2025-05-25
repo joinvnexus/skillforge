@@ -22,7 +22,7 @@ const store = createStore({
     blog,
     filters,
     ui,
-     auth
+    auth
   }
 })
 
