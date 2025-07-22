@@ -67,7 +67,7 @@ export default {
       const { email, password } = this
       const result = await this.$store.dispatch('auth/login', { email, password })
       if (result.success) {
-        this.$router.push('/')
+        this.$router.push('/profile')
       }
     }
   }
