@@ -162,7 +162,7 @@ export default {
     this.fetchCourseById(courseId).then(() => {
       console.log('Loaded course:', this.course)
       if (this.course) {
-        // bthis.fetchCourseById(this.course.tags)
+          // this.fetchCourseById(this.course.tags) // Fetch related courses based on tags
       }
     })
   }

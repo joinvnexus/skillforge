@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "../firebase";
 import store from "../store";
 import HomeView from "../views/HomeView.vue";
-import CourseDetails from "../views/CourseDetail.vue";
+// import CourseDetails from "../views/CourseDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
