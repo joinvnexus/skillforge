@@ -25,7 +25,7 @@
               v-model="email"
               placeholder="Enter your email"
               required
-              class="w-full px-5 py-3 pr-12 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200"
+              class="w-full px-5 py-3 pr-12 outline-0 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200"
               :class="{'border-green-500': isSuccess, 'border-red-500': isError}"
             >
             <svg 

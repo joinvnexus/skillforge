@@ -4,7 +4,7 @@
     "name": "John Doe",
     "title": "Senior Vue.js Developer",
     "bio": "John is an experienced Vue.js developer with over 10 years in web development. He specializes in performance optimization and state management.",
-    "photo": "/images/instructors/john-doe.jpg",
+    "photo" : "https://salondesmaires-herault.fr/wp-content/uploads/2014/10/speaker-2-v2.jpg",
     "socialLinks": [
       { "platform": "LinkedIn", "url": "https://linkedin.com/in/johndoe", "iconClass": "fab fa-linkedin" },
       { "platform": "Twitter", "url": "https://twitter.com/johndoe", "iconClass": "fab fa-twitter" },
@@ -16,7 +16,7 @@
     "name": "Jane Smith",
     "title": "Full-Stack Developer & Mentor",
     "bio": "Jane specializes in full-stack web development and has taught thousands of students. She's passionate about clean code and best practices.",
-    "photo": "/images/instructors/jane-smith.jpg",
+    "photo": "https://captiontools.com/wp-content/uploads/2017/03/testy3-1.png",
     "socialLinks": [
       { "platform": "LinkedIn", "url": "https://linkedin.com/in/janesmith", "iconClass": "fab fa-linkedin" },
       { "platform": "Twitter", "url": "https://twitter.com/janesmith", "iconClass": "fab fa-twitter" }
@@ -27,7 +27,7 @@
     "name": "Alex Johnson",
     "title": "UI/UX Specialist",
     "bio": "Alex combines development skills with design expertise to create beautiful, user-friendly interfaces with Vue.js.",
-    "photo": "/images/instructors/alex-johnson.jpg",
+    "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9Tp9QV0YOLXrb3m0G6FyUlGcx5sBr8UNN7Ez6nj6u7qOi-LXNL2P0Gx9ynX80l-gXYFc&usqp=CAU",
     "socialLinks": [
       { "platform": "LinkedIn", "url": "https://linkedin.com/in/alexjohnson", "iconClass": "fab fa-linkedin" },
       { "platform": "Dribbble", "url": "https://dribbble.com/alexjohnson", "iconClass": "fab fa-dribbble" }
@@ -38,7 +38,7 @@
     "name": "Maria Garcia",
     "title": "Nuxt.js Expert",
     "bio": "Maria is a Nuxt.js core contributor who helps developers build universal Vue applications with confidence.",
-    "photo": "/images/instructors/maria-garcia.jpg",
+    "photo": "https://ticktickets.com.au/wp-content/uploads/2017/09/speaker6-min.jpg",
     "socialLinks": [
       { "platform": "LinkedIn", "url": "https://linkedin.com/in/mariagarcia", "iconClass": "fab fa-linkedin" },
       { "platform": "GitHub", "url": "https://github.com/mariagarcia", "iconClass": "fab fa-github" }

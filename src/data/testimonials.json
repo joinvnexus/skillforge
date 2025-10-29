@@ -4,7 +4,8 @@
     "name": "Emily Johnson",
     "title": "Front-End Developer",
     "quote": "This course completely changed the way I work with Vue.js! The instructors are phenomenal.",
-    "photo": "/images/testimonials/emily-johnson.jpg",
+    "photo":       "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?auto=format&fit=crop&w=400&q=80",
+
     "rating": 5
   },
   {
@@ -12,7 +13,8 @@
     "name": "Michael Smith",
     "title": "Full-Stack Engineer",
     "quote": "The structured learning paths made it easy to go from beginner to advanced. I recommend it to everyone!",
-    "photo": "/images/testimonials/michael-smith.jpg",
+    "photo":       "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=400&q=80",
+
     "rating": 5
   },
   {
@@ -20,7 +22,8 @@
     "name": "Sophia Brown",
     "title": "UI/UX Designer",
     "quote": "This is hands down the best Vue.js learning platform! It has everything I needed to excel in my career.",
-    "photo": "/images/testimonials/sophia-brown.jpg",
+    "photo":      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80",
+
     "rating": 5
   },
   {
@@ -28,7 +31,7 @@
     "name": "David Wilson",
     "title": "Senior Developer",
     "quote": "The real-world projects helped me apply concepts immediately in my job. Worth every penny!",
-    "photo": "/images/testimonials/david-wilson.jpg",
+    "photo": "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=400&q=80",
     "rating": 4
   }
 ]

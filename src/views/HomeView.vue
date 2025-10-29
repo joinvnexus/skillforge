@@ -1,16 +1,17 @@
 <template>
-  <main class="space-y-16"> <!-- Add spacing between sections -->
+  <main class="space-y-16 bg-[#F9FAFB]"> <!-- Add spacing between sections -->
     <!-- Hero Banner Section -->
     <HeroSection />
 
     <!-- Features / Benefits Section -->
     <FeaturesSection />
 
+       <!-- Featured Courses -->
+    <FeaturedCourses />
     <!-- Spotlight on Instructors -->
     <InstructorSpotlights />
 
-    <!-- Featured Courses -->
-    <FeaturedCourses />
+ 
 
     <!-- Popular Courses Section -->
     <PopularCourses />
@@ -26,7 +27,7 @@
 
     <!-- Call to Action Section -->
     <CTASection />
-    <AddCourse />
+    <!-- <AddCourse /> -->
   </main>
 </template>
 
@@ -41,7 +42,7 @@ import StudentTestimonials from '@/components/Home/StudentTestimonials.vue';
 import NewsletterSignup from '@/components/Home/NewsletterSignup.vue';
 import BlogCard from '@/components/Home/BlogCard.vue';
 import CTASection from '@/components/Home/CTASction.vue'; // Fixed typo
-import AddCourse from '@/components/addCourse.vue';
+// import AddCourse from '@/components/addCourse.vue';
 </script>
 
 <style scoped>
