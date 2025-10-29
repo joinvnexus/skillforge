@@ -1,307 +1,179 @@
 <template>
-  <div class="beginner-path">
-    <!-- Loading State -->
-    <div v-if="isLoading" class="loading-spinner">
-      <div class="spinner"></div>
+  <div class="max-w-6xl mx-auto px-6 py-10 pt-20 ">
+    <!-- 🌀 Loading State -->
+    <div v-if="isLoading" class="flex justify-center py-12">
+      <div class="w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="error" class="error-message">
-      {{ error }}
-      <button @click="fetchPath" class="retry-button">Try Again</button>
+    <!-- ⚠️ Error State -->
+    <div
+      v-else-if="error"
+      class="bg-red-100 text-red-700 p-6 rounded-xl text-center shadow-sm"
+    >
+      <p>{{ error }}</p>
+      <button
+        @click="fetchPath"
+        class="mt-4 px-5 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition"
+      >
+        Try Again
+      </button>
     </div>
 
-    <!-- Content -->
-    <div v-else class="path-content">
-      <div class="path-header">
-        <div class="header-content">
-          <img :src="path.icon" :alt="path.title" class="path-icon">
+    <!-- 🌱 Content -->
+    <div v-else>
+      <!-- Header Section -->
+      <div class="bg-gray-50 rounded-2xl p-8 mb-10 shadow-sm">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
+          <img
+            :src="path.icon"
+            :alt="path.title"
+            class="w-20 h-20 md:w-24 md:h-24 object-cover "
+          />
           <div>
-            <h1 class="path-title">{{ path.title }}</h1>
-            <p class="path-description">{{ path.description }}</p>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+              {{ path.title }}
+            </h1>
+            <p class="text-gray-600 text-base leading-relaxed">
+              {{ path.description }}
+            </p>
           </div>
         </div>
-        <div class="path-meta">
-          <div class="meta-item">
-            <svg class="icon" viewBox="0 0 24 24">
-              <path d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2z"/>
+
+        <div class="flex flex-wrap gap-6 text-gray-600 mt-4">
+          <div class="flex items-center gap-2">
+            <svg
+              class="w-5 h-5 text-blue-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2L1 12h3v9h6v-6h4v6h6v-9h3L12 2z"
+              />
             </svg>
-            <span>{{ path.courses }} Courses</span>
+            <span class="font-medium">{{ path.courses }} Courses</span>
           </div>
-          <div class="meta-item">
-            <svg class="icon" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-              <path d="M12 6v6l4 2"/>
+          <div class="flex items-center gap-2">
+            <svg
+              class="w-5 h-5 text-blue-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 
+                10-4.48 10-10S17.52 2 12 2zm0 
+                18c-4.41 0-8-3.59-8-8s3.59-8 
+                8-8 8 3.59 8 8-3.59 8-8 
+                8z"
+              />
+              <path d="M12 6v6l4 2" />
             </svg>
-            <span>{{ path.duration }}</span>
+            <span class="font-medium">{{ path.duration }}</span>
           </div>
         </div>
       </div>
 
-      <div class="path-body">
-        <div class="features-section">
-          <h2>What You'll Learn</h2>
-          <ul class="features-list">
-            <li v-for="(feature, index) in path.features" :key="index">
-              <svg class="check-icon" viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+      <!-- Main Body -->
+      <div class="grid md:grid-cols-3 gap-10">
+        <!-- 🎯 Features -->
+        <div class="md:col-span-1">
+          <h2 class="text-xl font-semibold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">
+            What You'll Learn
+          </h2>
+          <ul class="space-y-3">
+            <li
+              v-for="(feature, index) in path.features"
+              :key="index"
+              class="flex items-start gap-2 text-gray-700"
+            >
+              <svg
+                class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 
+                21 7l-1.41-1.41L9 16.17z" />
               </svg>
-              {{ feature }}
+              <span>{{ feature }}</span>
             </li>
           </ul>
         </div>
 
-        <div class="curriculum-section">
-          <h2>Curriculum</h2>
-          <div class="module" v-for="module in path.curriculum" :key="module.module">
-            <h3 class="module-title">{{ module.title }}</h3>
-            <ul class="lessons-list">
-              <li v-for="lesson in module.lessons" :key="lesson.title">
-                <span class="lesson-title">{{ lesson.title }}</span>
-                <span class="lesson-duration">{{ lesson.duration }}</span>
+        <!-- 📘 Curriculum -->
+        <div class="md:col-span-2">
+          <h2 class="text-xl font-semibold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">
+            Curriculum
+          </h2>
+
+          <div
+            v-for="module in path.curriculum"
+            :key="module.module"
+            class="mb-6"
+          >
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">
+              {{ module.title }}
+            </h3>
+            <ul class="border-l-4 border-green-100 pl-4 space-y-2">
+              <li
+                v-for="lesson in module.lessons"
+                :key="lesson.title"
+                class="flex justify-between items-center border-b border-gray-100 py-2"
+              >
+                <span class="text-gray-700">{{ lesson.title }}</span>
+                <span class="text-sm text-gray-500">{{
+                  lesson.duration
+                }}</span>
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        <div class="cta-section">
-          <router-link to="/signup" class="cta-button">Start Learning Now</router-link>
-          <p class="cta-note">7-day free trial available</p>
-        </div>
+      <!-- 🚀 Call to Action -->
+      <div class="text-center mt-10">
+        <router-link
+          to="/signup"
+          class="inline-block px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition"
+        >
+          Start Learning Now
+        </router-link>
+        <p class="text-gray-500 text-sm mt-2">7-day free trial available</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from "vuex";
 
 export default {
-  name: 'BeginnerPath',
-  
+  name: "BeginnerPath",
   computed: {
-    ...mapState('learningPaths', {
-      path: 'currentPath',
-      isLoading: state => state.isLoading,
-      error: state => state.error
-    })
+    ...mapState("learningPaths", {
+      path: "currentPath",
+      isLoading: (state) => state.isLoading,
+      error: (state) => state.error,
+    }),
   },
-  
   created() {
-    this.fetchPath()
+    this.fetchPath();
   },
-  
   methods: {
-    ...mapActions('learningPaths', ['fetchPathBySlug']),
-    
+    ...mapActions("learningPaths", ["fetchPathBySlug"]),
     fetchPath() {
-      this.fetchPathBySlug('beginner')
-    }
+      this.fetchPathBySlug("beginner");
+    },
   },
-  
   metaInfo() {
     return {
-      title: 'Beginner Vue.js Learning Path',
+      title: "Beginner Vue.js Learning Path",
       meta: [
-        { 
-          name: 'description', 
-          content: 'Start your Vue.js journey with our beginner-friendly learning path'
-        }
-      ]
-    }
-  }
-}
+        {
+          name: "description",
+          content:
+            "Start your Vue.js journey with our beginner-friendly learning path",
+        },
+      ],
+    };
+  },
+};
 </script>
-
-<style scoped>
-.beginner-path {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #42b983;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 1rem;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.retry-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #42b983;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.path-header {
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.path-icon {
-  width: 80px;
-  height: 80px;
-}
-
-.path-title {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.path-description {
-  font-size: 1.1rem;
-  color: #666;
-}
-
-.path-meta {
-  display: flex;
-  gap: 2rem;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #666;
-}
-
-.icon {
-  width: 20px;
-  height: 20px;
-  fill: #42b983;
-}
-
-.path-body {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .path-body {
-    grid-template-columns: 1fr 2fr;
-  }
-}
-
-.features-section h2,
-.curriculum-section h2 {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #eee;
-}
-
-.features-list {
-  list-style: none;
-  padding: 0;
-}
-
-.features-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-}
-
-.check-icon {
-  width: 20px;
-  height: 20px;
-  fill: #42b983;
-}
-
-.module {
-  margin-bottom: 1.5rem;
-}
-
-.module-title {
-  font-size: 1.2rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.lessons-list {
-  list-style: none;
-  padding: 0;
-  border-left: 3px solid #eee;
-  padding-left: 1rem;
-}
-
-.lessons-list li {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f5f5f5;
-}
-
-.lesson-title {
-  color: #333;
-}
-
-.lesson-duration {
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.cta-section {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.cta-button {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #42b983;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-.cta-button:hover {
-  background-color: #3aa876;
-}
-
-.cta-note {
-  margin-top: 0.5rem;
-  color: #666;
-  font-size: 0.9rem;
-}
-</style>

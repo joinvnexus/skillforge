@@ -2,13 +2,17 @@
   <section class="py-16 bg-gray-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Section Title -->
-      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12 animate-slide-up">
+      <h2
+        class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12 animate-slide-up"
+      >
         Explore Our <span class="text-blue-600">Features</span>
       </h2>
 
       <!-- Loading State -->
       <div v-if="isLoading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
+        ></div>
       </div>
 
       <!-- Error State -->
@@ -19,20 +23,26 @@
       <!-- Features Grid -->
       <div v-else>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          <div 
-            v-for="feature in features" 
+          <div
+            v-for="feature in features"
             :key="feature.id"
             class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1 animate-fade-in"
           >
             <div class="p-8 text-center">
               <div class="flex justify-center mb-6">
-                <img 
+                <!-- <img 
                   :src="feature.icon" 
                   :alt="feature.title" 
                   class="h-16 w-16 object-contain"
-                >
+                > -->
+                <div
+                  v-html="feature.icon"
+                  class="flex items-center justify-center h-20 w-20 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 rounded-2xl shadow-inner border border-blue-100 transition-all hover:scale-105 hover:shadow-md duration-300"
+                ></div>
               </div>
-              <h3 class="text-xl font-semibold text-gray-800 mb-3">{{ feature.title }}</h3>
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">
+                {{ feature.title }}
+              </h3>
               <p class="text-gray-600">{{ feature.description }}</p>
             </div>
           </div>
@@ -50,24 +60,30 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div 
-              v-for="path in learningPaths" 
+            <div
+              v-for="path in learningPaths"
               :key="path.id"
               class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 animate-fade-in"
             >
               <div class="p-6 text-center">
-                <div class="flex justify-center mb-4">
-                  <img 
+                <div class="flex justify-center mb-6">
+                  <!-- <img 
                     :src="path.icon" 
                     :alt="path.title" 
-                    class="h-14 w-14 object-contain"
-                  >
+                    class="h-14 w-14 object-contain "
+                  > -->
+                  <div
+                    v-html="path.svg"
+                    class="flex items-center justify-center h-16 w-16 bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-600 rounded-xl shadow-inner border border-indigo-100 hover:scale-105 transition-transform duration-300"
+                  ></div>
                 </div>
-                <h4 class="text-lg font-semibold text-gray-800 mb-2">{{ path.title }}</h4>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">
+                  {{ path.title }}
+                </h4>
                 <p class="text-gray-600 mb-4">{{ path.description }}</p>
-                <router-link 
-                  :to="path.link" 
-                  class="inline-block px-6 py-2 text-blue-600 font-medium rounded-full hover:bg-blue-50 transition-colors duration-300"
+                <router-link
+                  :to="path.link"
+                  class="inline-block px-6 py-2 text-blue-600 font-medium rounded-full border border-indigo-200 hover:bg-indigo-50 hover:text-blue-700 transition-colors duration-300"
                 >
                   Learn More →
                 </router-link>
@@ -81,37 +97,26 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from "vuex";
 
 export default {
-  name: 'FeaturesSection',
+  name: "FeaturesSection",
   computed: {
-    ...mapState('features', [
-      'features',
-      'learningPaths',
-      'loading',
-      'error'
-    ]),
+    ...mapState("features", ["features", "learningPaths", "loading", "error"]),
     isLoading() {
-      return this.loading
-    }
+      return this.loading;
+    },
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    ...mapActions('features', [
-      'fetchFeatures',
-      'fetchLearningPaths'
-    ]),
+    ...mapActions("features", ["fetchFeatures", "fetchLearningPaths"]),
     async fetchData() {
-      await Promise.all([
-        this.fetchFeatures(),
-        this.fetchLearningPaths()
-      ])
-    }
-  }
-}
+      await Promise.all([this.fetchFeatures(), this.fetchLearningPaths()]);
+    },
+  },
+};
 </script>
 
 <style>

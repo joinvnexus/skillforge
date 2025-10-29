@@ -23,6 +23,14 @@
           {"title": "Introduction to Vue", "duration": "30 min"},
           {"title": "Creating Your First App", "duration": "45 min"}
         ]
+      },
+      {
+        "module": 2,
+        "title": "Component Fundamentals",
+        "lessons": [
+          {"title": "Understanding Components", "duration": "30 min"},
+          {"title": "Props and Slots", "duration": "45 min"}
+        ]
       }
     ]
   },
