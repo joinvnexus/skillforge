@@ -16,6 +16,7 @@
       <CourseHero 
         :course="course"
         :description="course.description"
+        
         @enroll="handleEnroll"
       />
       
@@ -135,7 +136,7 @@ export default {
     ]),
 
     course() {
-      return this.currentCourse
+       return this.currentCourse 
     },
     instructorCourses() {
       if (!this.course || !this.allCourses.length) return []
@@ -162,7 +163,7 @@ export default {
     this.fetchCourseById(courseId).then(() => {
       console.log('Loaded course:', this.course)
       if (this.course) {
-          // this.fetchCourseById(this.course.tags) // Fetch related courses based on tags
+          //this.fetchCourseById(this.course.tags) // Fetch related courses based on tags
       }
     })
   }
