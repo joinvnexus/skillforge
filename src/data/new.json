@@ -37,7 +37,11 @@
         "title": "Introduction to Vue.js",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Getting Started with Vue.js", "duration": "30 min", "type": "video" },
+          {
+            "title": "Getting Started with Vue.js",
+            "duration": "30 min",
+            "type": "video"
+          },
           { "title": "Vue.js Basics", "duration": "1 hour", "type": "video" }
         ]
       },
@@ -45,8 +49,16 @@
         "title": "State Management with Vuex",
         "duration": "3 hours",
         "lessons": [
-          { "title": "Understanding Vuex", "duration": "1 hour", "type": "video" },
-          { "title": "Implementing Vuex in Your App", "duration": "2 hours", "type": "video" }
+          {
+            "title": "Understanding Vuex",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Implementing Vuex in Your App",
+            "duration": "2 hours",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -103,16 +115,32 @@
         "title": "Introduction to Vue Animations",
         "duration": "1 hour",
         "lessons": [
-          { "title": "Understanding Vue Animation Basics", "duration": "30 min", "type": "video" },
-          { "title": "Setting Up the Environment", "duration": "30 min", "type": "video" }
+          {
+            "title": "Understanding Vue Animation Basics",
+            "duration": "30 min",
+            "type": "video"
+          },
+          {
+            "title": "Setting Up the Environment",
+            "duration": "30 min",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Dynamic Transitions",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Creating Dynamic Transitions", "duration": "1 hour", "type": "video" },
-          { "title": "Using Transition Groups", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Creating Dynamic Transitions",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Using Transition Groups",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -169,16 +197,32 @@
         "title": "Understanding Vuex",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Vuex Fundamentals", "duration": "1 hour", "type": "video" },
-          { "title": "State Management Patterns", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Vuex Fundamentals",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "State Management Patterns",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Building Scalable Applications",
         "duration": "3 hours",
         "lessons": [
-          { "title": "Designing Vuex Modules", "duration": "1.5 hours", "type": "video" },
-          { "title": "Integrating Vuex with Vue Router", "duration": "1.5 hours", "type": "video" }
+          {
+            "title": "Designing Vuex Modules",
+            "duration": "1.5 hours",
+            "type": "video"
+          },
+          {
+            "title": "Integrating Vuex with Vue Router",
+            "duration": "1.5 hours",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -235,16 +279,32 @@
         "title": "Introduction to Vue Router",
         "duration": "1 hour",
         "lessons": [
-          { "title": "Getting Started with Vue Router", "duration": "30 min", "type": "video" },
-          { "title": "Basic Routing Concepts", "duration": "30 min", "type": "video" }
+          {
+            "title": "Getting Started with Vue Router",
+            "duration": "30 min",
+            "type": "video"
+          },
+          {
+            "title": "Basic Routing Concepts",
+            "duration": "30 min",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Advanced Routing Techniques",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Dynamic Route Matching", "duration": "1 hour", "type": "video" },
-          { "title": "Navigation Guards", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Dynamic Route Matching",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Navigation Guards",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -315,7 +375,11 @@
         "duration": "2 hours",
         "lessons": [
           { "title": "Vue CLI Basics", "duration": "30 min", "type": "video" },
-          { "title": "Project Structure", "duration": "45 min", "type": "video" }
+          {
+            "title": "Project Structure",
+            "duration": "45 min",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -372,16 +436,32 @@
         "title": "Introduction to REST APIs",
         "duration": "1 hour",
         "lessons": [
-          { "title": "What is a REST API?", "duration": "20 min", "type": "video" },
-          { "title": "Understanding HTTP Methods", "duration": "40 min", "type": "video" }
+          {
+            "title": "What is a REST API?",
+            "duration": "20 min",
+            "type": "video"
+          },
+          {
+            "title": "Understanding HTTP Methods",
+            "duration": "40 min",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Integrating Vue.js with REST APIs",
         "duration": "3 hours",
         "lessons": [
-          { "title": "Using Axios for API Requests", "duration": "1 hour", "type": "video" },
-          { "title": "Handling API Responses", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Using Axios for API Requests",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Handling API Responses",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -438,24 +518,48 @@
         "title": "Understanding Vue Components",
         "duration": "1 hour",
         "lessons": [
-          { "title": "What are Vue Components?", "duration": "20 min", "type": "video" },
-          { "title": "Creating Your First Component", "duration": "40 min", "type": "video" }
+          {
+            "title": "What are Vue Components?",
+            "duration": "20 min",
+            "type": "video"
+          },
+          {
+            "title": "Creating Your First Component",
+            "duration": "40 min",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Building Reusable Components",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Component Communication", "duration": "1 hour", "type": "video" },
-          { "title": "Creating a Component Library", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Component Communication",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Creating a Component Library",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       },
       {
         "title": "Advanced Component Patterns",
         "duration": "2 hours",
         "lessons": [
-          { "title": "Using Slots for Flexibility", "duration": "1 hour", "type": "video" },
-          { "title": "Props Validation and Defaults", "duration": "1 hour", "type": "video" }
+          {
+            "title": "Using Slots for Flexibility",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Props Validation and Defaults",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
       }
     ],
@@ -474,125 +578,149 @@
       }
     ]
   },
-    {
-        "id": 8,
-        "title": "Vue.js Performance Optimization",
-        "instructor": "Liam Brown",
-        "category": "Data Science",
-        "description": "Optimize your Vue.js applications for better performance and user experience.",
-        "rating": 4.7,
-        "price": 160,
-        "students": 1200,
-        "duration": "9 hours",
-        "lessons": 30,
-        "descriptionExtended": "Learn techniques to improve the performance of your Vue.js applications.",
-        "fullDescription": "This course focuses on performance optimization techniques for Vue.js applications. You'll learn about lazy loading, code splitting, caching strategies, and best practices for building high-performance Vue apps.",
-        "image": "https://picsum.photos/536/354",
-        "tags": ["Vue.js", "Performance", "Web Development", "Optimization"],
-        "level": "Intermediate to Advanced",
-        "isPopular": true,
-        "isFeatured": false,
-        "createdAt": "2023-07-20",
-        "Language": "English",
-        "certificate": "Yes",
-        "features": [
-        "Hands-on projects",
-        "Real-world examples",
-        "Lifetime access",
-        "Certificate of completion",
-        "Community support",
-        "Mobile-friendly"
-        ],
-        "prerequisites": [
-        "Basic knowledge of HTML, CSS, and JavaScript",
-        "Familiarity with Vue.js fundamentals"
-        ],
-        "sections": [
-        {
-            "title": "Understanding Performance Bottlenecks",
+  {
+    "id": 8,
+    "title": "Vue.js Performance Optimization",
+    "instructor": "Liam Brown",
+    "category": "Data Science",
+    "description": "Optimize your Vue.js applications for better performance and user experience.",
+    "rating": 4.7,
+    "price": 160,
+    "students": 1200,
+    "duration": "9 hours",
+    "lessons": 30,
+    "descriptionExtended": "Learn techniques to improve the performance of your Vue.js applications.",
+    "fullDescription": "This course focuses on performance optimization techniques for Vue.js applications. You'll learn about lazy loading, code splitting, caching strategies, and best practices for building high-performance Vue apps.",
+    "image": "https://picsum.photos/536/354",
+    "tags": ["Vue.js", "Performance", "Web Development", "Optimization"],
+    "level": "Intermediate to Advanced",
+    "isPopular": true,
+    "isFeatured": false,
+    "createdAt": "2023-07-20",
+    "Language": "English",
+    "certificate": "Yes",
+    "features": [
+      "Hands-on projects",
+      "Real-world examples",
+      "Lifetime access",
+      "Certificate of completion",
+      "Community support",
+      "Mobile-friendly"
+    ],
+    "prerequisites": [
+      "Basic knowledge of HTML, CSS, and JavaScript",
+      "Familiarity with Vue.js fundamentals"
+    ],
+    "sections": [
+      {
+        "title": "Understanding Performance Bottlenecks",
+        "duration": "1 hour",
+        "lessons": [
+          {
+            "title": "Identifying Performance Issues",
+            "duration": "30 min",
+            "type": "video"
+          },
+          {
+            "title": "Using Chrome DevTools for Profiling",
+            "duration": "30 min",
+            "type": "video"
+          }
+        ]
+      },
+      {
+        "title": "Optimizing Rendering Performance",
+        "duration": "",
+        "lessons": [
+          {
+            "title": "Virtual DOM and Reconciliation",
             "duration": "1 hour",
-            "lessons": [
-            { "title": "Identifying Performance Issues", "duration": "30 min", "type": "video" },
-            { "title": "Using Chrome DevTools for Profiling", "duration": "30 min", "type": "video" }
-            ]
-        },
-        {
-            "title": "Optimizing Rendering Performance",
-            "duration": "",
-            "lessons": [
-            { "title": "Virtual DOM and Reconciliation", "duration": "1 hour", "type": "video" },
-            { "title": "Optimizing Component Updates", "duration": "1 hour", "type": "video" }
-            ]
-        },
-        {
-            "title": "Code Splitting and Lazy Loading",
-            "duration": "2 hours",
-            "lessons": [
-            { "title": "Implementing Code Splitting", "duration": "1 hour", "type": "video" },
-            { "title": "Lazy Loading Components", "duration": "1 hour", "type": "video" }
-            ]
-        }
-        ],
-        "instructorOtherCourses": [
-        {
-            "title": "Vue.js for Beginners",
-            "duration": "10 hours",
-            "lessons": 25,
-            "description": "A beginner-friendly course to get started with Vue.js."
-        },
-        {
-            "title": "Vue.js Performance Optimization",
-            "duration": "8 hours",
-            "lessons": 20,
-            "description": "Learn how to optimize your Vue.js applications for better performance."
-        }
+            "type": "video"
+          },
+          {
+            "title": "Optimizing Component Updates",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
-    },
-    {
-        "id": 9,
-        "title": "Vue.js Testing with Jest",
-        "instructor": "Ava Johnson",
-        "category": "Mobile Development",
-        "description": "Learn how to test your Vue.js applications using Jest.",
-        "rating": 4.4,
-        "price": 130,
-        "students": 700,
-        "duration": "6 hours",
-        "lessons": 22,
-        "descriptionExtended": "Master testing techniques for Vue.js applications using Jest.",
-        "fullDescription": "This course covers the fundamentals of testing Vue.js applications using Jest. You'll learn about unit testing, snapshot testing, and end-to-end testing with Cypress.",
-        "image": "https://picsum.photos/536/354",
-        "tags": ["Vue.js", "Testing", "JavaScript", "Jest"],
-        "level": "Intermediate",
-        "isPopular": false,
-        "isFeatured": false,
-        "createdAt": "2023-08-15",
-        "Language": "English",
-        "certificate": "Yes",
-        "features": [
-            "Hands-on projects",
-            "Real-world examples",
-            "Lifetime access",
-            "Certificate of completion",
-            "Community support",
-            "Mobile-friendly"
-        ],
-        "prerequisites": [
-            "Basic knowledge of HTML, CSS, and JavaScript",
-            "Familiarity with Vue.js fundamentals"
-        ],
-        "sections": [
-            {
-                "title": "",
-                "duration": "",
-                "lessons": [
-                    { 
-                        "title": "Unit Testing with Jest",
-                        "duration": "30 min",
-                        "type": "video"
-                    }
-                ]
-            }
+      },
+      {
+        "title": "Code Splitting and Lazy Loading",
+        "duration": "2 hours",
+        "lessons": [
+          {
+            "title": "Implementing Code Splitting",
+            "duration": "1 hour",
+            "type": "video"
+          },
+          {
+            "title": "Lazy Loading Components",
+            "duration": "1 hour",
+            "type": "video"
+          }
         ]
-    }
+      }
+    ],
+    "instructorOtherCourses": [
+      {
+        "title": "Vue.js for Beginners",
+        "duration": "10 hours",
+        "lessons": 25,
+        "description": "A beginner-friendly course to get started with Vue.js."
+      },
+      {
+        "title": "Vue.js Performance Optimization",
+        "duration": "8 hours",
+        "lessons": 20,
+        "description": "Learn how to optimize your Vue.js applications for better performance."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Vue.js Testing with Jest",
+    "instructor": "Ava Johnson",
+    "category": "Mobile Development",
+    "description": "Learn how to test your Vue.js applications using Jest.",
+    "rating": 4.4,
+    "price": 130,
+    "students": 700,
+    "duration": "6 hours",
+    "lessons": 22,
+    "descriptionExtended": "Master testing techniques for Vue.js applications using Jest.",
+    "fullDescription": "This course covers the fundamentals of testing Vue.js applications using Jest. You'll learn about unit testing, snapshot testing, and end-to-end testing with Cypress.",
+    "image": "https://picsum.photos/536/354",
+    "tags": ["Vue.js", "Testing", "JavaScript", "Jest"],
+    "level": "Intermediate",
+    "isPopular": false,
+    "isFeatured": false,
+    "createdAt": "2023-08-15",
+    "Language": "English",
+    "certificate": "Yes",
+    "features": [
+      "Hands-on projects",
+      "Real-world examples",
+      "Lifetime access",
+      "Certificate of completion",
+      "Community support",
+      "Mobile-friendly"
+    ],
+    "prerequisites": [
+      "Basic knowledge of HTML, CSS, and JavaScript",
+      "Familiarity with Vue.js fundamentals"
+    ],
+    "sections": [
+      {
+        "title": "",
+        "duration": "",
+        "lessons": [
+          {
+            "title": "Unit Testing with Jest",
+            "duration": "30 min",
+            "type": "video"
+          }
+        ]
+      }
+    ]
+  }
 ]

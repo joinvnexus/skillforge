@@ -115,6 +115,7 @@ export const coursesApi = {
   }
 }
 
+// 
 export const enrollmentsApi = {
   async getByUser(userId) {
     if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
