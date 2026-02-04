@@ -1,6 +1,8 @@
+// src/store/modules/courses.js
+import { coursesApi } from '@/supabase'
+
 const state = {
   enrolledCourses: [],
-  //user: null,
   allCourses: [],
   currentCourse: null,
   relatedCourses: [],
@@ -33,12 +35,11 @@ const actions = {
   async fetchCourses({ commit }) {
     try {
       commit('ui/SET_LOADING', true, { root: true })
-      const response = await import('@/data/new.json')
-      const courses = response.default
-
+      const courses = await coursesApi.getAll()
+      
       commit('SET_COURSES', courses)
-      commit('SET_POPULAR_COURSES', courses.filter(course => course.isPopular))
-      commit('SET_FEATURED_COURSES', courses.filter(course => course.isFeatured))
+      commit('SET_POPULAR_COURSES', courses.filter(course => course.is_popular))
+      commit('SET_FEATURED_COURSES', courses.filter(course => course.is_featured))
       return courses
     } catch (error) {
       commit('ui/SET_ERROR', error.message, { root: true })
@@ -47,31 +48,64 @@ const actions = {
       commit('ui/SET_LOADING', false, { root: true })
     }
   },
-  fetchCourseById({ commit, state }, courseId) {
-    const course = state.allCourses.find(c => c.id === courseId)
-    commit('SET_CURRENT_COURSE', course)
-      // Example: Find related courses by category (excluding the current course)
-      if(course && course.category){
+
+  async fetchCourseById({ commit, state }, courseId) {
+    try {
+      commit('ui/SET_LOADING', true, { root: true })
+      const course = await coursesApi.getById(courseId)
+      commit('SET_CURRENT_COURSE', course)
+      
+      // Find related courses by category
+      if (course && course.category) {
         const relatedCourses = state.allCourses.filter(
-          c => c.category === course.category && c.id !== courseId).slice(0, 4) // ← Limit to 4 here
-        
+          c => c.category === course.category && c.id !== courseId
+        ).slice(0, 4)
         commit('SET_RELATED_COURSES', relatedCourses)
-      }else{
+      } else {
         commit('SET_RELATED_COURSES', [])
       }
-
-    return course
+      
+      return course
+    } catch (error) {
+      commit('ui/SET_ERROR', error.message, { root: true })
+      throw error
+    } finally {
+      commit('ui/SET_LOADING', false, { root: true })
+    }
   },
 
+  async searchCourses({ commit }, query) {
+    try {
+      commit('ui/SET_LOADING', true, { root: true })
+      const courses = await coursesApi.search(query)
+      return courses
+    } catch (error) {
+      commit('ui/SET_ERROR', error.message, { root: true })
+      throw error
+    } finally {
+      commit('ui/SET_LOADING', false, { root: true })
+    }
+  },
 
+  async fetchCoursesByCategory({ commit }, category) {
+    try {
+      commit('ui/SET_LOADING', true, { root: true })
+      const courses = await coursesApi.getByCategory(category)
+      return courses
+    } catch (error) {
+      commit('ui/SET_ERROR', error.message, { root: true })
+      throw error
+    } finally {
+      commit('ui/SET_LOADING', false, { root: true })
+    }
+  }
 }
 
 const getters = {
   getPopularCourses: state => state.popularCourses,
   getFeaturedCourses: state => state.featuredCourses.slice(0, 3),
   getCourseById: state => id => state.allCourses.find(course => course.id === id),
-  relatedCourses: state => state.relatedCourses // <-- Add this line
-
+  relatedCourses: state => state.relatedCourses
 }
 
 export default {
