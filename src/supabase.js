@@ -1,25 +1,39 @@
 // src/supabase.js
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'YOUR_SUPABASE_URL'
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+// Validate environment variables
+if (!supabaseUrl || supabaseUrl === 'YOUR_SUPABASE_URL') {
+  console.warn('Supabase URL not configured. Please set VITE_SUPABASE_URL in your .env file.')
+}
+
+if (!supabaseKey || supabaseKey === 'YOUR_SUPABASE_ANON_KEY') {
+  console.warn('Supabase anon key not configured. Please set VITE_SUPABASE_ANON_KEY in your .env file.')
+}
+
+// Only create client if both values are properly configured
+export const supabase = (supabaseUrl && supabaseKey && 
+  supabaseUrl.startsWith('https://') && 
+  supabaseKey.length > 0) 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null
 
 // Database helper functions
 export const coursesApi = {
-  // Get all courses
   async getAll() {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
       .order('created_at', { ascending: false })
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Get course by ID
   async getById(id) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
@@ -29,48 +43,48 @@ export const coursesApi = {
     return data
   },
 
-  // Get courses by category
   async getByCategory(category) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
       .eq('category', category)
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Get featured courses
   async getFeatured() {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
       .eq('is_featured', true)
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Get popular courses
   async getPopular() {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
       .eq('is_popular', true)
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Search courses
   async search(query) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .select('*')
       .ilike('title', `%${query}%`)
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Create course (admin only)
   async create(course) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .insert(course)
@@ -79,8 +93,8 @@ export const coursesApi = {
     return data
   },
 
-  // Update course (admin only)
   async update(id, course) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('courses')
       .update(course)
@@ -90,8 +104,8 @@ export const coursesApi = {
     return data
   },
 
-  // Delete course (admin only)
   async delete(id) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { error } = await supabase
       .from('courses')
       .delete()
@@ -102,18 +116,18 @@ export const coursesApi = {
 }
 
 export const enrollmentsApi = {
-  // Get user enrollments
   async getByUser(userId) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('enrollments')
       .select('*, courses(*)')
       .eq('user_id', userId)
     if (error) throw error
-    return data
+    return data || []
   },
 
-  // Enroll in a course
   async enroll(userId, courseId) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('enrollments')
       .insert({ user_id: userId, course_id: courseId })
@@ -122,8 +136,8 @@ export const enrollmentsApi = {
     return data
   },
 
-  // Check if enrolled
   async isEnrolled(userId, courseId) {
+    if (!supabase) throw new Error('Supabase not configured. Please add your credentials to .env file.')
     const { data, error } = await supabase
       .from('enrollments')
       .select('*')
