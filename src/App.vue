@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { auth } from './firebase'
 import { useStore } from 'vuex'
 import HeaderSection from '@/components/Global/HeaderSection.vue'
 import FooterComponent from '@/components/Global/FooterComponent.vue'
@@ -26,12 +25,7 @@ export default {
   },
   setup() {
     const store = useStore()
-
-    // Firebase auth listener to keep Vuex store updated
-    auth.onAuthStateChanged(user => {
-      store.commit('auth/SET_USER', user)
-      store.commit('auth/SET_AUTH_READY', true)
-    })
+    // Auth is initialized in main.js via store.dispatch('auth/initializeAuth')
   }
 }
 </script>

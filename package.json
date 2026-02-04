@@ -9,14 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@heroicons/vue": "^2.2.0",
+    "@supabase/supabase-js": "^2.94.0",
     "@tailwindcss/vite": "^4.1.6",
     "@vueuse/core": "^13.1.0",
     "aos": "^2.3.4",
     "date-fns": "^4.1.0",
-    "firebase": "^11.8.1",
-    "firebase-admin": "^13.4.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3",
     "vue-slider-component": "^4.1.0-beta.7",
