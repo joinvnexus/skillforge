@@ -32,6 +32,11 @@ export default {
   },
   actions: {
     async initializeAuth({ commit }) {
+      if (!supabase) {
+        console.warn('Supabase not configured')
+        commit('SET_AUTH_READY', true)
+        return () => {}
+      }
       // Get initial session
       const { data: { session } } = await supabase.auth.getSession()
       commit('SET_USER', session?.user || null)
@@ -48,6 +53,10 @@ export default {
 
     // Authentication Actions
     async signup({ commit }, { email, password, displayName }) {
+      if (!supabase) {
+        commit('SET_ERROR', 'Supabase not configured')
+        return { success: false, error: 'Supabase not configured' }
+      }
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       try {
@@ -60,7 +69,7 @@ export default {
         })
         if (error) throw error
         commit('SET_USER', data.user)
-        commit('SET_NOTIFICATION', { type: 'success', message: 'Account created successfully!' })
+        commit('SET_NOTIFICATION', { type: 'success', message: 'Account created successfully! Please check your email to confirm.' })
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
@@ -72,6 +81,10 @@ export default {
     },
 
     async login({ commit }, { email, password }) {
+      if (!supabase) {
+        commit('SET_ERROR', 'Supabase not configured')
+        return { success: false, error: 'Supabase not configured' }
+      }
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       try {

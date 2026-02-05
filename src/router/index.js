@@ -63,6 +63,36 @@ const router = createRouter({
       meta: { requiresGuest: true },
     },
     {
+      path: "/blog",
+      name: "Blog",
+      component: () => import("@/views/BlogView.vue"),
+      meta: { title: "Blog" },
+    },
+    {
+      path: "/resources",
+      name: "Resources",
+      component: () => import("@/views/ResourcesView.vue"),
+      meta: { title: "Resources" },
+    },
+    {
+      path: "/contact",
+      name: "Contact",
+      component: () => import("@/views/ContactView.vue"),
+      meta: { title: "Contact Us" },
+    },
+    {
+      path: "/support",
+      name: "Support",
+      component: () => import("@/views/SupportView.vue"),
+      meta: { title: "Support Center" },
+    },
+    {
+      path: "/forgot-password",
+      name: "ForgotPassword",
+      component: () => import("@/views/ForgotPassword.vue"),
+      meta: { requiresGuest: true, title: "Forgot Password" },
+    },
+    {
     path: '/dashboard/',
     name: 'Dashboard',
     component: () => import('@/views/Dashboard.vue'),
