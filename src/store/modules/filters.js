@@ -43,9 +43,7 @@ const actions = {
 
     if (state.selectedCategories.length > 0) {
       filtered = filtered.filter(course =>
-        state.selectedCategories.some(category =>
-          course.category && course.category.includes(category)
-        )
+        state.selectedCategories.includes(course.category)
       )
     }
 
@@ -55,9 +53,10 @@ const actions = {
       )
     }
 
-    filtered = filtered.filter(course =>
-      course.price >= state.priceRange[0] && course.price <= state.priceRange[1]
-    )
+    filtered = filtered.filter(course => {
+      const price = parseFloat(course.price) || 0
+      return price >= state.priceRange[0] && price <= state.priceRange[1]
+    })
 
     filtered = [...filtered].sort((a, b) => {
       if (state.sortBy === 'newest') {
@@ -110,8 +109,10 @@ const getters = {
     filteredCourses: state => state.filteredCourses,
 
  allCategories: (state, getters, rootState) => {
-  // Use categories, not tags
-  const allCategories = rootState.courses.allCourses.flatMap(course => course.category || [])
+  // Use categories, not tags - category is a string, not an array
+  const allCategories = rootState.courses.allCourses
+    .map(course => course.category)
+    .filter(category => category) // Filter out null/undefined
   return [...new Set(allCategories)]
 },
   allLevels: (state, getters, rootState) => {

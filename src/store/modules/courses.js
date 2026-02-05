@@ -32,7 +32,7 @@ const mutations = {
 }
 
 const actions = {
-  async fetchCourses({ commit }) {
+  async fetchCourses({ commit, dispatch }) {
     try {
       commit('ui/SET_LOADING', true, { root: true })
       const courses = await coursesApi.getAll()
@@ -40,6 +40,10 @@ const actions = {
       commit('SET_COURSES', courses)
       commit('SET_POPULAR_COURSES', courses.filter(course => course.is_popular))
       commit('SET_FEATURED_COURSES', courses.filter(course => course.is_featured))
+      
+      // Update filtered courses after fetching
+      dispatch('filters/filterCourses', null, { root: true })
+      
       return courses
     } catch (error) {
       commit('ui/SET_ERROR', error.message, { root: true })

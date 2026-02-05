@@ -159,7 +159,7 @@ export default {
     }
   },
   created() {
-    const courseId = parseInt(this.$route.params.id)
+    const courseId = this.$route.params.id
     this.fetchCourseById(courseId).then(() => {
       console.log('Loaded course:', this.course)
       if (this.course) {
