@@ -26,11 +26,13 @@ CREATE TABLE IF NOT EXISTS instructors (
     twitter_url TEXT,
     github_url TEXT,
     youtube_url TEXT,
+    display_order INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
 -- Create indexes for instructors
+CREATE INDEX IF NOT EXISTS idx_instructors_display_order ON instructors(display_order);
 CREATE INDEX IF NOT EXISTS idx_instructors_name ON instructors(name);
 CREATE INDEX IF NOT EXISTS idx_instructors_featured ON instructors(is_featured, average_rating DESC) WHERE is_active = true AND is_featured = true;
 CREATE INDEX IF NOT EXISTS idx_instructors_user_id ON instructors(user_id);

@@ -2,13 +2,14 @@
 -- Seed Data: instructors
 -- Purpose: Insert sample instructors converted from JSON
 -- Created: 2026-02-07
+-- Updated: 2026-02-08 - Added display_order
 -- Table: instructors
 -- ============================================
 
 -- Note: Run this after migration 002_add_instructors_table.sql
 -- user_id is NULL: set these if you have existing user profiles
 
-INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_active, is_featured, total_students, total_courses, average_rating) VALUES
+INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_active, is_featured, total_students, total_courses, average_rating, display_order) VALUES
 (
     'John Doe',
     'Senior Vue.js Developer',
@@ -24,7 +25,8 @@ INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_ac
     true,
     5000,
     8,
-    4.8
+    4.8,
+    0
 ),
 (
     'Jane Smith',
@@ -40,7 +42,8 @@ INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_ac
     true,
     8000,
     12,
-    4.9
+    4.9,
+    1
 ),
 (
     'Alex Johnson',
@@ -56,7 +59,8 @@ INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_ac
     false,
     3500,
     5,
-    4.7
+    4.7,
+    2
 ),
 (
     'Maria Garcia',
@@ -72,7 +76,8 @@ INSERT INTO instructors (name, title, bio, photo, social_links, expertise, is_ac
     true,
     4200,
     6,
-    4.9
+    4.9,
+    3
 )
 ON CONFLICT DO NOTHING;
 
