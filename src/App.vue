@@ -5,9 +5,11 @@
   <HeaderSection />
 
   <!-- Router View with Transition -->
-  <transition name="fade" mode="out-in">
-    <router-view />
-  </transition>
+  <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
 
   <!-- Global Footer -->
   <FooterComponent />
