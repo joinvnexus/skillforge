@@ -57,4 +57,4 @@ SELECT
     p.bio as author_bio
 FROM blogs b
 LEFT JOIN profiles p ON b.author_id = p.id
-WHERE b.is_published = true;
+WHERE b.is_published = dtrue;
