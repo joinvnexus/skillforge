@@ -7,17 +7,15 @@ This directory contains production-ready Supabase database configuration for the
 ```
 supabase/
 ├── migrations/           # Schema changes (append-only)
-│   ├── 000_initial_setup.sql           # UUID extension
-│   ├── 101_profiles_table.sql          # User profiles
+│   ├── 000_initial_setup.sql           # UUID extension, pg_cron
+│   ├── 101_profiles_table.sql         # User profiles
 │   ├── 102_courses_and_categories.sql  # Courses & categories
 │   ├── 103_enrollments_reviews_wishlist.sql  # Enrollments, reviews, wishlist, progress
-│   ├── 104_indexes.sql                 # Performance indexes
-│   ├── 105_functions_triggers.sql      # Helper functions & triggers
-│   ├── 106_views.sql                   # Database views
-│   ├── 001_add_blogs_table.sql         # Blog posts
-│   ├── 002_add_instructors_table.sql   # Instructor profiles
-│   ├── 003_add_learning_paths_table.sql # Learning journeys + junction
-│   └── 004_add_testimonials_table.sql  # Student testimonials
+│   ├── 104_add_blogs_table.sql        # Blog posts
+│   ├── 105_add_instructors_table.sql  # Instructor profiles (with display_order)
+│   ├── 106_add_learning_paths_table.sql # Learning journeys + junction
+│   ├── 107_add_testimonials_table.sql # Student testimonials
+│   ├── 008_views.sql                  # All database views consolidated
 ├── policies/              # Row Level Security policies
 │   ├── profiles_policies.sql
 │   ├── courses_policies.sql
@@ -31,14 +29,10 @@ supabase/
 ├── seeds/                 # Seed data for development
 │   ├── 000_categories_seed.sql
 │   ├── 000_courses_seed.sql
-│   ├── 001_blogs_seed.sql
-│   ├── 002_instructors_seed.sql
-│   ├── 003_learning_paths_seed.sql
-│   └── 004_testimonials_seed.sql
-├── views/                 # Database views
-│   ├── blog_views.sql
-│   ├── instructor_and_learning_path_views.sql
-│   └── testimonials_views.sql
+│   ├── 104_blogs_seed.sql
+│   ├── 105_instructors_seed.sql
+│   ├── 106_learning_paths_seed.sql
+│   └── 107_testimonials_seed.sql
 ├── functions/             # Helper functions & triggers
 │   ├── blog_functions.sql
 │   └── instructor_and_testimonial_functions.sql
@@ -52,12 +46,11 @@ supabase/
 |-------|---------|
 | 000-099 | Base setup, extensions |
 | 100-199 | Existing schema (refactored from supabase-schema.sql) |
-| 200-299 | Future schema changes |
-| 900-999 | Data migrations, one-offs |
+| 008 | Views (consolidated) |
 
 ## All Tables
 
-### Existing Tables (Refactored)
+### Core Tables
 
 | Table | Purpose | Key Features |
 |-------|---------|--------------|
@@ -69,36 +62,58 @@ supabase/
 | `wishlist` | User wishlist | User-course relationship |
 | `course_progress` | Lesson progress | Section/lesson tracking, completion |
 
-### New Tables
+### Content Tables
 
 | Table | Purpose | Key Features |
 |-------|---------|--------------|
 | `blogs` | Blog posts | slug, tags (GIN), view_count, is_published, is_featured |
-| `instructors` | Instructor profiles | social_links (JSONB), expertise[], is_featured |
-| `learning_paths` | Learning journeys | level enum, curriculum (JSONB), display_order |
+| `instructors` | Instructor profiles | social_links (JSONB), expertise[], is_featured, display_order |
+| `learning_paths` | Learning journeys | level, curriculum (JSONB), display_order |
 | `testimonials` | Student testimonials | rating, is_approved, FK links to course/instructor/path |
 | `learning_path_courses` | Junction table | module_order, lesson_order, is_required |
 
-## Design Decisions
+## Views Created (008_views.sql)
 
-### UUID Primary Keys
-All tables use `UUID PRIMARY KEY DEFAULT uuid_generate_v4()` for:
-- Global uniqueness across distributed systems
-- Security through obscurity
-- Easy URL slugs (no exposing auto-increment IDs)
+| View | Purpose |
+|------|---------|
+| `published_blogs` | Public blog list |
+| `featured_blogs` | Homepage blog carousel |
+| `blog_statistics` | Blog counts and totals |
+| `featured_instructors` | Homepage instructor showcase |
+| `instructors_with_profiles` | Instructors with user profiles |
+| `learning_paths_with_courses` | Learning paths with course counts |
+| `learning_paths_courses_detail` | Full curriculum with course details |
+| `approved_testimonials` | Public testimonial list |
+| `featured_testimonials` | Homepage testimonials |
+| `testimonials_with_courses` | Testimonials with course info |
+| `testimonials_with_learning_paths` | Testimonials with learning path info |
+| `popular_courses` | Courses filtered by is_popular |
+| `featured_courses` | Courses filtered by is_featured |
+| `new_courses` | Courses from last 30 days |
+| `course_statistics` | Aggregated stats by category |
+| `user_enrolled_courses` | User's enrolled courses with progress |
+| `course_reviews` | Reviews with user profile info |
+| `user_wishlist` | Wishlist with course details |
+| `courses_by_instructor` | Instructor course counts |
 
-### Timestamp Conventions
-- All tables include `created_at` and `updated_at`
-- Uses `TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())`
-- Frontend should handle timezone conversion
+## Helper Functions
 
-### JSONB Usage
-- `social_links` in instructors: Flexible social media links
-- `curriculum`, `projects`, `testimonials` in learning_paths: Structured nested data
-- `sections` in courses: Course curriculum structure
-- Enables partial updates without schema changes
+### Profile Functions
+- `handle_new_user()`: Auto-create profile on auth signup
 
-### RLS Strategy
+### Blog Functions
+- `update_blog_timestamp()`: Auto-update updated_at
+- `increment_blog_view_count(blog_uuid)`: Atomic view counter
+- `generate_slug_from_title(title)`: URL-safe slug generation
+- `get_unique_slug(title, exclude_id)`: Unique slug with auto-increment
+
+### Instructor Functions
+- `update_instructor_timestamp()`: Auto-update updated_at
+
+### Testimonial Functions
+- `update_testimonial_timestamp()`: Auto-update updated_at
+
+## RLS Strategy
 
 | Table | Public Read | Authenticated | User-Owned | Admin |
 |-------|-------------|---------------|------------|-------|
@@ -114,62 +129,27 @@ All tables use `UUID PRIMARY KEY DEFAULT uuid_generate_v4()` for:
 | learning_paths | Published | - | - | Full |
 | testimonials | Approved | Create | Update own | Full |
 
-## Views Created
+## Design Decisions
 
-### Existing Views
+### UUID Primary Keys
+All tables use `UUID PRIMARY KEY DEFAULT gen_random_uuid()` for:
+- Global uniqueness across distributed systems
+- Security through obscurity
+- Easy URL slugs (no exposing auto-increment IDs)
 
-| View | Purpose |
-|------|---------|
-| `popular_courses` | Courses filtered by is_popular |
-| `featured_courses` | Courses filtered by is_featured |
-| `new_courses` | Courses from last 30 days |
-| `course_statistics` | Aggregated stats by category |
-| `user_enrolled_courses` | User's enrolled courses with progress |
-| `course_reviews` | Reviews with user profile info |
-| `user_wishlist` | Wishlist with course details |
-| `courses_by_instructor` | Instructor course counts |
+### Timestamp Conventions
+- All tables include `created_at` and `updated_at`
+- Uses `TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())`
+- Frontend should handle timezone conversion
 
-### New Views
+### JSONB Usage
+- `social_links` in instructors: Flexible social media links
+- `curriculum`, `sections` in courses: Structured nested data
+- Enables partial updates without schema changes
 
-| View | Purpose |
-|------|---------|
-| `published_blogs` | Public blog list |
-| `featured_blogs` | Homepage blog carousel |
-| `blog_statistics` | Blog counts and totals |
-| `blogs_with_authors` | Blogs with author profile details |
-| `featured_instructors` | Homepage instructor showcase |
-| `instructors_with_profiles` | Instructors with user profiles |
-| `learning_paths_with_courses` | Learning paths with course counts |
-| `learning_paths_courses_detail` | Full curriculum with course details |
-| `approved_testimonials` | Public testimonial list |
-| `featured_testimonials` | Homepage testimonials |
-| `testimonials_with_courses` | Testimonials with course info |
-| `testimonials_with_learning_paths` | Testimonials with learning path info |
-
-## Helper Functions
-
-### Profile Functions
-- `handle_new_user()`: Auto-create profile on auth signup
-- `update_profile_timestamp()`: Auto-update updated_at
-
-### Course Functions
-- `update_course_rating()`: Auto-update avg rating on review changes
-- `update_student_count()`: Auto-update student count on enrollments
-
-### Blog Functions
-- `update_blog_timestamp()`: Auto-update updated_at
-- `increment_blog_view_count(blog_uuid)`: Atomic view counter
-- `generate_slug_from_title(title)`: URL-safe slug generation
-- `get_unique_slug(title, exclude_id)`: Unique slug with auto-increment
-
-### Instructor Functions
-- `update_instructor_timestamp()`: Auto-update updated_at
-- `calculate_instructor_rating(uuid)`: Avg rating from courses
-- `update_instructor_stats(uuid)`: Sync stats from courses
-
-### Testimonial Functions
-- `update_testimonial_timestamp()`: Auto-update updated_at
-- `get_context_average_rating()`: Avg rating for course/path/instructor
+### Display Order
+- `instructors.display_order`: Controls display order on homepage
+- `learning_paths.display_order`: Controls curriculum sequence
 
 ## Migration Best Practices
 
@@ -184,7 +164,7 @@ All tables use `UUID PRIMARY KEY DEFAULT uuid_generate_v4()` for:
 1. Create new migration in `migrations/`
 2. Add RLS policies in `policies/`
 3. Add helper functions in `functions/`
-4. Create views in `views/`
+4. Create views in `008_views.sql`
 5. Add seed data in `seeds/`
 6. Update `EXECUTION_PLAN.md` with new steps
 
@@ -201,9 +181,6 @@ supabase db diff > migrations/new_migration.sql
 
 # Deploy migrations
 supabase db push
-
-# Generate TypeScript types
-supabase gen types typescript > src/types/database.types.ts
 ```
 
 ## Rollback Strategy
@@ -220,5 +197,4 @@ For new databases:
 ## Related Files
 
 - **Original Schema**: `supabase-schema.sql` (do not modify)
-- **Frontend Data**: `src/data/` (JSON files for static data)
 - **Frontend Stores**: `src/store/modules/` (Vuex stores for data fetching)
