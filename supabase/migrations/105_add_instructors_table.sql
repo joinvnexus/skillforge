@@ -1,16 +1,13 @@
 -- ============================================
--- Migration: 002_add_instructors_table
+-- Migration: 105_add_instructors_table
 -- Purpose: Create instructors table for instructor profiles
 -- Created: 2026-02-07
--- Dependencies: 001_add_blogs_table (uses profiles FK)
+-- Dependencies: 101_profiles_table (FK to profiles)
 -- ============================================
-
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create instructors table
 CREATE TABLE IF NOT EXISTS instructors (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES profiles(id) ON DELETE SET NULL UNIQUE,
     name TEXT NOT NULL,
     title TEXT NOT NULL,

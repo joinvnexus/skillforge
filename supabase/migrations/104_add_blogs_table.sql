@@ -1,16 +1,13 @@
 -- ============================================
--- Migration: 001_add_blogs_table
+-- Migration: 104_add_blogs_table
 -- Purpose: Create blogs table for blog posts
 -- Created: 2026-02-07
--- Dependencies: None (base tables only)
+-- Dependencies: 101_profiles_table (FK to profiles)
 -- ============================================
-
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create blogs table
 CREATE TABLE IF NOT EXISTS blogs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     snippet TEXT NOT NULL,

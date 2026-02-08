@@ -1,16 +1,13 @@
 -- ============================================
--- Migration: 003_add_learning_paths_table
+-- Migration: 106_add_learning_paths_table
 -- Purpose: Create learning_paths table for structured learning journeys
 -- Created: 2026-02-07
--- Dependencies: 002_add_instructors_table (uses courses FK)
+-- Dependencies: 102_courses_and_categories (FK to courses)
 -- ============================================
-
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create learning_paths table
 CREATE TABLE IF NOT EXISTS learning_paths (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     slug TEXT NOT NULL UNIQUE,
     level TEXT NOT NULL CHECK (level IN ('beginner', 'intermediate', 'advanced')),
     title TEXT NOT NULL,
@@ -45,7 +42,7 @@ ALTER TABLE learning_paths ENABLE ROW LEVEL SECURITY;
 
 -- Create junction table for learning_paths <-> courses many-to-many relationship
 CREATE TABLE IF NOT EXISTS learning_path_courses (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     learning_path_id UUID NOT NULL REFERENCES learning_paths(id) ON DELETE CASCADE,
     course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
     module_order INTEGER DEFAULT 0,

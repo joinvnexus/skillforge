@@ -7,7 +7,7 @@
 
 -- Create categories table
 CREATE TABLE IF NOT EXISTS categories (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL UNIQUE,
     description TEXT,
     image TEXT,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Create courses table
 CREATE TABLE IF NOT EXISTS courses (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
     instructor TEXT NOT NULL,
     instructor_id UUID REFERENCES profiles(id),

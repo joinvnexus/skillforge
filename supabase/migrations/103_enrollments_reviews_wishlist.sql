@@ -7,7 +7,7 @@
 
 -- Create enrollments table
 CREATE TABLE IF NOT EXISTS enrollments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
     enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
 
 -- Create reviews table
 CREATE TABLE IF NOT EXISTS reviews (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
     rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 -- Create wishlist table
 CREATE TABLE IF NOT EXISTS wishlist (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     course_id UUID NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
     added_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS wishlist (
 
 -- Create course_progress table
 CREATE TABLE IF NOT EXISTS course_progress (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     enrollment_id UUID REFERENCES enrollments(id) ON DELETE CASCADE,
     section_index INTEGER,
     lesson_index INTEGER,

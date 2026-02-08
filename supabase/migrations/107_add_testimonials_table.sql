@@ -1,16 +1,13 @@
 -- ============================================
--- Migration: 004_add_testimonials_table
+-- Migration: 107_add_testimonials_table
 -- Purpose: Create testimonials table for student testimonials
 -- Created: 2026-02-07
--- Dependencies: None (base tables only)
+-- Dependencies: 101_profiles_table, 102_courses_and_categories, 105_add_instructors_table, 106_add_learning_paths_table
 -- ============================================
-
--- Enable UUID extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create testimonials table
 CREATE TABLE IF NOT EXISTS testimonials (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     title TEXT,
     quote TEXT NOT NULL,

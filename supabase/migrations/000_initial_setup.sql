@@ -5,8 +5,8 @@
 -- Dependencies: None
 -- ============================================
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Note: gen_random_uuid() is built into PostgreSQL 13+
+-- No extension needed - it's available automatically in the public schema
 
 -- Note: This migration establishes the foundation for all subsequent migrations.
 -- All new tables should reference this as the base dependency.
