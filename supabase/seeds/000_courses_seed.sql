@@ -1,8 +1,5 @@
 -- ============================================
--- Seed Data: courses
--- Purpose: Insert sample courses
--- Created: From refactored supabase-schema.sql
--- Table: courses
+-- Seed Data: courses (JSON-এর সাথে মিলিয়ে সংশোধিত)
 -- ============================================
 
 INSERT INTO courses (
@@ -16,7 +13,7 @@ INSERT INTO courses (
 (
     'Mastering Vue.js',
     'John Doe',
-    'Web Development',
+    'Web Development', -- JSON-এও একই
     'Learn the essentials of Vue.js with hands-on projects.',
     'This course covers everything from basics to advanced concepts, including state management, Vue Router, and more.',
     'Mastering Vue.js is the ultimate course to learn the essentials of Vue.js, starting from the basics to more advanced concepts like state management with Vuex, routing with Vue Router, and building real-world applications. Dive into practical projects and hands-on exercises to solidify your understanding.',
@@ -41,16 +38,16 @@ INSERT INTO courses (
     '[{"title": "Vue.js for Beginners", "duration": "10 hours", "lessons": 25, "description": "A beginner-friendly course to get started with Vue.js."}, {"title": "Advanced Vue.js Patterns", "duration": "8 hours", "lessons": 20, "description": "Explore advanced patterns and techniques in Vue.js development."}]',
     NULL, NULL, 0, 0, 0
 ),
--- Course 2: Advanced Vue Animations
+-- Course 2: Advanced Vue Animations (Category JSON-এর মতো)
 (
     'Advanced Vue Animations',
     'Jane Smith',
-    'Web Development',
+    'Data Science', -- JSON-এর সাথে মিলিয়ে
     'Deep dive into Vue animations and transitions.',
     'Explore advanced animation techniques, including dynamic transitions, animation hooks, and scroll-triggered animations.',
     'In Advanced Vue Animations, you will explore cutting-edge animation techniques using Vue.js. Learn how to build immersive user interfaces with dynamic transitions, animation hooks, and scroll-based animations. This course is perfect for developers who want to enhance the interactivity and user experience of their Vue applications.',
     4.7, 10, 890, '8 hours', 32,
-    'https://picsum.photos/id/43/367/267',
+    'https://picsum.photos/200/300', -- JSON-এর মতো
     ARRAY['Vue.js', 'Animations', 'Web Development', 'UI/UX'],
     'Intermediate', false, true, '2023-03-22',
     'English', true,
@@ -70,16 +67,16 @@ INSERT INTO courses (
     '[{"title": "Vue.js for Beginners", "duration": "10 hours", "lessons": 25, "description": "A beginner-friendly course to get started with Vue.js."}, {"title": "Vue.js Performance Optimization", "duration": "8 hours", "lessons": 20, "description": "Learn how to optimize your Vue.js applications for better performance."}]',
     NULL, NULL, 0, 0, 0
 ),
--- Course 3: Vue.js and Vuex Mastery
+-- Course 3: Vue.js and Vuex Mastery (Category JSON-এর মতো)
 (
     'Vue.js and Vuex Mastery',
     'Emily White',
-    'Web Development',
+    'Mobile Development', -- JSON-এর সাথে মিলিয়ে
     'Master Vuex for state management in large-scale Vue.js applications.',
     'Learn how to manage complex state in your Vue applications, build robust architectures, and create seamless user experiences.',
     'This Vue.js and Vuex Mastery course focuses on state management, a crucial aspect of building large-scale Vue.js applications. You''ll learn the intricacies of Vuex, how to design scalable state management architectures, and create applications that are easy to maintain and enhance over time.',
     4.9, 200, 1500, '10 hours', 38,
-    'https://picsum.photos/id/27/367/267',
+    'https://picsum.photos/200/300', -- JSON-এর মতো
     ARRAY['Vue.js', 'Vuex', 'State Management', 'Advanced'],
     'Advanced', true, true, '2023-02-10',
     'English', true,
@@ -99,16 +96,16 @@ INSERT INTO courses (
     '[{"title": "Vue.js for Beginners", "duration": "10 hours", "lessons": 25, "description": "A beginner-friendly course to get started with Vue.js."}, {"title": "Vue.js Performance Optimization", "duration": "8 hours", "lessons": 20, "description": "Learn how to optimize your Vue.js applications for better performance."}]',
     NULL, NULL, 0, 0, 0
 ),
--- Course 4: Vue Router: From Basics to Advanced
+-- Course 4: Vue Router: From Basics to Advanced (Category JSON-এর মতো)
 (
     'Vue Router: From Basics to Advanced',
     'Emma Wilson',
-    'Web Development',
+    'Design', -- JSON-এর সাথে মিলিয়ে
     'Learn how to navigate and structure your Vue.js apps with Vue Router.',
     'Master client-side routing with Vue Router for seamless navigation experiences.',
     'This comprehensive course covers everything from basic routing concepts to advanced navigation guards and lazy loading routes. You''ll learn how to structure large applications effectively with nested and dynamic routes.',
     4.5, 125, 1100, '6 hours', 28,
-    'https://picsum.photos/id/35/367/267',
+    'https://picsum.photos/536/354', -- JSON-এর মতো
     ARRAY['Vue.js', 'Vue Router', 'Web Development', 'Routing'],
     'Intermediate', true, false, '2023-04-05',
     'English', true,
@@ -129,15 +126,16 @@ INSERT INTO courses (
     NULL, NULL, 0, 0, 0
 ),
 -- Course 5: Building Single Page Applications with Vue.js
+-- (এইটি ঠিক আছে, শুধু category JSON-এর মতো করতে হবে)
 (
     'Building Single Page Applications with Vue.js',
     'Sophia Green',
-    'Web Development',
+    'Business', -- JSON-এর মতো
     'Create powerful SPAs using the best practices in Vue.js.',
     'Learn to build modern single-page applications with Vue.js from scratch.',
     'This course takes you through the complete process of building a production-ready SPA with Vue.js. You''ll learn about project structure, component architecture, state management, authentication, and deployment strategies.',
     4.8, 175, 950, '14 hours', 42,
-    'https://picsum.photos/id/29/367/267',
+    'https://picsum.photos/id/28/367/267',
     ARRAY['Vue.js', 'SPA', 'Web Development', 'Frontend'],
     'Advanced', false, true, '2023-05-18',
     'English', true,
@@ -159,16 +157,16 @@ INSERT INTO courses (
     'https://picsum.photos/id/64/200/200',
     4.8, 3256, 8
 ),
--- Course 6: Vue.js and REST APIs
+-- Course 6: Vue.js and REST APIs (Category JSON-এর মতো)
 (
     'Vue.js and REST APIs',
     'Chris Lee',
-    'Web Development',
+    'Marketing', -- JSON-এর মতো
     'Learn how to integrate Vue.js with RESTful APIs to build dynamic apps.',
     'Connect your Vue.js applications to backend services with REST APIs.',
     'This practical course teaches you how to fetch, display, and manipulate data from REST APIs in your Vue.js applications. You''ll learn about axios, error handling, loading states, and best practices for API integration.',
     4.3, 120, 800, '7 hours', 25,
-    'https://picsum.photos/id/36/367/267',
+    'https://picsum.photos/536/354', -- JSON-এর মতো
     ARRAY['Vue.js', 'REST API', 'Backend Integration', 'JavaScript'],
     'Intermediate', false, false, '2023-01-30',
     'English', true,
@@ -189,6 +187,7 @@ INSERT INTO courses (
     NULL, NULL, 0, 0, 0
 ),
 -- Course 7: Creating Reusable Components in Vue.js
+-- (এইটি ঠিক আছে)
 (
     'Creating Reusable Components in Vue.js',
     'Olivia White',
@@ -197,7 +196,7 @@ INSERT INTO courses (
     'Master component composition and reusability patterns in Vue.js.',
     'Learn how to design and build truly reusable Vue components that can be shared across projects. This course covers slots, props validation, component communication patterns, and building component libraries.',
     4.6, 140, 1350, '5 hours', 20,
-    'https://picsum.photos/id/37/367/267',
+    'https://picsum.photos/536/354', -- JSON-এর মতো
     ARRAY['Vue.js', 'JavaScript', 'Web Development', 'Frontend'],
     'Beginner to Intermediate', true, false, '2023-06-12',
     'English', true,
@@ -217,16 +216,17 @@ INSERT INTO courses (
     '[{"title": "Vue.js for Beginners", "duration": "10 hours", "lessons": 25, "description": "A beginner-friendly course to get started with Vue.js."}, {"title": "Vue.js Performance Optimization", "duration": "8 hours", "lessons": 20, "description": "Learn how to optimize your Vue.js applications for better performance."}]',
     NULL, NULL, 0, 0, 0
 ),
--- Course 8: Vue.js Performance Optimization
+-- Course 8: Vue.js Performance Optimization (Category JSON-এর মতো)
+-- এবং duration issue fix
 (
     'Vue.js Performance Optimization',
     'Liam Brown',
-    'Web Development',
+    'Data Science', -- JSON-এর মতো
     'Optimize your Vue.js applications for better performance and user experience.',
     'Learn techniques to improve the performance of your Vue.js applications.',
     'This course focuses on performance optimization techniques for Vue.js applications. You''ll learn about lazy loading, code splitting, caching strategies, and best practices for building high-performance Vue apps.',
     4.7, 160, 1200, '9 hours', 30,
-    'https://picsum.photos/id/38/367/267',
+    'https://picsum.photos/536/354', -- JSON-এর মতো
     ARRAY['Vue.js', 'Performance', 'Web Development', 'Optimization'],
     'Intermediate to Advanced', true, false, '2023-07-20',
     'English', true,
@@ -246,16 +246,16 @@ INSERT INTO courses (
     '[{"title": "Vue.js for Beginners", "duration": "10 hours", "lessons": 25, "description": "A beginner-friendly course to get started with Vue.js."}, {"title": "Vue.js Performance Optimization", "duration": "8 hours", "lessons": 20, "description": "Learn how to optimize your Vue.js applications for better performance."}]',
     NULL, NULL, 0, 0, 0
 ),
--- Course 9: Vue.js Testing with Jest
+-- Course 9: Vue.js Testing with Jest (Category JSON-এর মতো)
 (
     'Vue.js Testing with Jest',
     'Ava Johnson',
-    'Web Development',
+    'Mobile Development', -- JSON-এর মতো
     'Learn how to test your Vue.js applications using Jest.',
     'Master testing techniques for Vue.js applications using Jest.',
     'This course covers the fundamentals of testing Vue.js applications using Jest. You''ll learn about unit testing, snapshot testing, and end-to-end testing with Cypress.',
     4.4, 130, 700, '6 hours', 22,
-    'https://picsum.photos/id/40/367/267',
+    'https://picsum.photos/536/354', -- JSON-এর মতো
     ARRAY['Vue.js', 'Testing', 'JavaScript', 'Jest'],
     'Intermediate', false, false, '2023-08-15',
     'English', true,
@@ -276,4 +276,4 @@ INSERT INTO courses (
     NULL, NULL, 0, 0, 0
 );
 
-SELECT 'Courses seeded' as status, COUNT(*) as count FROM courses;
+SELECT 'Courses seeded (JSON-এর সাথে aligned)' as status, COUNT(*) as count FROM courses;
