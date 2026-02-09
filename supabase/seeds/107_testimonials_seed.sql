@@ -33,7 +33,7 @@ INSERT INTO testimonials (name, title, quote, photo, rating, is_approved, is_fea
     'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=400&q=80',
     5,
     true,
-    false
+    true
 ),
 (
     'David Wilson',
@@ -42,7 +42,7 @@ INSERT INTO testimonials (name, title, quote, photo, rating, is_approved, is_fea
     'https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=400&q=80',
     4,
     true,
-    false
+    true
 )
 ON CONFLICT DO NOTHING;
 

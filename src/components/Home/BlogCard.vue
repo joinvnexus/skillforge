@@ -108,7 +108,14 @@ export default {
       this.$router.push({ name: "BlogPost", params: { id: post.id } });
     },
     formatDate(dateString) {
-      return format(new Date(dateString), "MMMM d, yyyy");
+      if (!dateString) return 'No date';
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Invalid date';
+        return format(date, 'MMMM d, yyyy');
+      } catch (e) {
+        return 'Invalid date';
+      }
     },
   },
 };
