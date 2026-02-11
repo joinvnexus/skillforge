@@ -2,7 +2,6 @@
 import { coursesApi } from '@/supabase'
 
 const state = {
-  enrolledCourses: [],
   allCourses: [],
   currentCourse: null,
   relatedCourses: [],
@@ -11,9 +10,7 @@ const state = {
 }
 
 const mutations = {
-  SET_ENROLLED_COURSES(state, courses) {
-    state.enrolledCourses = courses
-  },
+
   SET_COURSES(state, courses) {
     state.allCourses = courses
   },

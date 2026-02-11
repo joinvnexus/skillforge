@@ -99,6 +99,12 @@ const router = createRouter({
     meta: { requiresAuth: true },
     children: [
       {
+        path: 'my-courses',
+        name: 'MyEnrolledCourses',
+        component: () => import('@/views/dashboard/MyEnrolledCourses.vue'),
+        meta: { title: 'My Courses' }
+      },
+      {
         path: 'profile',
         name: 'UserProfile',
         component: () => import('@/views/dashboard/UserProfile.vue'),

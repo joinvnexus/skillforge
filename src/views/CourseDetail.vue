@@ -149,13 +149,46 @@ export default {
     }
   },
   methods: {
-    ...mapActions('courses', ['fetchCourseById', 'fetchRelatedCourses']),
+    ...mapActions('courses', ['fetchCourseById', 'fetchRelatedCourses', 'enrollInCourse', 'checkEnrollment']),
     changeTab(tab) {
       this.activeTab = tab
     },
-    handleEnroll() {
-      // Handle enrollment logic
-      console.log('Enrolling in course:', this.course.id)
+    async handleEnroll() {
+      const user = this.$store.state.auth.user
+      
+      if (!user) {
+        // Redirect to login if not authenticated
+        this.$router.push({ name: 'Login', query: { redirect: this.$route.fullPath } })
+        return
+      }
+      
+      try {
+        this.$store.commit('ui/SET_LOADING', true)
+        
+        // Check if already enrolled
+        const isEnrolled = await this.checkEnrollment({ 
+          userId: user.id, 
+          courseId: this.course.id 
+        })
+        
+        if (isEnrolled) {
+          alert('You are already enrolled in this course!')
+          return
+        }
+        
+        // Enroll in the course
+        await this.enrollInCourse({
+          userId: user.id,
+          courseId: this.course.id
+        })
+        
+        alert('Successfully enrolled! You can now access this course from your dashboard.')
+        this.$router.push('/dashboard/my-courses')
+      } catch (error) {
+        alert('Error enrolling in course: ' + error.message)
+      } finally {
+        this.$store.commit('ui/SET_LOADING', false)
+      }
     }
   },
   created() {
