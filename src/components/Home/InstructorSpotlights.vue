@@ -30,7 +30,7 @@
       <!-- Instructor Grid -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 animate-fade-in-up">
         <div 
-          v-for="instructor in featuredInstructors" 
+          v-for="instructor in allInstructors"
           :key="instructor.id"
           class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2"
         >
@@ -80,7 +80,7 @@ export default {
   
   computed: {
     ...mapState('instructors', ['loading', 'error']),
-    ...mapGetters('instructors', ['featuredInstructors'])
+    ...mapGetters('instructors', ['allInstructors'])
   },
   
   created() {

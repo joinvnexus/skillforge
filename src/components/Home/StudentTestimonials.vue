@@ -33,7 +33,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10"
       >
         <div 
-          v-for="testimonial in featuredTestimonials" 
+          v-for="testimonial in allTestimonials"
           :key="testimonial.id"
           class="relative bg-white/80 backdrop-blur-md border border-gray-100  rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:bg-white"
         >
@@ -94,7 +94,7 @@ export default {
   
   computed: {
     ...mapState('testimonials', ['loading', 'error']),
-    ...mapGetters('testimonials', ['featuredTestimonials'])
+    ...mapGetters('testimonials', ['allTestimonials'])
   },
   
   created() {
