@@ -112,11 +112,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('courses', ['enrolledCourses']),
+    ...mapState('enrollments', ['enrolledCourses', 'loading', 'error']),
     ...mapState('auth', ['user'])
   },
   methods: {
-    ...mapActions('courses', ['fetchEnrolledCourses']),
+    ...mapActions('enrollments', ['fetchEnrolledCourses']),
     formatDate(dateString) {
       if (!dateString) return 'N/A'
       const date = new Date(dateString)

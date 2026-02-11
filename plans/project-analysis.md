@@ -73,10 +73,10 @@ This is a **Skillshare Clone** - a modern online learning platform built with **
 
 | Feature | Status | Priority |
 |---------|--------|----------|
-| Course Enrollment | Not implemented | High |
+| Course Enrollment | ✅ Implemented | High |
 | Wishlist (Add/Remove) | Not implemented | High |
 | Submit Reviews | Not implemented | Medium |
-| Course Progress Tracking | Not implemented | High |
+| Course Progress Tracking | In Progress | High |
 | Video Player/Lesson Viewer | Not implemented | High |
 | Cart/Checkout Flow | Not implemented | Medium |
 
@@ -226,16 +226,18 @@ src/
 │   └── UI/           # Loading, Error, NoResults
 ├── router/           # Vue Router configuration
 ├── store/            # Vuex store modules
-│   ├── modules/
-│   │   ├── auth.js       ✅ Implemented
-│   │   ├── courses.js    ✅ Implemented
-│   │   ├── filters.js    ✅ Implemented
-│   │   ├── ui.js         ✅ Implemented
-│   │   ├── blog.js       ⚠️ Partial
-│   │   ├── features.js   ✅ Implemented
-│   │   ├── testimonials.js ✅ Implemented
-│   │   ├── instructors.js  ✅ Implemented
-│   │   └── learningPaths.js ✅ Implemented
+│   ├── index.js      # Store configuration
+│   └── modules/
+│       ├── auth.js           ✅ Implemented
+│       ├── courses.js        ✅ Implemented (course catalog only)
+│       ├── enrollments.js    ✅ Implemented (enrollment logic)
+│       ├── filters.js        ✅ Implemented
+│       ├── ui.js             ✅ Implemented
+│       ├── blog.js           ⚠️ Partial
+│       ├── features.js       ✅ Implemented
+│       ├── testimonials.js   ✅ Implemented
+│       ├── instructors.js    ✅ Implemented
+│       └── learningPaths.js  ✅ Implemented
 ├── views/            # Page components
 │   ├── HomeView.vue
 │   ├── CourseList.vue
@@ -244,7 +246,10 @@ src/
 │   ├── Login.vue
 │   ├── Signup.vue
 │   ├── BlogView.vue
-│   └── learning-paths/
+│   └── dashboard/
+│       ├── MyEnrolledCourses.vue
+│       ├── UserProfile.vue
+│       └── UserSettings.vue
 └── supabase.js       # Supabase client configuration
 ```
 

@@ -149,7 +149,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions('courses', ['fetchCourseById', 'fetchRelatedCourses', 'enrollInCourse', 'checkEnrollment']),
+    ...mapActions('courses', ['fetchCourseById', 'fetchRelatedCourses']),
+    ...mapActions('enrollments', ['enrollInCourse', 'checkEnrollment']),
     changeTab(tab) {
       this.activeTab = tab
     },
@@ -179,7 +180,8 @@ export default {
         // Enroll in the course
         await this.enrollInCourse({
           userId: user.id,
-          courseId: this.course.id
+          courseId: this.course.id,
+          courseData: this.course
         })
         
         alert('Successfully enrolled! You can now access this course from your dashboard.')
