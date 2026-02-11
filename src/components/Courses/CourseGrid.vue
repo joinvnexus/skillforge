@@ -1,3 +1,4 @@
+<!-- src/components/Courses /CourseGrid.vue -->
 <template>
   <div id="course-listing" class="min-h-[400px]">
     <!-- Loading State -->
@@ -19,8 +20,8 @@
       <p class="text-gray-600">Try adjusting your filters or check back later.</p>
     </div>
 
-    <!-- Courses Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2">
+    <!-- Courses Grid - Adjusted breakpoints for sidebar layout -->
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 p-2">
       <div
         v-for="(course, index) in courses"
         :key="course.id"

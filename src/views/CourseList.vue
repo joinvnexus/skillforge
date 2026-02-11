@@ -1,3 +1,5 @@
+<!-- src/views/ couserlist -->
+
 <template>
   <div class="min-h-screen bg-gray-50 py-8">
     <HeroSection />
@@ -10,10 +12,12 @@
         </p>
       </div>
 
-      <div class="flex flex-col lg:flex-row gap-8">
-        <SidebarFilters />
-
-        <main class="w-full lg:w-3/4">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Sidebar Filters with fixed responsive width -->
+        <SidebarFilters class="lg:w-64 xl:w-72 flex-shrink-0" />
+        
+        <!-- Main Content Area - takes remaining space -->
+        <main class="flex-1 min-w-0">
           <!-- Sorting and Results Count -->
           <div class="flex flex-col sm:flex-row justify-between items-center mb-6" data-aos="fade-left">
             <p class="text-gray-600 mb-2 sm:mb-0">

@@ -1,3 +1,4 @@
+<!-- src/componentes/couses/Pagination.vue -->
 <template>
   <div class="mt-8 flex justify-center" data-aos="fade-up">
     <nav class="flex items-center space-x-2">

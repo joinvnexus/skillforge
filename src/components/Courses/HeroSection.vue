@@ -1,3 +1,5 @@
+<!-- src/components/Courses /HeroSection.vue -->
+
 <template>
   <div class="relative bg-white overflow-hidden" id="hero-section">
     <!-- Grid background -->
