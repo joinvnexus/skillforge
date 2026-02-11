@@ -14,25 +14,25 @@
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
       </div>
       
-      <CourseGrid
-        v-else
-        :courses="relatedCourses"
-        :loading="loading"
-        :columns="4"
-        class="related-courses-grid"
-      />
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <RelatedCourseCard
+          v-for="course in relatedCourses"
+          :key="course.id"
+          :course="course"
+        />
+      </div>
     </div>
   </section>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import CourseGrid from '@/components/Courses/CourseGrid.vue'
+import RelatedCourseCard from '@/components/Courses/RelatedCourseCard.vue'
 
 export default {
   name: 'RelatedCourses',
   components: {
-    CourseGrid
+    RelatedCourseCard
   },
   props: {
     currentCourseId: {
