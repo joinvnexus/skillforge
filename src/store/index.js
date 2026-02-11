@@ -7,10 +7,8 @@ import courses from './modules/courses'
 import filters from './modules/filters'
 import ui from './modules/ui'
 import blog from './modules/blog'
-//
- import auth from './modules/auth'
-
-
+import enrollments from './modules/enrollments'
+import auth from './modules/auth'
 
 const store = createStore({
   modules: {
@@ -22,6 +20,7 @@ const store = createStore({
     blog,
     filters,
     ui,
+    enrollments,
     auth
   }
 })
