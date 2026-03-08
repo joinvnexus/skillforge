@@ -27,7 +27,6 @@
 
     <!-- Call to Action Section -->
     <CTASection />
-    <!-- <AddCourse /> -->
   </main>
 </template>
 
@@ -42,7 +41,6 @@ import StudentTestimonials from '@/components/Home/StudentTestimonials.vue';
 import NewsletterSignup from '@/components/Home/NewsletterSignup.vue';
 import BlogCard from '@/components/Home/BlogCard.vue';
 import CTASection from '@/components/Home/CTASction.vue'; // Fixed typo
-// import AddCourse from '@/components/addCourse.vue';
 </script>
 
 <style scoped>

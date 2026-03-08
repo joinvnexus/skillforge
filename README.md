@@ -5,11 +5,11 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
 ## Features
 
 - **Course Discovery**: Browse and search through a wide range of courses with advanced filtering and pagination.
-- **User Authentication**: Secure login and signup with Supabase authentication.
+- **User Authentication**: Secure login and signup flow with role-based access support.
 - **Course Details**: Detailed course pages with curriculum, instructor information, reviews, and FAQs.
 - **Dashboard**: Personalized user dashboard for managing enrolled courses and profile settings.
 - **Responsive Design**: Mobile-first design using Tailwind CSS for optimal viewing on all devices.
-- **Real-time Updates**: Integration with Supabase for real-time data synchronization.
+- **Extensible Backend**: Prisma-based backend starter added for a fresh PostgreSQL setup.
 - **Learning Paths**: Structured learning paths for beginners, intermediate, and advanced learners.
 - **Instructor Spotlights**: Highlight featured instructors and their courses.
 - **Blog Integration**: Read and engage with educational blog posts.
@@ -22,7 +22,7 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
 - **Styling**: Tailwind CSS
 - **State Management**: Vuex 4
 - **Routing**: Vue Router 4
-- **Backend**: Supabase (Authentication, Database, Real-time)
+- **Backend**: Legacy frontend data layer plus new Express + Prisma starter in `server/`
 - **Icons**: Heroicons
 - **Animations**: AOS (Animate On Scroll)
 - **Utilities**: VueUse, date-fns, vue-slider-component
@@ -31,7 +31,7 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
 
 - Node.js (version 16 or higher)
 - npm or yarn
-- Supabase account and project
+- PostgreSQL database if you want to run the new Prisma API
 
 ## Installation
 
@@ -46,20 +46,12 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
    npm install
    ```
 
-3. Set up Supabase:
-   - Create a new project on [Supabase](https://supabase.com)
-   - Copy your project URL and anon key
-   - Create a `.env` file in the root directory and add:
-     ```
-     VITE_SUPABASE_URL=your_supabase_url
-     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-     ```
-   - Run the SQL schema from `supabase-schema.sql` in your Supabase SQL editor
-
-4. Start the development server:
+3. Start the frontend development server:
    ```sh
    npm run dev
    ```
+
+4. If you want to use the new backend starter, follow the setup in `server/README.md`
 
 ## Usage
 
