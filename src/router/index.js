@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "../store";
 import HomeView from "../views/HomeView.vue";
-// import CourseDetails from "../views/CourseDetail.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,37 +92,53 @@ const router = createRouter({
       meta: { requiresGuest: true, title: "Forgot Password" },
     },
     {
-    path: '/dashboard/',
-    name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: 'my-courses',
-        name: 'MyEnrolledCourses',
-        component: () => import('@/views/dashboard/MyEnrolledCourses.vue'),
-        meta: { title: 'My Courses' }
-      },
-      {
-        path: 'profile',
-        name: 'UserProfile',
-        component: () => import('@/views/dashboard/UserProfile.vue'),
-        meta: { title: 'User Profile' }
-      },
-      {
-        path: 'settings',
-        name: 'UserSettings',
-        component: () => import('@/views/dashboard/UserSettings.vue'),
-        meta: { title: 'User Settings' }
-      },
-    ],
+      path: "/dashboard",
+      name: "Dashboard",
+      component: () => import("@/views/Dashboard.vue"),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          name: "DashboardOverview",
+          component: () => import("@/views/dashboard/RoleOverview.vue"),
+          meta: { title: "Dashboard" }
+        },
+        {
+          path: "my-courses",
+          name: "MyEnrolledCourses",
+          component: () => import("@/views/dashboard/MyEnrolledCourses.vue"),
+          meta: { title: "My Courses", requiresRole: ["STUDENT"] }
+        },
+        {
+          path: "profile",
+          name: "UserProfile",
+          component: () => import("@/views/dashboard/UserProfile.vue"),
+          meta: { title: "User Profile" }
+        },
+        {
+          path: "settings",
+          name: "UserSettings",
+          component: () => import("@/views/dashboard/UserSettings.vue"),
+          meta: { title: "User Settings" }
+        },
+        {
+          path: "instructor-courses",
+          name: "InstructorCourses",
+          component: () => import("@/views/dashboard/InstructorCourses.vue"),
+          meta: { title: "Instructor Courses", requiresRole: ["INSTRUCTOR"] }
+        },
+        {
+          path: "admin-panel",
+          name: "AdminPanel",
+          component: () => import("@/views/dashboard/AdminPanel.vue"),
+          meta: { title: "Admin Panel", requiresRole: ["ADMIN"] }
+        }
+      ],
     },
-    // 404 Not Found
-    // {
-    //   path: '/:catchAll(.*)',
-    //   name: 'NotFound',
-    //   component: () => import('@/views/NotFound.vue')
-    // }
+    {
+      path: "/profile",
+      redirect: "/dashboard/profile"
+    }
   ],
   // Scroll behavior to scroll to the top of the page on navigation
 
@@ -137,17 +152,20 @@ const router = createRouter({
 });
 // Navigation guard to check auth status
 router.beforeEach(async (to, from, next) => {
-  // Wait for auth to initialize
   await store.dispatch("auth/initializeAuth");
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const requiresGuest = to.matched.some((record) => record.meta.requiresGuest);
+  const roleRequirement = to.matched.find((record) => record.meta.requiresRole)?.meta.requiresRole;
   const isAuthenticated = store.getters["auth/isAuthenticated"];
+  const role = store.getters["auth/userRole"];
 
   if (requiresAuth && !isAuthenticated) {
     next("/login");
   } else if (requiresGuest && isAuthenticated) {
-    next("/");
+    next("/dashboard");
+  } else if (roleRequirement && !roleRequirement.includes(role)) {
+    next("/dashboard");
   } else {
     next();
   }

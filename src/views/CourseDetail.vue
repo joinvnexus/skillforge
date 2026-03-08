@@ -126,9 +126,6 @@ export default {
     }
   },
   computed: {
-    currentCourse() {
-      return this.$store.state.courses.currentCourse
-    },
     ...mapState('courses', [
       'currentCourse',
       'relatedCourses',
@@ -149,7 +146,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('courses', ['fetchCourseById', 'fetchRelatedCourses']),
+    ...mapActions('courses', ['fetchCourseById']),
     ...mapActions('enrollments', ['enrollInCourse', 'checkEnrollment']),
     changeTab(tab) {
       this.activeTab = tab

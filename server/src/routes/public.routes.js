@@ -7,6 +7,18 @@ import { prisma } from "../lib/prisma.js";
 
 const router = Router();
 
+const getIdentifierFilter = (identifier) => {
+  if (
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      identifier
+    )
+  ) {
+    return { id: identifier };
+  }
+
+  return { slug: identifier };
+};
+
 const coursePreviewInclude = {
   category: {
     select: {
@@ -220,9 +232,11 @@ router.get(
 router.get(
   "/courses/:slug",
   asyncHandler(async (req, res) => {
+    const identifier = req.params.slug;
+
     const course = await prisma.course.findFirst({
       where: {
-        slug: req.params.slug,
+        ...getIdentifierFilter(identifier),
         status: "PUBLISHED"
       },
       include: {
@@ -295,10 +309,13 @@ router.get(
 
 router.get(
   "/learning-paths",
-  asyncHandler(async (_req, res) => {
+  asyncHandler(async (req, res) => {
+    const level = String(req.query.level || "").trim().toUpperCase();
+
     const learningPaths = await prisma.learningPath.findMany({
       where: {
-        isPublished: true
+        isPublished: true,
+        ...(level ? { level } : {})
       },
       orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
       include: {
@@ -329,7 +346,23 @@ router.get(
             moduleOrder: true,
             isRequired: true,
             course: {
-              include: coursePreviewInclude
+              include: {
+                ...coursePreviewInclude,
+                sections: {
+                  orderBy: [{ position: "asc" }],
+                  include: {
+                    lessons: {
+                      orderBy: [{ position: "asc" }],
+                      select: {
+                        id: true,
+                        title: true,
+                        durationMinutes: true,
+                        position: true
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         },
@@ -501,6 +534,27 @@ router.get(
     }
 
     res.json({ data: instructor });
+  })
+);
+
+router.get(
+  "/testimonials",
+  asyncHandler(async (req, res) => {
+    const featuredOnly = String(req.query.featured || "") === "true";
+    const courseId = String(req.query.courseId || "").trim();
+    const learningPathId = String(req.query.learningPathId || "").trim();
+
+    const testimonials = await prisma.testimonial.findMany({
+      where: {
+        isApproved: true,
+        ...(featuredOnly ? { isFeatured: true } : {}),
+        ...(courseId ? { courseId } : {}),
+        ...(learningPathId ? { learningPathId } : {})
+      },
+      orderBy: [{ rating: "desc" }, { createdAt: "desc" }]
+    });
+
+    res.json({ data: testimonials });
   })
 );
 

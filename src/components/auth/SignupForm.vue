@@ -32,6 +32,16 @@
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Account Type</label>
+          <select
+            v-model="role"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="STUDENT">Student</option>
+            <option value="INSTRUCTOR">Instructor</option>
+          </select>
+        </div>
 
         <button
           type="submit"
@@ -59,6 +69,7 @@ export default {
       displayName: '',
       email: '',
       password: '',
+      role: 'STUDENT'
     }
   },
   computed: {
@@ -71,10 +82,10 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const { email, password, displayName } = this
-      const result = await this.$store.dispatch('auth/signup', { email, password, displayName })
+      const { email, password, displayName, role } = this
+      const result = await this.$store.dispatch('auth/signup', { email, password, displayName, role })
       if (result.success) {
-        this.$router.push('/dashboard') // Redirect to dashboard or any other page after successful signup
+        this.$router.push('/dashboard')
       }
     }
   }

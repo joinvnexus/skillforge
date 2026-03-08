@@ -1,4 +1,5 @@
-import { supabase } from '@/supabase'
+import { apiRequest } from '@/lib/api'
+import { normalizeInstructor } from '@/lib/normalizers'
 
 const state = {
   instructors: [],
@@ -27,17 +28,12 @@ const actions = {
     try {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
-      
-      const { data, error } = await supabase
-        .from('instructors')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order')
-      
-      if (error) throw error
-      
-      commit('SET_INSTRUCTORS', data || [])
-      return data || []
+
+      const response = await apiRequest('/instructors')
+      const instructors = (response.data || []).map(normalizeInstructor)
+
+      commit('SET_INSTRUCTORS', instructors)
+      return instructors
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching instructors:', error)
@@ -51,17 +47,12 @@ const actions = {
     try {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
-      
-      const { data, error } = await supabase
-        .from('instructors')
-        .select('*')
-        .eq('id', id)
-        .single()
-      
-      if (error) throw error
-      
-      commit('SET_CURRENT_INSTRUCTOR', data)
-      return data
+
+      const response = await apiRequest(`/instructors/${id}`)
+      const instructor = normalizeInstructor(response.data)
+
+      commit('SET_CURRENT_INSTRUCTOR', instructor)
+      return instructor
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching instructor by ID:', error)
@@ -73,18 +64,9 @@ const actions = {
 
   async updateInstructorProfile({ commit }, { id, updates }) {
     try {
-      const { data, error } = await supabase
-        .from('instructors')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single()
-      
-      if (error) throw error
-      
-      commit('SET_CURRENT_INSTRUCTOR', data)
-      return data
+      throw new Error(`Instructor profile update endpoint is not implemented yet for ${id}`)
     } catch (error) {
+      commit('SET_ERROR', error.message)
       console.error('Error updating instructor profile:', error)
       throw error
     }

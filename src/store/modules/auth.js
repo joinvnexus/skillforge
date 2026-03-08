@@ -1,5 +1,5 @@
-// src/store/modules/auth.js
-import { supabase } from '@/supabase'
+import { apiRequest, clearStoredSession, getStoredSession, setStoredSession } from '@/lib/api'
+import { normalizeUser } from '@/lib/normalizers'
 
 export default {
   namespaced: true,
@@ -8,7 +8,8 @@ export default {
     authIsReady: false,
     error: null,
     loading: false,
-    notification: null
+    notification: null,
+    initialized: false
   }),
   mutations: {
     SET_USER(state, user) {
@@ -28,48 +29,61 @@ export default {
     },
     CLEAR_NOTIFICATION(state) {
       state.notification = null
+    },
+    SET_INITIALIZED(state, initialized) {
+      state.initialized = initialized
     }
   },
   actions: {
-    async initializeAuth({ commit }) {
-      if (!supabase) {
-        console.warn('Supabase not configured')
+    async initializeAuth({ state, commit }) {
+      if (state.initialized) {
         commit('SET_AUTH_READY', true)
-        return () => {}
+        return
       }
-      // Get initial session
-      const { data: { session } } = await supabase.auth.getSession()
-      commit('SET_USER', session?.user || null)
-      
-      // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        commit('SET_USER', session?.user || null)
+
+      const { accessToken } = getStoredSession()
+
+      if (!accessToken) {
+        commit('SET_USER', null)
         commit('SET_AUTH_READY', true)
-      })
-      
-      commit('SET_AUTH_READY', true)
-      return () => subscription.unsubscribe()
+        commit('SET_INITIALIZED', true)
+        return
+      }
+
+      try {
+        const response = await apiRequest('/auth/me', { auth: true })
+        commit('SET_USER', normalizeUser(response.data))
+      } catch (error) {
+        clearStoredSession()
+        commit('SET_USER', null)
+        commit('SET_ERROR', error.message)
+      } finally {
+        commit('SET_AUTH_READY', true)
+        commit('SET_INITIALIZED', true)
+      }
     },
 
-    // Authentication Actions
-    async signup({ commit }, { email, password, displayName }) {
-      if (!supabase) {
-        commit('SET_ERROR', 'Supabase not configured')
-        return { success: false, error: 'Supabase not configured' }
-      }
+    async signup({ commit }, { email, password, displayName, role = 'STUDENT' }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
+
       try {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { displayName }
+        const response = await apiRequest('/auth/register', {
+          method: 'POST',
+          body: {
+            name: displayName,
+            email,
+            password,
+            role
           }
         })
-        if (error) throw error
-        commit('SET_USER', data.user)
-        commit('SET_NOTIFICATION', { type: 'success', message: 'Account created successfully! Please check your email to confirm.' })
+
+        setStoredSession({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken
+        })
+        commit('SET_USER', normalizeUser(response.data.user))
+        commit('SET_NOTIFICATION', { type: 'success', message: 'Account created successfully.' })
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
@@ -81,19 +95,23 @@ export default {
     },
 
     async login({ commit }, { email, password }) {
-      if (!supabase) {
-        commit('SET_ERROR', 'Supabase not configured')
-        return { success: false, error: 'Supabase not configured' }
-      }
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
+
       try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
+        const response = await apiRequest('/auth/login', {
+          method: 'POST',
+          body: {
+            email,
+            password
+          }
         })
-        if (error) throw error
-        commit('SET_USER', data.user)
+
+        setStoredSession({
+          accessToken: response.data.accessToken,
+          refreshToken: response.data.refreshToken
+        })
+        commit('SET_USER', normalizeUser(response.data.user))
         commit('SET_NOTIFICATION', { type: 'success', message: 'Logged in successfully!' })
         return { success: true }
       } catch (error) {
@@ -107,9 +125,18 @@ export default {
 
     async logout({ commit }) {
       commit('SET_LOADING', true)
+
       try {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
+        const { refreshToken } = getStoredSession()
+
+        if (refreshToken) {
+          await apiRequest('/auth/logout', {
+            method: 'POST',
+            body: { refreshToken }
+          })
+        }
+
+        clearStoredSession()
         commit('SET_USER', null)
         commit('SET_NOTIFICATION', { type: 'success', message: 'Logged out successfully!' })
         return { success: true }
@@ -122,16 +149,21 @@ export default {
       }
     },
 
-    // Profile Management
     async updateProfile({ commit }, { displayName, photoURL }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
+
       try {
-        const { data, error } = await supabase.auth.updateUser({
-          data: { displayName, photoURL }
+        const response = await apiRequest('/student/me/profile', {
+          method: 'PATCH',
+          auth: true,
+          body: {
+            ...(displayName !== undefined ? { name: displayName } : {}),
+            ...(photoURL !== undefined ? { avatarUrl: photoURL } : {})
+          }
         })
-        if (error) throw error
-        commit('SET_USER', data.user)
+
+        commit('SET_USER', normalizeUser(response.data))
         commit('SET_NOTIFICATION', { type: 'success', message: 'Profile updated successfully!' })
         return { success: true }
       } catch (error) {
@@ -146,14 +178,9 @@ export default {
     async updateEmail({ commit }, newEmail) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
+
       try {
-        const { error } = await supabase.auth.updateUser({ email: newEmail })
-        if (error) throw error
-        commit('SET_NOTIFICATION', {
-          type: 'success',
-          message: 'Verification email sent. Please check your inbox to confirm your new email address.'
-        })
-        return { success: true }
+        throw new Error(`Email update is not implemented yet. Requested email: ${newEmail}`)
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
@@ -163,18 +190,12 @@ export default {
       }
     },
 
-    // Password Management
     async forgotPassword({ commit }, email) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
+
       try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email)
-        if (error) throw error
-        commit('SET_NOTIFICATION', {
-          type: 'success',
-          message: 'Password reset email sent. Please check your inbox.'
-        })
-        return { success: true }
+        throw new Error(`Password reset is not implemented yet for ${email}.`)
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
@@ -184,16 +205,20 @@ export default {
       }
     },
 
-    // Notification Management
+    updateUserProfile({ dispatch }, payload) {
+      return dispatch('updateProfile', payload)
+    },
+
     clearNotification({ commit }) {
       commit('CLEAR_NOTIFICATION')
     }
   },
   getters: {
     currentUser: (state) => state.user,
-    userDisplayName: (state) => state.user?.user_metadata?.displayName || state.user?.displayName || '',
+    userDisplayName: (state) => state.user?.displayName || state.user?.name || '',
     userEmail: (state) => state.user?.email || '',
-    userPhotoURL: (state) => state.user?.user_metadata?.photoURL || state.user?.photoURL || '',
+    userPhotoURL: (state) => state.user?.photoURL || state.user?.avatarUrl || '',
+    userRole: (state) => state.user?.role || 'STUDENT',
     isAuthenticated: (state) => !!state.user,
     authError: (state) => state.error,
     isLoading: (state) => state.loading,

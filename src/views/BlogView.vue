@@ -1,63 +1,51 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Stay updated with the latest news, tutorials, and insights from our team.
-        </p>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="post in posts" :key="post.id" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-          <img :src="post.image" :alt="post.title" class="w-full h-48 object-cover" />
-          <div class="p-6">
-            <span class="text-sm text-blue-600 font-medium">{{ post.category }}</span>
-            <h3 class="text-xl font-semibold text-gray-900 mt-2 mb-3">{{ post.title }}</h3>
-            <p class="text-gray-600 mb-4">{{ post.excerpt }}</p>
-            <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-500">{{ post.date }}</span>
-              <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Read More →</a>
-            </div>
-          </div>
-        </div>
+  <section class="min-h-screen bg-slate-50 px-4 pb-16 pt-24">
+    <div class="mx-auto max-w-7xl">
+      <header class="mb-10">
+        <h1 class="text-3xl font-bold text-slate-900 md:text-4xl">Insights & Engineering Notes</h1>
+        <p class="mt-2 max-w-2xl text-slate-600">Latest articles from the platform about learning strategy and development.</p>
+      </header>
+
+      <div v-if="loading" class="rounded-xl bg-white p-6 shadow-sm">Loading posts...</div>
+      <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
+
+      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <article v-for="post in posts" :key="post.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <img :src="post.image" :alt="post.title" class="h-44 w-full rounded-lg object-cover" />
+          <p class="mt-4 text-xs font-semibold uppercase tracking-wide text-sky-700">{{ post.category }}</p>
+          <h2 class="mt-2 text-xl font-semibold text-slate-900">{{ post.title }}</h2>
+          <p class="mt-2 text-sm text-slate-600">{{ post.excerpt }}</p>
+          <p class="mt-3 text-xs text-slate-500">{{ formatDate(post.published_at) }}</p>
+        </article>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+
 export default {
-  name: 'BlogView',
-  data() {
-    return {
-      posts: [
-        {
-          id: 1,
-          title: 'Getting Started with Vue.js 3',
-          excerpt: 'Learn the fundamentals of Vue.js 3 and start building modern web applications.',
-          category: 'Tutorial',
-          date: 'Jan 15, 2024',
-          image: 'https://picsum.photos/id/1/400/300'
-        },
-        {
-          id: 2,
-          title: 'Best Practices for State Management',
-          excerpt: 'Discover the best practices for managing state in large-scale Vue applications.',
-          category: 'Best Practices',
-          date: 'Jan 10, 2024',
-          image: 'https://picsum.photos/id/2/400/300'
-        },
-        {
-          id: 3,
-          title: 'Building Responsive Layouts with Tailwind',
-          excerpt: 'Master responsive design using Tailwind CSS utility classes.',
-          category: 'Design',
-          date: 'Jan 5, 2024',
-          image: 'https://picsum.photos/id/3/400/300'
-        }
-      ]
+  computed: {
+    ...mapState('blog', {
+      posts: (state) => state.posts,
+      loading: (state) => state.loading,
+      error: (state) => state.error
+    })
+  },
+  methods: {
+    ...mapActions('blog', ['fetchPosts']),
+    formatDate(value) {
+      if (!value) return 'Unpublished'
+      return new Date(value).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      })
     }
+  },
+  async created() {
+    await this.fetchPosts()
   }
 }
 </script>

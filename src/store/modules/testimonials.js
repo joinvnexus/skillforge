@@ -1,4 +1,5 @@
-import { supabase } from '@/supabase'
+import { apiRequest } from '@/lib/api'
+import { normalizeTestimonial } from '@/lib/normalizers'
 
 const state = {
   testimonials: [],
@@ -26,18 +27,12 @@ const actions = {
     try {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
-      
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_approved', true)
-        .order('rating', { ascending: false })
-        .order('created_at', { ascending: false })
-      
-      if (error) throw error
-      
-      commit('SET_TESTIMONIALS', data || [])
-      return data || []
+
+      const response = await apiRequest('/testimonials')
+      const testimonials = (response.data || []).map(normalizeTestimonial)
+
+      commit('SET_TESTIMONIALS', testimonials)
+      return testimonials
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching testimonials:', error)
@@ -52,18 +47,11 @@ const actions = {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_approved', true)
-        .eq('is_featured', true)
-        .order('rating', { ascending: false })
-        .limit(4)
-      
-      if (error) throw error
-      
-      commit('SET_TESTIMONIALS', data || [])
-      return data || []
+      const response = await apiRequest('/testimonials?featured=true')
+      const testimonials = (response.data || []).map(normalizeTestimonial).slice(0, 4)
+
+      commit('SET_TESTIMONIALS', testimonials)
+      return testimonials
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching featured testimonials:', error)
@@ -75,17 +63,7 @@ const actions = {
 
   async createTestimonial({ commit }, testimonial) {
     try {
-      const { data, error } = await supabase
-        .from('testimonials')
-        .insert([testimonial])
-        .select()
-        .single()
-      
-      if (error) throw error
-      
-      // Note: New testimonials start unapproved, so won't appear in public lists
-      commit('ADD_TESTIMONIAL', data)
-      return data
+      throw new Error('Public testimonial create endpoint is not implemented yet')
     } catch (error) {
       console.error('Error creating testimonial:', error)
       throw error
@@ -96,16 +74,8 @@ const actions = {
     try {
       commit('SET_LOADING', true)
       
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_approved', true)
-        .eq('course_id', courseId)
-        .order('rating', { ascending: false })
-      
-      if (error) throw error
-      
-      return data
+      const response = await apiRequest(`/testimonials?courseId=${encodeURIComponent(courseId)}`)
+      return (response.data || []).map(normalizeTestimonial)
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching testimonials by course:', error)
@@ -119,16 +89,10 @@ const actions = {
     try {
       commit('SET_LOADING', true)
       
-      const { data, error } = await supabase
-        .from('testimonials')
-        .select('*')
-        .eq('is_approved', true)
-        .eq('learning_path_id', learningPathId)
-        .order('rating', { ascending: false })
-      
-      if (error) throw error
-      
-      return data
+      const response = await apiRequest(
+        `/testimonials?learningPathId=${encodeURIComponent(learningPathId)}`
+      )
+      return (response.data || []).map(normalizeTestimonial)
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching testimonials by learning path:', error)

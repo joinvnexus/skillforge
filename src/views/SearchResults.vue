@@ -202,12 +202,12 @@
               <div class="flex items-center justify-between pt-3 border-t border-gray-100">
                 <div class="flex items-center">
                   <img 
-                    :src="course.instructor.avatar" 
-                    :alt="course.instructor.name" 
+                    :src="course.instructorImage" 
+                    :alt="course.instructorName" 
                     class="h-8 w-8 rounded-full object-cover mr-2"
                     loading="lazy"
                   >
-                  <span class="text-sm text-gray-600">{{ course.instructor.name }}</span>
+                  <span class="text-sm text-gray-600">{{ course.instructorName }}</span>
                 </div>
                 <span class="text-xs text-gray-500">{{ course.duration }}</span>
               </div>

@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     viewPost(post) {
-      this.$router.push({ name: "BlogPost", params: { id: post.id } });
+      this.$router.push({ name: "Blog" });
     },
     formatDate(dateString) {
       if (!dateString) return 'No date';

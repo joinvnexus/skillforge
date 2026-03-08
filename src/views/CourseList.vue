@@ -88,7 +88,6 @@
       ...mapState('filters', ['sortBy']),
       ...mapGetters('ui', ['paginatedCourses', 'totalPages', 'courseCount']),
       ...mapGetters('filters', ['hasFilters']),
-      ...mapGetters('courses', ['allCategories']),
 
     },
 

@@ -22,7 +22,7 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
 - **Styling**: Tailwind CSS
 - **State Management**: Vuex 4
 - **Routing**: Vue Router 4
-- **Backend**: Legacy frontend data layer plus new Express + Prisma starter in `server/`
+- **Backend**: Express + Prisma API in `server/` (PostgreSQL/Supabase compatible)
 - **Icons**: Heroicons
 - **Animations**: AOS (Animate On Scroll)
 - **Utilities**: VueUse, date-fns, vue-slider-component
@@ -51,7 +51,11 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
    npm run dev
    ```
 
-4. If you want to use the new backend starter, follow the setup in `server/README.md`
+4. Configure frontend API base URL in `.env`:
+   ```sh
+   VITE_API_BASE_URL=http://localhost:4000/api/v1
+   ```
+5. Start backend using setup from `server/README.md`
 
 ## Usage
 

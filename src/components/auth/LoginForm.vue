@@ -67,7 +67,8 @@ export default {
       const { email, password } = this
       const result = await this.$store.dispatch('auth/login', { email, password })
       if (result.success) {
-        this.$router.push('/profile')
+        const redirect = this.$route.query.redirect || '/dashboard'
+        this.$router.push(redirect)
       }
     }
   }

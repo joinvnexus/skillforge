@@ -1,4 +1,5 @@
-import { supabase } from '@/supabase'
+import { apiRequest } from '@/lib/api'
+import { normalizeBlogPost } from '@/lib/normalizers'
 
 const state = {
   posts: [],
@@ -25,17 +26,11 @@ const actions = {
   async fetchPosts({ commit }) {
     try {
       commit('SET_LOADING', true)
-      
-      const { data, error } = await supabase
-        .from('blogs')
-        .select('*')
-        .eq('is_published', true)
-        .order('published_at', { ascending: false })
-      
-      if (error) throw error
-      
-      commit('SET_POSTS', data)
-      return data
+      const response = await apiRequest('/blogs')
+      const posts = response.data.map(normalizeBlogPost)
+
+      commit('SET_POSTS', posts)
+      return posts
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching posts:', error)
@@ -48,19 +43,11 @@ const actions = {
   async fetchFeaturedPosts({ commit }) {
     try {
       commit('SET_LOADING', true)
-      
-      const { data, error } = await supabase
-        .from('blogs')
-        .select('*')
-        .eq('is_published', true)
-        .eq('is_featured', true)
-        .order('published_at', { ascending: false })
-        .limit(3)
-      
-      if (error) throw error
-      
-      commit('SET_POSTS', data)
-      return data
+      const response = await apiRequest('/home')
+      const posts = (response.data.featuredBlogs || []).map(normalizeBlogPost)
+
+      commit('SET_POSTS', posts)
+      return posts
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching featured posts:', error)
@@ -73,16 +60,8 @@ const actions = {
   async fetchPostBySlug({ commit }, slug) {
     try {
       commit('SET_LOADING', true)
-      
-      const { data, error } = await supabase
-        .from('blogs')
-        .select('*')
-        .eq('slug', slug)
-        .single()
-      
-      if (error) throw error
-      
-      return data
+      const response = await apiRequest(`/blogs/${slug}`)
+      return normalizeBlogPost(response.data)
     } catch (error) {
       commit('SET_ERROR', error.message)
       console.error('Error fetching post by slug:', error)
@@ -94,16 +73,15 @@ const actions = {
 
   async createPost({ commit }, post) {
     try {
-      const { data, error } = await supabase
-        .from('blogs')
-        .insert([post])
-        .select()
-        .single()
-      
-      if (error) throw error
-      
-      commit('ADD_POST', data)
-      return data
+      const response = await apiRequest('/admin/blogs', {
+        method: 'POST',
+        auth: true,
+        body: post
+      })
+      const createdPost = normalizeBlogPost(response.data)
+
+      commit('ADD_POST', createdPost)
+      return createdPost
     } catch (error) {
       console.error('Error creating post:', error)
       throw error
@@ -112,16 +90,7 @@ const actions = {
 
   async incrementViewCount(_, slug) {
     try {
-      const { error } = await supabase.rpc('increment_blog_view_count', {
-        blog_uuid: (await supabase
-          .from('blogs')
-          .select('id')
-          .eq('slug', slug)
-          .single()
-        ).data?.id
-      })
-      
-      if (error) console.warn('Could not increment view count:', error)
+      await apiRequest(`/blogs/${slug}`)
     } catch (error) {
       console.warn('Error incrementing view count:', error)
     }
@@ -129,10 +98,10 @@ const actions = {
 }
 
 const getters = {
-  allPosts: state => state.posts,
-  featuredPosts: state => state.posts.filter(p => p.is_featured).slice(0, 3),
-  postsLoading: state => state.loading,
-  postsError: state => state.error
+  allPosts: (state) => state.posts,
+  featuredPosts: (state) => state.posts.filter((post) => post.isFeatured).slice(0, 3),
+  postsLoading: (state) => state.loading,
+  postsError: (state) => state.error
 }
 
 export default {
