@@ -172,6 +172,145 @@
           </div>
         </div>
       </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <h2 class="text-lg font-semibold text-slate-900">Learning Paths Management</h2>
+          <div class="grid gap-2 md:grid-cols-4">
+            <input
+              v-model="learningPathFilters.search"
+              type="text"
+              placeholder="Search title/slug"
+              class="rounded border border-slate-300 px-2 py-1 text-xs"
+              @keyup.enter="applyLearningPathFilters"
+            />
+            <select v-model="learningPathFilters.level" class="rounded border border-slate-300 px-2 py-1 text-xs">
+              <option value="">All Levels</option>
+              <option value="BEGINNER">BEGINNER</option>
+              <option value="INTERMEDIATE">INTERMEDIATE</option>
+              <option value="ADVANCED">ADVANCED</option>
+            </select>
+            <select v-model="learningPathFilters.published" class="rounded border border-slate-300 px-2 py-1 text-xs">
+              <option value="">All</option>
+              <option value="true">Published</option>
+              <option value="false">Unpublished</option>
+            </select>
+            <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="applyLearningPathFilters">Apply</button>
+          </div>
+        </div>
+
+        <div class="mt-3 grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 md:grid-cols-6">
+          <input v-model="createLearningPathForm.slug" type="text" placeholder="Slug" class="rounded border border-slate-300 px-2 py-1 text-xs" />
+          <input v-model="createLearningPathForm.title" type="text" placeholder="Title" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-2" />
+          <input v-model="createLearningPathForm.estimatedDuration" type="text" placeholder="Duration" class="rounded border border-slate-300 px-2 py-1 text-xs" />
+          <select v-model="createLearningPathForm.level" class="rounded border border-slate-300 px-2 py-1 text-xs">
+            <option value="BEGINNER">BEGINNER</option>
+            <option value="INTERMEDIATE">INTERMEDIATE</option>
+            <option value="ADVANCED">ADVANCED</option>
+          </select>
+          <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="createLearningPath">Create</button>
+          <textarea v-model="createLearningPathForm.description" rows="2" placeholder="Description" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-6"></textarea>
+        </div>
+
+        <ul class="mt-4 space-y-3">
+          <li v-for="path in learningPaths" :key="path.id" class="rounded-lg border border-slate-200 p-3">
+            <p class="text-sm font-semibold text-slate-800">{{ path.title }}</p>
+            <p class="text-xs text-slate-500">{{ path.slug }} · {{ path.level }}</p>
+            <div class="mt-2 grid gap-2 md:grid-cols-6">
+              <input v-model="learningPathEdits[path.id].title" type="text" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-2" />
+              <input v-model="learningPathEdits[path.id].estimatedDuration" type="text" class="rounded border border-slate-300 px-2 py-1 text-xs" />
+              <select v-model="learningPathEdits[path.id].level" class="rounded border border-slate-300 px-2 py-1 text-xs">
+                <option value="BEGINNER">BEGINNER</option>
+                <option value="INTERMEDIATE">INTERMEDIATE</option>
+                <option value="ADVANCED">ADVANCED</option>
+              </select>
+              <input v-model.number="learningPathEdits[path.id].displayOrder" type="number" min="0" class="rounded border border-slate-300 px-2 py-1 text-xs" />
+              <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="updateLearningPath(path.id)">Save</button>
+            </div>
+            <div class="mt-2 flex gap-3 text-xs text-slate-700">
+              <label class="inline-flex items-center gap-1">
+                <input v-model="learningPathEdits[path.id].isPublished" type="checkbox" />
+                Published
+              </label>
+              <label class="inline-flex items-center gap-1">
+                <input v-model="learningPathEdits[path.id].isFeatured" type="checkbox" />
+                Featured
+              </label>
+            </div>
+          </li>
+        </ul>
+
+        <div class="mt-4 flex items-center justify-between text-xs text-slate-600">
+          <span>Page {{ learningPathsMeta.page }} / {{ learningPathsMeta.totalPages || 1 }} ({{ learningPathsMeta.total }} paths)</span>
+          <div class="flex gap-2">
+            <button class="rounded border border-slate-300 px-2 py-1 disabled:opacity-50" :disabled="learningPathsMeta.page <= 1" @click="changeLearningPathsPage(learningPathsMeta.page - 1)">Prev</button>
+            <button class="rounded border border-slate-300 px-2 py-1 disabled:opacity-50" :disabled="learningPathsMeta.page >= learningPathsMeta.totalPages" @click="changeLearningPathsPage(learningPathsMeta.page + 1)">Next</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <h2 class="text-lg font-semibold text-slate-900">Blog Management</h2>
+          <div class="grid gap-2 md:grid-cols-3">
+            <input
+              v-model="blogFilters.search"
+              type="text"
+              placeholder="Search title/slug"
+              class="rounded border border-slate-300 px-2 py-1 text-xs"
+              @keyup.enter="applyBlogFilters"
+            />
+            <select v-model="blogFilters.status" class="rounded border border-slate-300 px-2 py-1 text-xs">
+              <option value="">All Status</option>
+              <option value="DRAFT">DRAFT</option>
+              <option value="PUBLISHED">PUBLISHED</option>
+              <option value="ARCHIVED">ARCHIVED</option>
+            </select>
+            <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="applyBlogFilters">Apply</button>
+          </div>
+        </div>
+
+        <div class="mt-3 grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 md:grid-cols-6">
+          <input v-model="createBlogForm.slug" type="text" placeholder="Slug" class="rounded border border-slate-300 px-2 py-1 text-xs" />
+          <input v-model="createBlogForm.title" type="text" placeholder="Title" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-2" />
+          <input v-model="createBlogForm.snippet" type="text" placeholder="Snippet" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-2" />
+          <select v-model="createBlogForm.status" class="rounded border border-slate-300 px-2 py-1 text-xs">
+            <option value="DRAFT">DRAFT</option>
+            <option value="PUBLISHED">PUBLISHED</option>
+            <option value="ARCHIVED">ARCHIVED</option>
+          </select>
+          <textarea v-model="createBlogForm.content" rows="2" placeholder="Content" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-5"></textarea>
+          <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="createBlog">Create</button>
+        </div>
+
+        <ul class="mt-4 space-y-3">
+          <li v-for="blog in blogs" :key="blog.id" class="rounded-lg border border-slate-200 p-3">
+            <p class="text-sm font-semibold text-slate-800">{{ blog.title }}</p>
+            <p class="text-xs text-slate-500">{{ blog.slug }}</p>
+            <div class="mt-2 grid gap-2 md:grid-cols-4">
+              <input v-model="blogEdits[blog.id].title" type="text" class="rounded border border-slate-300 px-2 py-1 text-xs md:col-span-2" />
+              <select v-model="blogEdits[blog.id].status" class="rounded border border-slate-300 px-2 py-1 text-xs">
+                <option value="DRAFT">DRAFT</option>
+                <option value="PUBLISHED">PUBLISHED</option>
+                <option value="ARCHIVED">ARCHIVED</option>
+              </select>
+              <button class="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white hover:bg-slate-800" @click="updateBlog(blog.id)">Save</button>
+            </div>
+            <label class="mt-2 inline-flex items-center gap-1 text-xs text-slate-700">
+              <input v-model="blogEdits[blog.id].isFeatured" type="checkbox" />
+              Featured
+            </label>
+          </li>
+        </ul>
+
+        <div class="mt-4 flex items-center justify-between text-xs text-slate-600">
+          <span>Page {{ blogsMeta.page }} / {{ blogsMeta.totalPages || 1 }} ({{ blogsMeta.total }} blogs)</span>
+          <div class="flex gap-2">
+            <button class="rounded border border-slate-300 px-2 py-1 disabled:opacity-50" :disabled="blogsMeta.page <= 1" @click="changeBlogsPage(blogsMeta.page - 1)">Prev</button>
+            <button class="rounded border border-slate-300 px-2 py-1 disabled:opacity-50" :disabled="blogsMeta.page >= blogsMeta.totalPages" @click="changeBlogsPage(blogsMeta.page + 1)">Next</button>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 </template>
@@ -185,14 +324,39 @@ const error = ref(null);
 const users = ref([]);
 const testimonials = ref([]);
 const orders = ref([]);
+const learningPaths = ref([]);
+const blogs = ref([]);
 const userEdits = reactive({});
 const orderEdits = reactive({});
+const learningPathEdits = reactive({});
+const blogEdits = reactive({});
 const usersMeta = ref({ page: 1, totalPages: 1, total: 0 });
 const testimonialsMeta = ref({ page: 1, totalPages: 1, total: 0 });
 const ordersMeta = ref({ page: 1, totalPages: 1, total: 0 });
+const learningPathsMeta = ref({ page: 1, totalPages: 1, total: 0 });
+const blogsMeta = ref({ page: 1, totalPages: 1, total: 0 });
 const userFilters = reactive({ page: 1, limit: 12, search: "", role: "", status: "" });
 const testimonialFilters = reactive({ page: 1, limit: 8, approved: "false", search: "" });
 const orderFilters = reactive({ page: 1, limit: 10, status: "", search: "" });
+const learningPathFilters = reactive({ page: 1, limit: 8, search: "", level: "", published: "" });
+const blogFilters = reactive({ page: 1, limit: 8, search: "", status: "" });
+const createLearningPathForm = reactive({
+  slug: "",
+  title: "",
+  description: "",
+  estimatedDuration: "",
+  level: "BEGINNER",
+  isPublished: false,
+  isFeatured: false
+});
+const createBlogForm = reactive({
+  title: "",
+  slug: "",
+  snippet: "",
+  content: "",
+  status: "DRAFT",
+  isFeatured: false
+});
 
 const primeFormState = () => {
   for (const user of users.value) {
@@ -202,6 +366,23 @@ const primeFormState = () => {
     orderEdits[order.id] = {
       status: order.status,
       paymentReference: order.paymentReference || ""
+    };
+  }
+  for (const item of learningPaths.value) {
+    learningPathEdits[item.id] = {
+      title: item.title,
+      level: item.level,
+      estimatedDuration: item.estimatedDuration || "",
+      isPublished: Boolean(item.isPublished),
+      isFeatured: Boolean(item.isFeatured),
+      displayOrder: Number(item.displayOrder || 0)
+    };
+  }
+  for (const blog of blogs.value) {
+    blogEdits[blog.id] = {
+      title: blog.title,
+      status: blog.status,
+      isFeatured: Boolean(blog.isFeatured)
     };
   }
 };
@@ -234,11 +415,23 @@ const reloadOrders = async () => {
   ordersMeta.value = ordersRes.meta || { page: 1, totalPages: 1, total: 0 };
 };
 
+const reloadLearningPaths = async () => {
+  const response = await apiRequest(`/admin/learning-paths?${buildParams(learningPathFilters)}`, { auth: true });
+  learningPaths.value = response.data || [];
+  learningPathsMeta.value = response.meta || { page: 1, totalPages: 1, total: 0 };
+};
+
+const reloadBlogs = async () => {
+  const response = await apiRequest(`/admin/blogs?${buildParams(blogFilters)}`, { auth: true });
+  blogs.value = response.data || [];
+  blogsMeta.value = response.meta || { page: 1, totalPages: 1, total: 0 };
+};
+
 const reload = async () => {
   loading.value = true;
   error.value = null;
   try {
-    await Promise.all([reloadUsers(), reloadTestimonials(), reloadOrders()]);
+    await Promise.all([reloadUsers(), reloadTestimonials(), reloadOrders(), reloadLearningPaths(), reloadBlogs()]);
     primeFormState();
   } catch (err) {
     error.value = err.message;
@@ -331,6 +524,114 @@ const applyOrderFilters = async () => {
   orderFilters.page = 1;
   await reloadOrders();
   primeFormState();
+};
+
+const changeLearningPathsPage = async (page) => {
+  learningPathFilters.page = page;
+  await reloadLearningPaths();
+  primeFormState();
+};
+
+const applyLearningPathFilters = async () => {
+  learningPathFilters.page = 1;
+  await reloadLearningPaths();
+  primeFormState();
+};
+
+const createLearningPath = async () => {
+  try {
+    await apiRequest("/admin/learning-paths", {
+      method: "POST",
+      auth: true,
+      body: {
+        slug: createLearningPathForm.slug.trim(),
+        title: createLearningPathForm.title.trim(),
+        description: createLearningPathForm.description.trim(),
+        estimatedDuration: createLearningPathForm.estimatedDuration.trim(),
+        level: createLearningPathForm.level,
+        isPublished: createLearningPathForm.isPublished,
+        isFeatured: createLearningPathForm.isFeatured
+      }
+    });
+    createLearningPathForm.slug = "";
+    createLearningPathForm.title = "";
+    createLearningPathForm.description = "";
+    createLearningPathForm.estimatedDuration = "";
+    createLearningPathForm.level = "BEGINNER";
+    createLearningPathForm.isPublished = false;
+    createLearningPathForm.isFeatured = false;
+    await reloadLearningPaths();
+    primeFormState();
+  } catch (err) {
+    error.value = err.message;
+  }
+};
+
+const updateLearningPath = async (id) => {
+  try {
+    await apiRequest(`/admin/learning-paths/${id}`, {
+      method: "PATCH",
+      auth: true,
+      body: learningPathEdits[id]
+    });
+    await reloadLearningPaths();
+    primeFormState();
+  } catch (err) {
+    error.value = err.message;
+  }
+};
+
+const changeBlogsPage = async (page) => {
+  blogFilters.page = page;
+  await reloadBlogs();
+  primeFormState();
+};
+
+const applyBlogFilters = async () => {
+  blogFilters.page = 1;
+  await reloadBlogs();
+  primeFormState();
+};
+
+const createBlog = async () => {
+  try {
+    await apiRequest("/admin/blogs", {
+      method: "POST",
+      auth: true,
+      body: {
+        title: createBlogForm.title.trim(),
+        slug: createBlogForm.slug.trim(),
+        snippet: createBlogForm.snippet.trim(),
+        content: createBlogForm.content.trim(),
+        status: createBlogForm.status,
+        isFeatured: createBlogForm.isFeatured
+      }
+    });
+    createBlogForm.title = "";
+    createBlogForm.slug = "";
+    createBlogForm.snippet = "";
+    createBlogForm.content = "";
+    createBlogForm.status = "DRAFT";
+    createBlogForm.isFeatured = false;
+    await reloadBlogs();
+    primeFormState();
+  } catch (err) {
+    error.value = err.message;
+  }
+};
+
+const updateBlog = async (id) => {
+  try {
+    await apiRequest(`/admin/blogs/${id}`, {
+      method: "PATCH",
+      auth: true,
+      body: blogEdits[id]
+    });
+    await reloadBlogs();
+    primeFormState();
+  } catch (err) {
+    error.value = err.message;
+  }
 };
 
 onMounted(reload);

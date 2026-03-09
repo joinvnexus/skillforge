@@ -27,7 +27,8 @@ Audit date: 2026-03-09
   Done: added `GET/PATCH /instructor/me/profile` and role-based instructor settings form for title, bio, expertise, and social URLs.
 - [x] Admin: add pagination/filter/search for orders/testimonials/users in AdminPanel.  
   Done: backend query support for user role/status/search, order status/search, testimonial approved/search with pagination; AdminPanel wired with filters and paged navigation.
-- [ ] Admin: add learning path/blog management UI (backend exists, dashboard UI still minimal).
+- [x] Admin: add learning path/blog management UI (backend exists, dashboard UI still minimal).  
+  Done: admin panel now supports listing/filtering/paging plus create/update controls for learning paths and blogs.
 
 ## P1 - Frontend Quality/UX
 

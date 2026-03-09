@@ -12,6 +12,8 @@ const allowedRoles = ["STUDENT", "INSTRUCTOR", "ADMIN"];
 const allowedStatuses = ["ACTIVE", "PENDING", "BLOCKED"];
 const allowedCourseStatuses = ["DRAFT", "REVIEW", "PUBLISHED", "ARCHIVED"];
 const allowedOrderStatuses = ["PENDING", "PAID", "FAILED", "REFUNDED"];
+const allowedBlogStatuses = ["DRAFT", "PUBLISHED", "ARCHIVED"];
+const allowedLearningPathLevels = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
 
 const logAdminAction = async (actorId, action, entityType, entityId, meta = null) => {
   await prisma.auditLog.create({
@@ -316,6 +318,49 @@ router.get(
 );
 
 router.get(
+  "/admin/testimonials/pending",
+  asyncHandler(async (req, res) => {
+    req.query.approved = "false";
+    const { page, limit, skip } = getPagination(req.query, { limit: 20 });
+    const search = String(req.query.search || "").trim();
+
+    const where = search
+      ? {
+          AND: [
+            { isApproved: false },
+            {
+              OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { quote: { contains: search, mode: "insensitive" } }
+              ]
+            }
+          ]
+        }
+      : { isApproved: false };
+
+    const [testimonials, total] = await Promise.all([
+      prisma.testimonial.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ createdAt: "desc" }]
+      }),
+      prisma.testimonial.count({ where })
+    ]);
+
+    res.json({
+      data: testimonials,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  })
+);
+
+router.get(
   "/admin/orders",
   asyncHandler(async (req, res) => {
     const { page, limit, skip } = getPagination(req.query, { limit: 20 });
@@ -485,6 +530,96 @@ router.post(
   })
 );
 
+router.get(
+  "/admin/learning-paths",
+  asyncHandler(async (req, res) => {
+    const { page, limit, skip } = getPagination(req.query, { limit: 20 });
+    const search = String(req.query.search || "").trim();
+    const level = String(req.query.level || "").toUpperCase().trim();
+    const published = String(req.query.published || "").toLowerCase().trim();
+
+    const andWhere = [];
+
+    if (search) {
+      andWhere.push({
+        OR: [{ title: { contains: search, mode: "insensitive" } }, { slug: { contains: search, mode: "insensitive" } }]
+      });
+    }
+
+    if (allowedLearningPathLevels.includes(level)) {
+      andWhere.push({ level });
+    }
+
+    if (published === "true") {
+      andWhere.push({ isPublished: true });
+    } else if (published === "false") {
+      andWhere.push({ isPublished: false });
+    }
+
+    const where = andWhere.length ? { AND: andWhere } : {};
+
+    const [items, total] = await Promise.all([
+      prisma.learningPath.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }]
+      }),
+      prisma.learningPath.count({ where })
+    ]);
+
+    res.json({
+      data: items,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  })
+);
+
+router.patch(
+  "/admin/learning-paths/:id",
+  asyncHandler(async (req, res) => {
+    const data = {};
+
+    if ("title" in req.body) data.title = String(req.body.title || "").trim();
+    if ("description" in req.body) data.description = String(req.body.description || "").trim();
+    if ("estimatedDuration" in req.body) data.estimatedDuration = String(req.body.estimatedDuration || "").trim();
+    if ("icon" in req.body) data.icon = req.body.icon ? String(req.body.icon) : null;
+    if ("imageUrl" in req.body) data.imageUrl = req.body.imageUrl ? String(req.body.imageUrl) : null;
+    if ("displayOrder" in req.body) data.displayOrder = Number(req.body.displayOrder || 0);
+    if ("isPublished" in req.body) data.isPublished = Boolean(req.body.isPublished);
+    if ("isFeatured" in req.body) data.isFeatured = Boolean(req.body.isFeatured);
+    if ("features" in req.body) data.features = Array.isArray(req.body.features) ? req.body.features : [];
+    if ("skills" in req.body) data.skills = Array.isArray(req.body.skills) ? req.body.skills : [];
+    if ("projects" in req.body) data.projects = req.body.projects || null;
+
+    if ("level" in req.body) {
+      const level = String(req.body.level || "").toUpperCase();
+      if (!allowedLearningPathLevels.includes(level)) {
+        throw new HttpError(400, "Invalid learning path level");
+      }
+      data.level = level;
+    }
+
+    if (Object.keys(data).length === 0) {
+      throw new HttpError(400, "No learning path fields provided");
+    }
+
+    const learningPath = await prisma.learningPath.update({
+      where: { id: req.params.id },
+      data
+    });
+
+    await logAdminAction(req.auth.userId, "LEARNING_PATH_UPDATED", "LearningPath", learningPath.id, data);
+
+    res.json({ data: learningPath });
+  })
+);
+
 router.post(
   "/admin/blogs",
   asyncHandler(async (req, res) => {
@@ -519,6 +654,94 @@ router.post(
     await logAdminAction(req.auth.userId, "BLOG_CREATED", "BlogPost", post.id, { slug: post.slug });
 
     res.status(201).json({ data: post });
+  })
+);
+
+router.get(
+  "/admin/blogs",
+  asyncHandler(async (req, res) => {
+    const { page, limit, skip } = getPagination(req.query, { limit: 20 });
+    const search = String(req.query.search || "").trim();
+    const status = String(req.query.status || "").toUpperCase().trim();
+
+    const andWhere = [];
+
+    if (search) {
+      andWhere.push({
+        OR: [{ title: { contains: search, mode: "insensitive" } }, { slug: { contains: search, mode: "insensitive" } }]
+      });
+    }
+
+    if (allowedBlogStatuses.includes(status)) {
+      andWhere.push({ status });
+    }
+
+    const where = andWhere.length ? { AND: andWhere } : {};
+
+    const [posts, total] = await Promise.all([
+      prisma.blogPost.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ createdAt: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          snippet: true,
+          status: true,
+          isFeatured: true,
+          readingTimeMinutes: true,
+          publishedAt: true,
+          createdAt: true
+        }
+      }),
+      prisma.blogPost.count({ where })
+    ]);
+
+    res.json({
+      data: posts,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  })
+);
+
+router.patch(
+  "/admin/blogs/:id",
+  asyncHandler(async (req, res) => {
+    const data = {};
+
+    if ("title" in req.body) data.title = String(req.body.title || "").trim();
+    if ("snippet" in req.body) data.snippet = String(req.body.snippet || "").trim();
+    if ("content" in req.body) data.content = String(req.body.content || "").trim();
+    if ("isFeatured" in req.body) data.isFeatured = Boolean(req.body.isFeatured);
+
+    if ("status" in req.body) {
+      const status = String(req.body.status || "").toUpperCase();
+      if (!allowedBlogStatuses.includes(status)) {
+        throw new HttpError(400, "Invalid blog status");
+      }
+      data.status = status;
+      data.publishedAt = status === "PUBLISHED" ? new Date() : null;
+    }
+
+    if (Object.keys(data).length === 0) {
+      throw new HttpError(400, "No blog fields provided");
+    }
+
+    const post = await prisma.blogPost.update({
+      where: { id: req.params.id },
+      data
+    });
+
+    await logAdminAction(req.auth.userId, "BLOG_UPDATED", "BlogPost", post.id, data);
+
+    res.json({ data: post });
   })
 );
 
