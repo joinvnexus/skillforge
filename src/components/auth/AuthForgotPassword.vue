@@ -8,11 +8,16 @@
 
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div>
-          <label class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
+          <label for="forgot-email" class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
           <input
+            id="forgot-email"
             v-model="email"
             type="email"
             placeholder="your@email.com"
+            autocomplete="email"
+            required
+            :aria-invalid="Boolean(localError || error)"
+            aria-describedby="forgot-form-error"
             class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
@@ -21,8 +26,8 @@
           {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
         </button>
 
-        <p v-if="localError || error" class="text-center text-sm text-red-600">{{ localError || error }}</p>
-        <p v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
+        <p id="forgot-form-error" role="alert" aria-live="polite" v-if="localError || error" class="text-center text-sm text-red-600">{{ localError || error }}</p>
+        <p role="status" aria-live="polite" v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
         <div v-if="resetUrl" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
           <p class="font-semibold">Dev reset link</p>
           <router-link :to="resetPath" class="break-all font-medium text-emerald-800 underline">

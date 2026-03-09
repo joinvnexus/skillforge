@@ -18,7 +18,7 @@
           <button class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800" @click="addToCart(course)">
             Add to Cart
           </button>
-          <button class="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" @click="remove(course.id)">
+          <button :aria-label="`Remove ${course.title} from wishlist`" class="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" @click="remove(course.id)">
             Remove
           </button>
         </div>

@@ -1,5 +1,5 @@
 <template>
-  <div :class="wrapperClass">
+  <div :class="wrapperClass" :role="stateRole" :aria-live="stateLive">
     <p class="text-sm font-semibold" :class="titleClass">{{ title }}</p>
     <p v-if="description" class="mt-1 text-sm" :class="descriptionClass">{{ description }}</p>
     <button
@@ -36,6 +36,13 @@ export default {
     }
   },
   computed: {
+    stateRole() {
+      if (this.type === "error") return "alert";
+      return "status";
+    },
+    stateLive() {
+      return this.type === "error" ? "assertive" : "polite";
+    },
     wrapperClass() {
       if (this.type === "error") {
         return "rounded-xl border border-red-200 bg-red-50 p-6 text-red-700";

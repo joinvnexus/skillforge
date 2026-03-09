@@ -57,6 +57,32 @@ button {
   transition: all 0.2s ease;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 55%, white 45%);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -100px;
+  z-index: 100;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
+}
+
 .page-shell {
   padding-top: 84px;
 }

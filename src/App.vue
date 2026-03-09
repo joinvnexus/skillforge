@@ -1,10 +1,11 @@
 <!-- App Layout -->
  <!-- src/App.vue -->
 <template>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <HeaderSection />
   <ToastStack />
 
-  <main class="page-shell">
+  <main id="main-content" tabindex="-1" class="page-shell">
     <router-view v-slot="{ Component }">
       <transition name="fade-slide" mode="out-in">
         <component :is="Component" />

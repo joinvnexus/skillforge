@@ -8,21 +8,32 @@
 
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div>
-          <label class="mb-1 block text-sm font-semibold text-slate-700">New Password</label>
+          <label for="reset-new-password" class="mb-1 block text-sm font-semibold text-slate-700">New Password</label>
           <input
+            id="reset-new-password"
             v-model="newPassword"
             type="password"
             placeholder="********"
+            autocomplete="new-password"
+            required
+            :aria-invalid="Boolean(localError)"
+            aria-describedby="reset-form-error reset-password-help"
             class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
+          <p id="reset-password-help" class="mt-1 text-xs text-slate-500">Use at least 6 characters.</p>
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-semibold text-slate-700">Confirm Password</label>
+          <label for="reset-confirm-password" class="mb-1 block text-sm font-semibold text-slate-700">Confirm Password</label>
           <input
+            id="reset-confirm-password"
             v-model="confirmPassword"
             type="password"
             placeholder="********"
+            autocomplete="new-password"
+            required
+            :aria-invalid="Boolean(localError)"
+            aria-describedby="reset-form-error"
             class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
@@ -31,8 +42,8 @@
           {{ isLoading ? 'Resetting...' : 'Reset Password' }}
         </button>
 
-        <p v-if="localError" class="text-center text-sm text-red-600">{{ localError }}</p>
-        <p v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
+        <p id="reset-form-error" role="alert" aria-live="polite" v-if="localError" class="text-center text-sm text-red-600">{{ localError }}</p>
+        <p role="status" aria-live="polite" v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
 
         <p class="text-center text-sm text-slate-600">
           <router-link to="/login" class="font-semibold text-sky-700 hover:text-sky-900">Back to login</router-link>

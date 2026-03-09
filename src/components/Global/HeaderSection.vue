@@ -12,7 +12,7 @@
           </div>
         </router-link>
 
-        <nav class="hidden items-center gap-1 rounded-xl bg-[var(--surface-soft)] p-1 md:flex">
+        <nav aria-label="Primary navigation" class="hidden items-center gap-1 rounded-xl bg-[var(--surface-soft)] p-1 md:flex">
           <router-link
             v-for="item in primaryLinks"
             :key="item.to"
@@ -29,11 +29,13 @@
         </nav>
 
         <div class="flex items-center gap-2 md:gap-3">
-          <form @submit.prevent="performSearch" class="relative hidden lg:block">
+          <form @submit.prevent="performSearch" class="relative hidden lg:block" role="search" aria-label="Site search">
             <input
+              id="desktop-site-search"
               v-model="searchQuery"
               type="text"
               placeholder="Search courses, paths..."
+              aria-label="Search courses and learning paths"
               class="w-64 rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-800 outline-none ring-[var(--accent)]/40 focus:ring"
             />
             <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none">
@@ -66,6 +68,9 @@
               <button
                 @click="isProfileMenuOpen = !isProfileMenuOpen"
                 type="button"
+                aria-label="Open profile menu"
+                :aria-expanded="isProfileMenuOpen ? 'true' : 'false'"
+                aria-controls="desktop-profile-menu"
                 class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
                 <img
@@ -84,7 +89,7 @@
                 <!-- <span class="max-w-24 truncate">{{ userName }}</span> -->
               </button>
               <transition name="fade-slide">
-                <div v-if="isProfileMenuOpen" class="absolute right-0 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                <div id="desktop-profile-menu" v-if="isProfileMenuOpen" class="absolute right-0 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
                   <router-link @click="closeProfileMenu" to="/dashboard" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Dashboard</router-link>
                   <router-link @click="closeProfileMenu" to="/dashboard/profile" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Profile</router-link>
                   <router-link
@@ -124,6 +129,8 @@
             @click="isMobileMenuOpen = !isMobileMenuOpen"
             type="button"
             aria-label="Toggle menu"
+            :aria-expanded="isMobileMenuOpen ? 'true' : 'false'"
+            aria-controls="mobile-navigation"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M3 5h14v2H3V5zm0 4h14v2H3V9zm0 4h14v2H3v-2z" clip-rule="evenodd" />
@@ -133,12 +140,14 @@
       </div>
 
       <transition name="fade-slide">
-        <div v-if="isMobileMenuOpen" class="border-t border-[var(--line)] bg-white px-3 py-3 md:hidden">
-          <form @submit.prevent="performSearch" class="relative mb-3">
+        <div id="mobile-navigation" v-if="isMobileMenuOpen" class="border-t border-[var(--line)] bg-white px-3 py-3 md:hidden">
+          <form @submit.prevent="performSearch" class="relative mb-3" role="search" aria-label="Site search">
             <input
+              id="mobile-site-search"
               v-model="searchQuery"
               type="text"
               placeholder="Search..."
+              aria-label="Search courses and learning paths"
               class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-800 outline-none ring-[var(--accent)]/40 focus:ring"
             />
             <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none">
@@ -146,7 +155,7 @@
             </svg>
           </form>
 
-          <nav class="grid gap-1">
+          <nav aria-label="Mobile navigation" class="grid gap-1">
             <router-link
               v-for="item in primaryLinks"
               :key="`mobile-${item.to}`"
@@ -296,6 +305,12 @@ const handleClickOutside = (event) => {
   }
 }
 
+const handleEscape = (event) => {
+  if (event.key !== 'Escape') return
+  closeProfileMenu()
+  closeMobileMenu()
+}
+
 const hydrateStudentCollections = async () => {
   if (!isAuthenticated.value || !isStudent.value) return
   try {
@@ -334,9 +349,11 @@ watch(
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  document.addEventListener('keydown', handleEscape)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('keydown', handleEscape)
 })
 </script>

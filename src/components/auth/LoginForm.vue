@@ -8,21 +8,31 @@
 
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div>
-          <label class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
+          <label for="login-email" class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
           <input
+            id="login-email"
             v-model="email"
             type="email"
             placeholder="your@email.com"
+            autocomplete="email"
+            required
+            :aria-invalid="Boolean(localError || error)"
+            aria-describedby="login-form-error"
             class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-semibold text-slate-700">Password</label>
+          <label for="login-password" class="mb-1 block text-sm font-semibold text-slate-700">Password</label>
           <input
+            id="login-password"
             v-model="password"
             type="password"
             placeholder="********"
+            autocomplete="current-password"
+            required
+            :aria-invalid="Boolean(localError || error)"
+            aria-describedby="login-form-error"
             class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
@@ -31,7 +41,7 @@
           {{ isLoading ? 'Logging in...' : 'Log In' }}
         </button>
 
-        <p v-if="localError || error" class="mt-2 text-center text-sm text-red-600">{{ localError || error }}</p>
+        <p id="login-form-error" role="alert" aria-live="polite" v-if="localError || error" class="mt-2 text-center text-sm text-red-600">{{ localError || error }}</p>
 
         <p class="text-center text-sm">
           <router-link to="/forgot-password" class="font-semibold text-sky-700 hover:text-sky-900">Forgot password?</router-link>

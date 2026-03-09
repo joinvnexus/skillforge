@@ -36,6 +36,7 @@
         <div v-if="order.status !== 'PAID'" class="mt-4 flex flex-wrap items-center gap-2">
           <button
             v-if="!intentByOrderId[order.id]"
+            :aria-label="`Start payment for order ${order.orderNumber}`"
             class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
             :disabled="paymentLoadingId === order.id"
             @click="startPayment(order.id)"
@@ -44,6 +45,7 @@
           </button>
           <button
             v-if="intentByOrderId[order.id]"
+            :aria-label="`Mark order ${order.orderNumber} as paid`"
             class="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
             :disabled="paymentLoadingId === order.id"
             @click="verifyPayment(order.id, 'SUCCESS')"
@@ -52,6 +54,7 @@
           </button>
           <button
             v-if="intentByOrderId[order.id]"
+            :aria-label="`Mark order ${order.orderNumber} as failed`"
             class="rounded-md border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
             :disabled="paymentLoadingId === order.id"
             @click="verifyPayment(order.id, 'FAILED')"
