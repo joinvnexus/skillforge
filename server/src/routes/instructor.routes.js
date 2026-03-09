@@ -42,6 +42,33 @@ const pickFields = (input, fields) => {
   }, {});
 };
 
+const parseAttachments = (value) => {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+
+  if (!Array.isArray(value)) {
+    throw new HttpError(400, "Attachments must be an array");
+  }
+
+  const cleaned = value
+    .map((item) => String(item || "").trim())
+    .filter(Boolean)
+    .map((item) => {
+      try {
+        const parsed = new URL(item);
+        if (!["http:", "https:"].includes(parsed.protocol)) {
+          throw new HttpError(400, "Attachment URLs must use HTTP(S)");
+        }
+      } catch (_error) {
+        throw new HttpError(400, "Attachment URLs must be valid");
+      }
+      return item;
+    });
+
+  return cleaned.length ? cleaned : null;
+};
+
 const resolveInstructorProfile = async (userId) => {
   const instructor = await prisma.instructorProfile.findUnique({
     where: {
@@ -126,6 +153,40 @@ router.get(
     });
 
     res.json({ data: courses });
+  })
+);
+
+router.get(
+  "/instructor/courses/:courseId/studio",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+
+    const course = await prisma.course.findFirst({
+      where: {
+        id: req.params.courseId,
+        instructorId: instructor.id
+      },
+      include: {
+        sections: {
+          orderBy: {
+            position: "asc"
+          },
+          include: {
+            lessons: {
+              orderBy: {
+                position: "asc"
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!course) {
+      throw new HttpError(404, "Course not found");
+    }
+
+    res.json({ data: course });
   })
 );
 
@@ -380,6 +441,80 @@ router.post(
     });
 
     res.status(201).json({ data: lesson });
+  })
+);
+
+router.patch(
+  "/instructor/lessons/:lessonId",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+
+    const lesson = await prisma.lesson.findFirst({
+      where: {
+        id: req.params.lessonId,
+        section: {
+          is: {
+            course: {
+              is: {
+                instructorId: instructor.id
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!lesson) {
+      throw new HttpError(404, "Lesson not found");
+    }
+
+    const updates = {};
+
+    if ("title" in req.body) {
+      updates.title = requireTrimmedString(req.body.title, "Lesson title", { min: 2, max: 180 });
+    }
+
+    if ("slug" in req.body) {
+      updates.slug = requireTrimmedString(req.body.slug, "Lesson slug", { min: 2, max: 180 });
+    }
+
+    if ("description" in req.body) {
+      updates.description = optionalTrimmedString(req.body.description, { max: 2000 });
+    }
+
+    if ("videoUrl" in req.body) {
+      updates.videoUrl = optionalUrl(req.body.videoUrl, "Video URL");
+    }
+
+    if ("articleContent" in req.body) {
+      updates.articleContent = optionalTrimmedString(req.body.articleContent, { max: 20000 });
+    }
+
+    if ("durationMinutes" in req.body) {
+      const duration = Number(req.body.durationMinutes);
+      updates.durationMinutes = Number.isFinite(duration) && duration > 0 ? Math.floor(duration) : null;
+    }
+
+    if ("isPreview" in req.body) {
+      updates.isPreview = Boolean(req.body.isPreview);
+    }
+
+    if ("attachments" in req.body) {
+      updates.attachments = parseAttachments(req.body.attachments);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      throw new HttpError(400, "No lesson fields provided");
+    }
+
+    const updatedLesson = await prisma.lesson.update({
+      where: {
+        id: lesson.id
+      },
+      data: updates
+    });
+
+    res.json({ data: updatedLesson });
   })
 );
 
