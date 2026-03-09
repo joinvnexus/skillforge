@@ -112,61 +112,61 @@ const router = createRouter({
         {
           path: "",
           name: "DashboardOverview",
-          component: () => import("@/views/dashboard/RoleOverview.vue"),
+          component: () => import("@/views/dashboard/shared/RoleOverview.vue"),
           meta: { title: "Dashboard" }
         },
         {
           path: "my-courses",
           name: "MyEnrolledCourses",
-          component: () => import("@/views/dashboard/MyEnrolledCourses.vue"),
+          component: () => import("@/views/dashboard/student/MyEnrolledCourses.vue"),
           meta: { title: "My Courses", requiresRole: ["STUDENT"] }
         },
         {
           path: "wishlist",
           name: "WishlistView",
-          component: () => import("@/views/dashboard/WishlistView.vue"),
+          component: () => import("@/views/dashboard/student/WishlistView.vue"),
           meta: { title: "Wishlist", requiresRole: ["STUDENT"] }
         },
         {
           path: "cart",
           name: "CartView",
-          component: () => import("@/views/dashboard/CartView.vue"),
+          component: () => import("@/views/dashboard/student/CartView.vue"),
           meta: { title: "Cart", requiresRole: ["STUDENT"] }
         },
         {
           path: "orders",
           name: "OrdersView",
-          component: () => import("@/views/dashboard/OrdersView.vue"),
+          component: () => import("@/views/dashboard/student/OrdersView.vue"),
           meta: { title: "Orders", requiresRole: ["STUDENT"] }
         },
         {
           path: "orders/:orderId",
           name: "OrderDetailsView",
-          component: () => import("@/views/dashboard/OrderDetailsView.vue"),
+          component: () => import("@/views/dashboard/student/OrderDetailsView.vue"),
           meta: { title: "Order Details", requiresRole: ["STUDENT"] }
         },
         {
           path: "profile",
           name: "UserProfile",
-          component: () => import("@/views/dashboard/UserProfile.vue"),
+          component: () => import("@/views/dashboard/shared/UserProfile.vue"),
           meta: { title: "User Profile" }
         },
         {
           path: "settings",
           name: "UserSettings",
-          component: () => import("@/views/dashboard/UserSettings.vue"),
+          component: () => import("@/views/dashboard/shared/UserSettings.vue"),
           meta: { title: "User Settings" }
         },
         {
           path: "instructor-courses",
           name: "InstructorCourses",
-          component: () => import("@/views/dashboard/InstructorCourses.vue"),
+          component: () => import("@/views/dashboard/instructor/InstructorCourses.vue"),
           meta: { title: "Instructor Courses", requiresRole: ["INSTRUCTOR"] }
         },
         {
           path: "admin-panel",
           name: "AdminPanel",
-          component: () => import("@/views/dashboard/AdminPanel.vue"),
+          component: () => import("@/views/dashboard/admin/AdminPanel.vue"),
           meta: { title: "Admin Panel", requiresRole: ["ADMIN"] }
         }
       ],
