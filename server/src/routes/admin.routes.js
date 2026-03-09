@@ -11,6 +11,7 @@ const router = Router();
 const allowedRoles = ["STUDENT", "INSTRUCTOR", "ADMIN"];
 const allowedStatuses = ["ACTIVE", "PENDING", "BLOCKED"];
 const allowedCourseStatuses = ["DRAFT", "REVIEW", "PUBLISHED", "ARCHIVED"];
+const allowedOrderStatuses = ["PENDING", "PAID", "FAILED", "REFUNDED"];
 
 const logAdminAction = async (actorId, action, entityType, entityId, meta = null) => {
   await prisma.auditLog.create({
@@ -312,6 +313,39 @@ router.get(
         totalPages: Math.ceil(total / limit)
       }
     });
+  })
+);
+
+router.patch(
+  "/admin/orders/:id",
+  asyncHandler(async (req, res) => {
+    const data = {};
+
+    if (req.body.status) {
+      const status = String(req.body.status).toUpperCase();
+
+      if (!allowedOrderStatuses.includes(status)) {
+        throw new HttpError(400, "Invalid order status");
+      }
+
+      data.status = status;
+      data.paidAt = status === "PAID" ? new Date() : null;
+    }
+
+    if (req.body.paymentReference !== undefined) {
+      data.paymentReference = req.body.paymentReference ? String(req.body.paymentReference) : null;
+    }
+
+    const order = await prisma.order.update({
+      where: {
+        id: req.params.id
+      },
+      data
+    });
+
+    await logAdminAction(req.auth.userId, "ORDER_UPDATED", "Order", order.id, data);
+
+    res.json({ data: order });
   })
 );
 
