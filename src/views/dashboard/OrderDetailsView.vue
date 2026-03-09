@@ -10,11 +10,9 @@
       </router-link>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-6 shadow-sm">Loading order details...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
-    <div v-else-if="!order" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-600">
-      Order not found.
-    </div>
+    <DashboardState v-if="loading" type="loading" title="Loading order details..." />
+    <DashboardState v-else-if="error" type="error" title="Order details failed to load" :description="error" show-retry @retry="reloadOrder" />
+    <DashboardState v-else-if="!order" type="empty" title="Order not found." description="This order may not belong to your account or no longer exists." />
 
     <template v-else>
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -73,6 +71,7 @@
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const route = useRoute();
 const store = useStore();
@@ -126,6 +125,8 @@ const timeline = computed(() => {
 });
 
 onMounted(() => {
-  store.dispatch("orders/fetchOrderById", route.params.orderId);
+  reloadOrder();
 });
+
+const reloadOrder = () => store.dispatch("orders/fetchOrderById", route.params.orderId);
 </script>

@@ -7,8 +7,8 @@
       </button>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-5 shadow">Loading admin data...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700">{{ error }}</div>
+    <DashboardState v-if="loading" type="loading" title="Loading admin data..." />
+    <DashboardState v-else-if="error" type="error" title="Admin data failed to load" :description="error" show-retry @retry="reload" />
 
     <div v-else class="grid gap-5 lg:grid-cols-2">
       <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-2">
@@ -318,6 +318,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { apiRequest } from "@/lib/api";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const loading = ref(true);
 const error = ref(null);

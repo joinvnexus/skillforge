@@ -6,8 +6,8 @@
       <p class="mt-2 text-slate-200">{{ subtitle }}</p>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-6 text-gray-600 shadow">Loading overview...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
+    <DashboardState v-if="loading" type="loading" title="Loading overview..." />
+    <DashboardState v-else-if="error" type="error" title="Overview failed to load" :description="error" show-retry @retry="fetchOverview" />
 
     <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
       <article
@@ -26,6 +26,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { apiRequest } from '@/lib/api'
+import DashboardState from '@/components/dashboard/DashboardState.vue'
 
 const store = useStore()
 const loading = ref(true)
@@ -78,7 +79,7 @@ const endpointByRole = {
   STUDENT: '/student/dashboard/overview'
 }
 
-onMounted(async () => {
+const fetchOverview = async () => {
   loading.value = true
   error.value = null
   try {
@@ -90,5 +91,7 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(fetchOverview)
 </script>

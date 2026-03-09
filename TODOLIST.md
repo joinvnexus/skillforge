@@ -32,7 +32,8 @@ Audit date: 2026-03-09
 
 ## P1 - Frontend Quality/UX
 
-- [ ] Standardize loading/error/empty states across all dashboard pages.
+- [x] Standardize loading/error/empty states across all dashboard pages.  
+  Done: introduced shared `DashboardState` UI and applied it across dashboard overview, admin panel, instructor studio, orders, order details, enrollments, wishlist, and cart.
 - [ ] Add global success/error toast system (currently many pages use inline error text only).
 - [ ] Improve accessibility: keyboard focus flow, form labels/help text, aria for interactive cards/buttons.
 - [ ] Replace external avatar fallback dependency with local fallback component (for reliability).

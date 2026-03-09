@@ -5,14 +5,14 @@
       <p class="text-slate-500">Track your active learning progress.</p>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-6 shadow-sm">Loading enrollments...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
-    <div
+    <DashboardState v-if="loading" type="loading" title="Loading enrollments..." />
+    <DashboardState v-else-if="error" type="error" title="Enrollment data failed to load" :description="error" show-retry @retry="fetchEnrolledCourses" />
+    <DashboardState
       v-else-if="enrolledCourses.length === 0"
-      class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-600"
-    >
-      You have no active enrollments yet.
-    </div>
+      type="empty"
+      title="You have no active enrollments yet."
+      description="Enroll in a course to start tracking lesson progress."
+    />
 
     <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <article v-for="course in enrolledCourses" :key="course.enrollmentId" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -74,9 +74,13 @@
 </template>
 
 <script>
+import DashboardState from '@/components/dashboard/DashboardState.vue'
 import { mapActions, mapState } from 'vuex'
 
 export default {
+  components: {
+    DashboardState
+  },
   data() {
     return {
       expandedEnrollments: {},

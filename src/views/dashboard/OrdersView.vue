@@ -5,11 +5,9 @@
       <p class="text-slate-500">Track payment status and purchased courses.</p>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-6 shadow-sm">Loading orders...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
-    <div v-else-if="orders.length === 0" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-600">
-      No orders yet.
-    </div>
+    <DashboardState v-if="loading" type="loading" title="Loading orders..." />
+    <DashboardState v-else-if="error" type="error" title="Orders failed to load" :description="error" show-retry @retry="reloadOrders" />
+    <DashboardState v-else-if="orders.length === 0" type="empty" title="No orders yet." description="Create an order from cart to track payment status here." />
 
     <div v-else class="space-y-4">
       <article v-for="order in orders" :key="order.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -72,6 +70,7 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const store = useStore();
 const orders = computed(() => store.getters["orders/orders"]);
@@ -87,8 +86,10 @@ const formatDate = (value) => {
 };
 
 onMounted(() => {
-  store.dispatch("orders/fetchOrders");
+  reloadOrders();
 });
+
+const reloadOrders = () => store.dispatch("orders/fetchOrders");
 
 const startPayment = async (orderId) => {
   paymentLoadingId.value = orderId;

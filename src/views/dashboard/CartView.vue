@@ -8,9 +8,7 @@
       <p class="text-sm font-semibold text-slate-700">Subtotal: ${{ subtotal.toFixed(2) }}</p>
     </div>
 
-    <div v-if="items.length === 0" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-600">
-      Cart is empty.
-    </div>
+    <DashboardState v-if="items.length === 0" type="empty" title="Cart is empty." description="Add courses from wishlist or course pages to create an order." />
 
     <div v-else class="space-y-4">
       <article v-for="course in items" :key="course.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -45,6 +43,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const store = useStore();
 const loading = ref(false);

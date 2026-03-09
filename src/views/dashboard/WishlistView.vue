@@ -5,11 +5,9 @@
       <p class="text-slate-500">Saved courses you want to start next.</p>
     </div>
 
-    <div v-if="loading" class="rounded-xl bg-white p-6 shadow-sm">Loading wishlist...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
-    <div v-else-if="items.length === 0" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-slate-600">
-      Your wishlist is empty.
-    </div>
+    <DashboardState v-if="loading" type="loading" title="Loading wishlist..." />
+    <DashboardState v-else-if="error" type="error" title="Wishlist failed to load" :description="error" show-retry @retry="load" />
+    <DashboardState v-else-if="items.length === 0" type="empty" title="Your wishlist is empty." description="Save courses you want to start later." />
 
     <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <article v-for="course in items" :key="course.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -32,6 +30,7 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const store = useStore();
 const items = computed(() => store.getters["wishlist/wishlistItems"]);

@@ -22,8 +22,8 @@
       <p v-if="formError" class="mt-3 text-sm text-red-600">{{ formError }}</p>
     </article>
 
-    <div v-if="loading" class="rounded-xl bg-white p-5 shadow">Loading courses...</div>
-    <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700">{{ error }}</div>
+    <DashboardState v-if="loading" type="loading" title="Loading courses..." />
+    <DashboardState v-else-if="error" type="error" title="Course studio failed to load" :description="error" show-retry @retry="reload" />
 
     <div v-else class="grid gap-4">
       <article v-for="course in courses" :key="course.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -152,9 +152,12 @@
         </div>
       </article>
 
-      <div v-if="courses.length === 0" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-500">
-        No instructor courses found yet.
-      </div>
+      <DashboardState
+        v-if="courses.length === 0"
+        type="empty"
+        title="No instructor courses found yet."
+        description="Create your first course to start building sections and lessons."
+      />
     </div>
 
     <div v-if="lessonEditor.open" class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4">
@@ -194,6 +197,7 @@
 import { onMounted, ref } from "vue";
 import { apiRequest } from "@/lib/api";
 import { validateCourseDraft, validateTrimmedLength } from "@/lib/validation";
+import DashboardState from "@/components/dashboard/DashboardState.vue";
 
 const loading = ref(true);
 const actionLoading = ref(false);
