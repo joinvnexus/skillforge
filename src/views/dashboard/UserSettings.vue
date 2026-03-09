@@ -52,6 +52,7 @@
         >
           {{ isLoading ? 'Saving...' : 'Save Settings' }}
         </button>
+        <p v-if="profileFormError" class="text-sm text-red-600">{{ profileFormError }}</p>
       </form>
     </div>
 
@@ -113,7 +114,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { validateEmail, validatePassword } from '@/lib/validation'
+import { validateEmail, validateOptionalUrl, validatePassword, validateTrimmedLength } from '@/lib/validation'
 
 const store = useStore()
 const router = useRouter()
@@ -132,6 +133,7 @@ const currentPassword = ref('')
 const confirmEmailUrl = ref('')
 const confirmEmailPath = ref('')
 const emailFormError = ref('')
+const profileFormError = ref('')
 
 const displayPhotoUrl = computed(() => photoURL.value?.trim() || '')
 const userInitial = computed(() => String(displayName.value || initialName.value || 'U').charAt(0).toUpperCase())
@@ -154,6 +156,18 @@ watch(
 )
 
 const saveProfile = async () => {
+  profileFormError.value = ''
+  const nameError = validateTrimmedLength(displayName.value, 'Display name', { min: 2, max: 100 })
+  if (nameError) {
+    profileFormError.value = nameError
+    return
+  }
+  const photoError = validateOptionalUrl(photoURL.value, 'Profile image URL')
+  if (photoError) {
+    profileFormError.value = photoError
+    return
+  }
+
   await store.dispatch('auth/updateProfile', {
     displayName: displayName.value?.trim() || undefined,
     photoURL: photoURL.value?.trim() || ''

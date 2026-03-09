@@ -10,8 +10,8 @@ Audit date: 2026-03-09
   Done: request + token confirm endpoints, settings UI request form, confirm page (`/confirm-email-change`).
 - [x] Replace "Checkout (Mock Paid)" with real payment lifecycle (init, success, fail, webhook/verification).  
   Done: pending order creation, payment intent init, success/fail verification endpoint, and mock webhook with secret verification.
-- [ ] Add centralized form validation (frontend + backend) for auth/profile/course create/edit.  
-  Progress: shared validators added and applied for auth routes + student profile + instructor course create/edit, plus frontend auth/settings forms.
+- [x] Add centralized form validation (frontend + backend) for auth/profile/course create/edit.  
+  Done: shared backend validators used across auth/profile/instructor course create-edit routes; shared frontend validators applied in login/signup/forgot/reset/settings and instructor course create-edit forms.
 - [x] Add role-safe profile update endpoint (single `/me/profile` route or role-aware service) and enforce consistent API contract.  
   Done: unified `PATCH /auth/me/profile` for all roles, frontend profile update moved to this contract.
 

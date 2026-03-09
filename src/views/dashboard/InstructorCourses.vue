@@ -19,6 +19,7 @@
       <button class="mt-4 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" :disabled="actionLoading" @click="createCourse">
         {{ actionLoading ? "Saving..." : "Create Course" }}
       </button>
+      <p v-if="formError" class="mt-3 text-sm text-red-600">{{ formError }}</p>
     </article>
 
     <div v-if="loading" class="rounded-xl bg-white p-5 shadow">Loading courses...</div>
@@ -75,10 +76,12 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { apiRequest } from "@/lib/api";
+import { validateCourseDraft } from "@/lib/validation";
 
 const loading = ref(true);
 const actionLoading = ref(false);
 const error = ref(null);
+const formError = ref("");
 const courses = ref([]);
 const editingId = ref(null);
 const editForm = ref({
@@ -99,6 +102,7 @@ const createForm = ref({
 const reload = async () => {
   loading.value = true;
   error.value = null;
+  formError.value = "";
   try {
     const response = await apiRequest("/instructor/courses", { auth: true });
     courses.value = response.data || [];
@@ -112,6 +116,11 @@ const reload = async () => {
 const createCourse = async () => {
   actionLoading.value = true;
   error.value = null;
+  formError.value = validateCourseDraft(createForm.value);
+  if (formError.value) {
+    actionLoading.value = false;
+    return;
+  }
   try {
     await apiRequest("/instructor/courses", {
       method: "POST",
@@ -128,6 +137,7 @@ const createCourse = async () => {
 };
 
 const openEdit = (course) => {
+  formError.value = "";
   editingId.value = course.id;
   editForm.value = {
     slug: course.slug || "",
@@ -139,12 +149,18 @@ const openEdit = (course) => {
 };
 
 const closeEdit = () => {
+  formError.value = "";
   editingId.value = null;
 };
 
 const saveEdit = async (courseId) => {
   actionLoading.value = true;
   error.value = null;
+  formError.value = validateCourseDraft(editForm.value);
+  if (formError.value) {
+    actionLoading.value = false;
+    return;
+  }
   try {
     await apiRequest(`/instructor/courses/${courseId}`, {
       method: "PATCH",
