@@ -40,61 +40,74 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
    git clone <repository-url>
    cd skillshare-clone
    ```
-
 2. Install dependencies:
    ```sh
    npm install
    ```
-
 3. Start the frontend development server:
    ```sh
    npm run dev
    ```
-
 4. Configure frontend API base URL in `.env`:
    ```sh
    VITE_API_BASE_URL=http://localhost:4000/api/v1
    ```
-5. Start backend using setup from `server/README.md`
+5. Start backend using setup from `server/README.md`.
 
 ## Usage
 
 ### Development
+
 ```sh
 npm run dev
 ```
+
 Runs the app in development mode with hot reloading.
 
 ### Production Build
+
 ```sh
 npm run build
 ```
+
 Builds the app for production to the `dist` folder.
 
 ### Preview Production Build
+
 ```sh
 npm run preview
 ```
+
 Locally preview the production build.
 
 ## Project Structure
 
-```
+```txt
 src/
-├── assets/          # Static assets (images, styles, etc.)
-├── components/      # Reusable Vue components
-│   ├── auth/        # Authentication components
-│   ├── Courses/     # Course-related components
-│   ├── Global/      # Global layout components
-│   ├── Home/        # Home page components
-│   └── UI/          # UI utility components
-├── data/            # Static JSON data files
-├── router/          # Vue Router configuration
-├── store/           # Vuex store modules
-├── views/           # Page-level Vue components
-└── main.js          # Application entry point
+|-- assets/          # Static assets (images, styles, etc.)
+|-- components/      # Reusable Vue components
+|   |-- auth/        # Authentication components
+|   |-- Courses/     # Course-related components
+|   |-- Global/      # Global layout components
+|   |-- Home/        # Home page components
+|   `-- UI/          # UI utility components
+|-- data/            # Static JSON data files
+|-- router/          # Vue Router configuration
+|-- store/           # Vuex store modules
+|-- views/           # Page-level Vue components
+`-- main.js          # Application entry point
 public/              # Public static files
 ```
+
+## Git Ignore Notes
+
+The repository ignores local runtime/build artifacts such as:
+
+- logs (`*.log`, `*.out.log`, `*.err.log`, `*.pid`)
+- cache folders (`.cache`, `.vite`, `.turbo`)
+- local env files (`.env`, `.env.local`, `.env.*.local`)
+
+Keep secrets only in local env files and do not commit generated logs.
 
 ## Recommended IDE Setup
 
