@@ -5,7 +5,14 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
-import { requireEmail, requirePassword, requireToken, requireTrimmedString } from "../lib/validators.js";
+import {
+  optionalTrimmedString,
+  optionalUrl,
+  requireEmail,
+  requirePassword,
+  requireToken,
+  requireTrimmedString
+} from "../lib/validators.js";
 import {
   expiryFromNow,
   hashToken,
@@ -34,6 +41,36 @@ const sanitizeUser = (user) => ({
   timezone: user.timezone,
   createdAt: user.createdAt
 });
+
+const resolveProfileUpdates = (body) => {
+  const updates = {};
+
+  if ("name" in body) {
+    updates.name = requireTrimmedString(body.name, "Name", { min: 2, max: 100 });
+  }
+
+  if ("avatarUrl" in body) {
+    updates.avatarUrl = optionalUrl(body.avatarUrl, "Avatar URL");
+  }
+
+  if ("headline" in body) {
+    updates.headline = optionalTrimmedString(body.headline, { max: 180 });
+  }
+
+  if ("bio" in body) {
+    updates.bio = optionalTrimmedString(body.bio, { max: 2000 });
+  }
+
+  if ("phone" in body) {
+    updates.phone = optionalTrimmedString(body.phone, { max: 40 });
+  }
+
+  if ("timezone" in body) {
+    updates.timezone = optionalTrimmedString(body.timezone, { max: 100 });
+  }
+
+  return updates;
+};
 
 const issueSession = async (user, req) => {
   const payload = {
@@ -477,6 +514,29 @@ router.get(
     if (!user) {
       throw new HttpError(404, "User not found");
     }
+
+    res.json({
+      data: sanitizeUser(user)
+    });
+  })
+);
+
+router.patch(
+  "/auth/me/profile",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const updates = resolveProfileUpdates(req.body || {});
+
+    if (Object.keys(updates).length === 0) {
+      throw new HttpError(400, "No profile fields provided");
+    }
+
+    const user = await prisma.user.update({
+      where: {
+        id: req.auth.userId
+      },
+      data: updates
+    });
 
     res.json({
       data: sanitizeUser(user)

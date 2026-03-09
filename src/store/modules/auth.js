@@ -154,7 +154,7 @@ export default {
       commit('SET_ERROR', null)
 
       try {
-        const response = await apiRequest('/student/me/profile', {
+        const response = await apiRequest('/auth/me/profile', {
           method: 'PATCH',
           auth: true,
           body: {

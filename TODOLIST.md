@@ -12,7 +12,8 @@ Audit date: 2026-03-09
   Progress: implemented `PENDING -> PAID` order flow (`create order` + `pay order`) and removed mock-paid checkout label.
 - [ ] Add centralized form validation (frontend + backend) for auth/profile/course create/edit.  
   Progress: shared validators added and applied for auth routes + student profile + instructor course create/edit, plus frontend auth/settings forms.
-- [ ] Add role-safe profile update endpoint (single `/me/profile` route or role-aware service) and enforce consistent API contract.
+- [x] Add role-safe profile update endpoint (single `/me/profile` route or role-aware service) and enforce consistent API contract.  
+  Done: unified `PATCH /auth/me/profile` for all roles, frontend profile update moved to this contract.
 
 ## P1 - Role Workflow Completion
 
