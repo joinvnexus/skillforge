@@ -57,7 +57,7 @@
                   :otherCourses="instructorCourses"
                   :students="course.students"
                   :coursesCount="instructorCourses.length + 1"
-                  :reviews="course.reviews"
+                  :reviews="course.reviewCount || course.reviews?.length || 0"
                   :bio="course.instructorBio"
                 />
                 
@@ -86,10 +86,13 @@
       
       <!-- Related Courses -->
       <div class="pb-16">
-           <RelatedCourses :current-course-id="currentCourse.id" />
-
+           <RelatedCourses :current-course-id="currentCourse.slug || currentCourse.id" />
       </div>
     </template>
+    
+    <div v-else class="flex min-h-[300px] items-center justify-center">
+      <p class="text-sm text-[var(--muted)]">Course data not found. Please try again from the course list.</p>
+    </div>
   </div>
 </template>
 
@@ -149,6 +152,17 @@ export default {
   methods: {
     ...mapActions('courses', ['fetchCourseById']),
     ...mapActions('enrollments', ['enrollInCourse', 'checkEnrollment']),
+    async loadCourse(identifier) {
+      if (!identifier) return
+      this.activeTab = 'overview'
+      try {
+        await this.fetchCourseById(identifier)
+      } catch (_error) {
+        if (this.$route.name === 'CourseDetail') {
+          this.$router.replace('/courses')
+        }
+      }
+    },
     changeTab(tab) {
       this.activeTab = tab
     },
@@ -192,12 +206,13 @@ export default {
     }
   },
   created() {
-    const courseId = this.$route.params.id
-    this.fetchCourseById(courseId).then(() => {
-      if (this.course) {
-          //this.fetchCourseById(this.course.tags) // Fetch related courses based on tags
-      }
-    })
+    const identifier = this.$route.params.id
+    this.loadCourse(identifier)
+  },
+  watch: {
+    '$route.params.id'(identifier) {
+      this.loadCourse(identifier)
+    }
   }
 }
 </script>

@@ -16,7 +16,7 @@
 
     <div class="flex flex-1 flex-col p-4">
       <h3 class="mb-1 text-lg font-semibold text-[var(--text)]">
-        <router-link :to="'/courses/' + course.id" class="transition-colors hover:text-[var(--brand-strong)]">
+        <router-link :to="'/courses/' + courseIdentifier" class="transition-colors hover:text-[var(--brand-strong)]">
           {{ course.title }}
         </router-link>
       </h3>
@@ -48,7 +48,7 @@
         </div>
 
         <router-link
-          :to="'/courses/' + course.id"
+          :to="'/courses/' + courseIdentifier"
           class="btn-brand inline-flex w-full items-center justify-center rounded-xl px-4 py-2 text-center text-sm font-semibold text-white"
         >
           View Course
@@ -65,6 +65,11 @@ export default {
     course: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    courseIdentifier() {
+      return this.course?.slug || this.course?.id;
     }
   }
 };

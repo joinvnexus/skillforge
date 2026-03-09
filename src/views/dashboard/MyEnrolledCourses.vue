@@ -23,7 +23,7 @@
           <div class="h-2 rounded-full bg-sky-600" :style="{ width: `${course.progress || 0}%` }"></div>
         </div>
         <router-link
-          :to="`/courses/${course.id}`"
+          :to="`/courses/${course.slug || course.id}`"
           class="mt-4 inline-block rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-800"
         >
           Continue

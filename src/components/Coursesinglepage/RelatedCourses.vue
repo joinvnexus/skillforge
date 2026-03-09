@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 import RelatedCourseCard from "@/components/Courses/RelatedCourseCard.vue";
 
 export default {
@@ -33,24 +33,6 @@ export default {
   computed: {
     ...mapState("courses", ["relatedCourses"]),
     ...mapState("ui", ["loading"])
-  },
-  methods: {
-    ...mapActions("courses", ["fetchCourseById"]),
-    async loadRelatedCourses() {
-      try {
-        await this.fetchCourseById(this.currentCourseId);
-      } catch (error) {
-        console.error("Error loading related courses:", error);
-      }
-    }
-  },
-  created() {
-    this.loadRelatedCourses();
-  },
-  watch: {
-    currentCourseId() {
-      this.loadRelatedCourses();
-    }
   }
 };
 </script>

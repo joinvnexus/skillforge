@@ -29,8 +29,8 @@
         :data-aos-delay="(index % 4) * 100"
         :aria-label="`Course: ${course.title}`"
         tabindex="0"
-        @keydown.enter="navigateToCourse(course.id)"
-        @click="navigateToCourse(course.id)"
+        @keydown.enter="navigateToCourse(course)"
+        @click="navigateToCourse(course)"
       >
         <!-- Course Image Container -->
         <div class="relative overflow-hidden bg-[var(--surface-soft)] pt-[56.25%]">
@@ -111,7 +111,7 @@
           <!-- Title -->
           <h3 class="mb-2 line-clamp-2 text-lg font-bold text-[var(--text)] transition-colors group-hover:text-[var(--brand-strong)]">
             <router-link
-              :to="'/courses/' + course.id"
+              :to="'/courses/' + getCourseIdentifier(course)"
               class="hover:no-underline focus:outline-none"
               :aria-label="`View ${course.title} course details`"
             >
@@ -230,7 +230,7 @@
             
             <!-- Action Button -->
             <router-link
-              :to="'/courses/' + course.id"
+              :to="'/courses/' + getCourseIdentifier(course)"
               class="btn-brand flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-center font-semibold text-white transition-all duration-200"
               :class="course.price === 0 
                 ? 'opacity-95' 
@@ -281,8 +281,14 @@ export default {
     }
   },
   methods: {
-    navigateToCourse(courseId) {
-      this.$router.push(`/courses/${courseId}`);
+    getCourseIdentifier(course) {
+      return course?.slug || course?.id;
+    },
+
+    navigateToCourse(course) {
+      const identifier = this.getCourseIdentifier(course);
+      if (!identifier) return;
+      this.$router.push(`/courses/${identifier}`);
     },
     
     handleImageError(event) {
