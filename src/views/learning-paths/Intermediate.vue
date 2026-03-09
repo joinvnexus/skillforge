@@ -85,9 +85,13 @@ export default {
   name: 'IntermediatePath',
 
   computed: {
-    ...mapState('learningPaths', ['currentPath', 'loading', 'error']),
+    ...mapState('learningPaths', {
+      currentPath: (state) => state.currentPath,
+      pathsLoading: (state) => state.isLoading,
+      error: (state) => state.error
+    }),
     isLoading() {
-      return this.loading && !this.currentPath
+      return this.pathsLoading && !this.currentPath
     }
   },
 

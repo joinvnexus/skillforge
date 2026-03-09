@@ -55,6 +55,33 @@ const actions = {
       commit('SET_CURRENT_PATH', path)
       return path
     } catch (error) {
+      const levelBySlug = {
+        beginner: 'BEGINNER',
+        intermediate: 'INTERMEDIATE',
+        advanced: 'ADVANCED'
+      }
+      const fallbackLevel = levelBySlug[String(slug || '').toLowerCase()]
+
+      try {
+        if (fallbackLevel) {
+          const levelResponse = await apiRequest(`/learning-paths?level=${encodeURIComponent(fallbackLevel)}`)
+          const levelPaths = (levelResponse.data || []).map(normalizeLearningPath)
+          if (levelPaths.length > 0) {
+            commit('SET_CURRENT_PATH', levelPaths[0])
+            return levelPaths[0]
+          }
+        }
+
+        const allResponse = await apiRequest('/learning-paths')
+        const allPaths = (allResponse.data || []).map(normalizeLearningPath)
+        if (allPaths.length > 0) {
+          commit('SET_CURRENT_PATH', allPaths[0])
+          return allPaths[0]
+        }
+      } catch (fallbackError) {
+        console.error('Error resolving learning path fallback:', fallbackError)
+      }
+
       commit('SET_ERROR', error.message)
       console.error(`Error fetching path "${slug}":`, error)
       throw error
