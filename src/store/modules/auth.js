@@ -195,7 +195,35 @@ export default {
       commit('SET_ERROR', null)
 
       try {
-        throw new Error(`Password reset is not implemented yet for ${email}.`)
+        const response = await apiRequest('/auth/forgot-password', {
+          method: 'POST',
+          body: { email }
+        })
+        commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Password reset link generated.' })
+        return {
+          success: true,
+          data: response.data
+        }
+      } catch (error) {
+        commit('SET_ERROR', error.message)
+        commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        return { success: false, error: error.message }
+      } finally {
+        commit('SET_LOADING', false)
+      }
+    },
+
+    async resetPassword({ commit }, { token, newPassword }) {
+      commit('SET_LOADING', true)
+      commit('SET_ERROR', null)
+
+      try {
+        const response = await apiRequest('/auth/reset-password', {
+          method: 'POST',
+          body: { token, newPassword }
+        })
+        commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Password reset successful.' })
+        return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })

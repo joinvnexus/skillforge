@@ -4,7 +4,16 @@ import { Router } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
-import { expiryFromNow, hashToken, signAccessToken, signRefreshToken, verifyRefreshToken } from "../lib/tokens.js";
+import { env } from "../config/env.js";
+import {
+  expiryFromNow,
+  hashToken,
+  signAccessToken,
+  signPasswordResetToken,
+  signRefreshToken,
+  verifyPasswordResetToken,
+  verifyRefreshToken
+} from "../lib/tokens.js";
 import { requireAuth } from "../middlewares/auth.js";
 
 const router = Router();
@@ -48,6 +57,114 @@ const issueSession = async (user, req) => {
     refreshToken
   };
 };
+
+router.post(
+  "/auth/forgot-password",
+  asyncHandler(async (req, res) => {
+    const email = String(req.body.email || "").trim().toLowerCase();
+
+    if (!email) {
+      throw new HttpError(400, "Email is required");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email
+      }
+    });
+
+    const responseData = {
+      success: true,
+      message: "If this email exists, a password reset link has been generated."
+    };
+
+    if (!user || user.status === "BLOCKED") {
+      return res.json({ data: responseData });
+    }
+
+    const resetToken = signPasswordResetToken({
+      userId: user.id,
+      email: user.email,
+      purpose: "PASSWORD_RESET"
+    });
+
+    if (env.NODE_ENV !== "production") {
+      responseData.debug = {
+        resetToken,
+        resetUrl: `${env.CLIENT_URL}/reset-password?token=${encodeURIComponent(resetToken)}`
+      };
+    }
+
+    res.json({ data: responseData });
+  })
+);
+
+router.post(
+  "/auth/reset-password",
+  asyncHandler(async (req, res) => {
+    const token = String(req.body.token || "").trim();
+    const newPassword = String(req.body.newPassword || "");
+
+    if (!token || !newPassword) {
+      throw new HttpError(400, "Token and newPassword are required");
+    }
+
+    if (newPassword.length < 6) {
+      throw new HttpError(400, "Password must be at least 6 characters");
+    }
+
+    let payload;
+
+    try {
+      payload = verifyPasswordResetToken(token);
+    } catch (_error) {
+      throw new HttpError(401, "Invalid or expired reset token");
+    }
+
+    if (payload?.purpose !== "PASSWORD_RESET" || !payload?.userId) {
+      throw new HttpError(401, "Invalid reset token payload");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: payload.userId
+      }
+    });
+
+    if (!user) {
+      throw new HttpError(404, "User not found");
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: user.id
+        },
+        data: {
+          passwordHash
+        }
+      }),
+      prisma.authSession.updateMany({
+        where: {
+          userId: user.id,
+          revokedAt: null
+        },
+        data: {
+          revokedAt: new Date()
+        }
+      })
+    ]);
+
+    res.json({
+      data: {
+        success: true,
+        message: "Password has been reset successfully"
+      }
+    });
+  })
+);
 
 router.post(
   "/auth/register",

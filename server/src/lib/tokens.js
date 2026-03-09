@@ -42,10 +42,20 @@ export const signRefreshToken = (payload) => {
   });
 };
 
+export const signPasswordResetToken = (payload) => {
+  return jwt.sign(payload, env.JWT_PASSWORD_RESET_SECRET, {
+    expiresIn: env.JWT_PASSWORD_RESET_EXPIRES_IN
+  });
+};
+
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, env.JWT_ACCESS_SECRET);
 };
 
 export const verifyRefreshToken = (token) => {
   return jwt.verify(token, env.JWT_REFRESH_SECRET);
+};
+
+export const verifyPasswordResetToken = (token) => {
+  return jwt.verify(token, env.JWT_PASSWORD_RESET_SECRET);
 };

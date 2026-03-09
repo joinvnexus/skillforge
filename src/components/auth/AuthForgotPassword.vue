@@ -23,6 +23,12 @@
 
         <p v-if="error" class="text-center text-sm text-red-600">{{ error }}</p>
         <p v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
+        <div v-if="resetUrl" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
+          <p class="font-semibold">Dev reset link</p>
+          <router-link :to="resetPath" class="break-all font-medium text-emerald-800 underline">
+            {{ resetUrl }}
+          </router-link>
+        </div>
 
         <p class="text-center text-sm text-slate-600">
           <router-link to="/login" class="font-semibold text-sky-700 hover:text-sky-900">Back to login</router-link>
@@ -37,7 +43,9 @@ export default {
   data() {
     return {
       email: '',
-      message: ''
+      message: '',
+      resetUrl: '',
+      resetPath: ''
     }
   },
   computed: {
@@ -51,9 +59,20 @@ export default {
   methods: {
     async handleSubmit() {
       this.message = ''
+      this.resetUrl = ''
+      this.resetPath = ''
       const result = await this.$store.dispatch('auth/forgotPassword', this.email)
       if (result.success) {
-        this.message = 'Password reset email sent. Please check your inbox.'
+        this.message = result.data?.message || 'Password reset link sent. Please check your inbox.'
+        if (result.data?.debug?.resetUrl) {
+          this.resetUrl = result.data.debug.resetUrl
+          try {
+            const parsed = new URL(result.data.debug.resetUrl)
+            this.resetPath = `${parsed.pathname}${parsed.search}`
+          } catch (_error) {
+            this.resetPath = `/reset-password?token=${encodeURIComponent(result.data.debug.resetToken || '')}`
+          }
+        }
       }
     }
   }
