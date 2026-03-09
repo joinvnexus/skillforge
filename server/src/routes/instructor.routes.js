@@ -3,6 +3,7 @@ import { Router } from "express";
 import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
+import { optionalTrimmedString, optionalUrl, requireTrimmedString } from "../lib/validators.js";
 import { requireAuth, requireRole } from "../middlewares/auth.js";
 
 const router = Router();
@@ -132,24 +133,24 @@ router.post(
   "/instructor/courses",
   asyncHandler(async (req, res) => {
     const instructor = await resolveInstructorProfile(req.auth.userId);
-    const slug = String(req.body.slug || "").trim();
-    const title = String(req.body.title || "").trim();
-    const shortDescription = String(req.body.shortDescription || "").trim();
-    const level = String(req.body.level || "").trim();
-
-    if (!slug || !title || !shortDescription || !level) {
-      throw new HttpError(400, "Slug, title, shortDescription, and level are required");
-    }
+    const slug = requireTrimmedString(req.body.slug, "Slug", { min: 3, max: 120 });
+    const title = requireTrimmedString(req.body.title, "Title", { min: 3, max: 180 });
+    const shortDescription = requireTrimmedString(req.body.shortDescription, "Short description", { min: 10, max: 400 });
+    const level = requireTrimmedString(req.body.level, "Level", { min: 3, max: 40 });
 
     const course = await prisma.course.create({
       data: {
+        ...pickFields(req.body, editableCourseFields),
         slug,
         title,
         shortDescription,
         level,
+        trailerUrl: optionalUrl(req.body.trailerUrl, "Trailer URL"),
+        thumbnailUrl: optionalUrl(req.body.thumbnailUrl, "Thumbnail URL"),
+        subtitle: optionalTrimmedString(req.body.subtitle, { max: 220 }),
+        fullDescription: optionalTrimmedString(req.body.fullDescription, { max: 10000 }),
         authorId: req.auth.userId,
-        instructorId: instructor.id,
-        ...pickFields(req.body, editableCourseFields)
+        instructorId: instructor.id
       }
     });
 
@@ -184,11 +185,24 @@ router.patch(
       throw new HttpError(404, "Course not found");
     }
 
+    const data = pickFields(req.body, editableCourseFields);
+
+    if ("slug" in data) data.slug = requireTrimmedString(data.slug, "Slug", { min: 3, max: 120 });
+    if ("title" in data) data.title = requireTrimmedString(data.title, "Title", { min: 3, max: 180 });
+    if ("shortDescription" in data) {
+      data.shortDescription = requireTrimmedString(data.shortDescription, "Short description", { min: 10, max: 400 });
+    }
+    if ("level" in data) data.level = requireTrimmedString(data.level, "Level", { min: 3, max: 40 });
+    if ("subtitle" in data) data.subtitle = optionalTrimmedString(data.subtitle, { max: 220 });
+    if ("fullDescription" in data) data.fullDescription = optionalTrimmedString(data.fullDescription, { max: 10000 });
+    if ("trailerUrl" in data) data.trailerUrl = optionalUrl(data.trailerUrl, "Trailer URL");
+    if ("thumbnailUrl" in data) data.thumbnailUrl = optionalUrl(data.thumbnailUrl, "Thumbnail URL");
+
     const updatedCourse = await prisma.course.update({
       where: {
         id: course.id
       },
-      data: pickFields(req.body, editableCourseFields)
+      data
     });
 
     res.json({ data: updatedCourse });

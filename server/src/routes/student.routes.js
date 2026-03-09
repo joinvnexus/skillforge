@@ -4,10 +4,10 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth } from "../middlewares/auth.js";
+import { optionalTrimmedString, optionalUrl, requireTrimmedString } from "../lib/validators.js";
 
 const router = Router();
 
-const profileFields = ["name", "avatarUrl", "headline", "bio", "phone", "timezone"];
 const allowedPaymentMethods = ["FREE", "CARD", "BANK", "MOBILE_WALLET", "MANUAL"];
 const createOrderNumber = () => `ORD-${Date.now()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 const courseUnitPrice = (course) => Number(course.salePrice ?? course.price ?? 0);
@@ -168,11 +168,23 @@ router.patch(
   "/student/me/profile",
   asyncHandler(async (req, res) => {
     const updates = {};
-
-    for (const field of profileFields) {
-      if (field in req.body) {
-        updates[field] = req.body[field];
-      }
+    if ("name" in req.body) {
+      updates.name = requireTrimmedString(req.body.name, "Name", { min: 2, max: 100 });
+    }
+    if ("avatarUrl" in req.body) {
+      updates.avatarUrl = optionalUrl(req.body.avatarUrl, "Avatar URL");
+    }
+    if ("headline" in req.body) {
+      updates.headline = optionalTrimmedString(req.body.headline, { max: 180 });
+    }
+    if ("bio" in req.body) {
+      updates.bio = optionalTrimmedString(req.body.bio, { max: 2000 });
+    }
+    if ("phone" in req.body) {
+      updates.phone = optionalTrimmedString(req.body.phone, { max: 40 });
+    }
+    if ("timezone" in req.body) {
+      updates.timezone = optionalTrimmedString(req.body.timezone, { max: 100 });
     }
 
     const user = await prisma.user.update({

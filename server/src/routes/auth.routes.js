@@ -5,6 +5,7 @@ import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
 import { prisma } from "../lib/prisma.js";
 import { env } from "../config/env.js";
+import { requireEmail, requirePassword, requireToken, requireTrimmedString } from "../lib/validators.js";
 import {
   expiryFromNow,
   hashToken,
@@ -63,11 +64,7 @@ const issueSession = async (user, req) => {
 router.post(
   "/auth/forgot-password",
   asyncHandler(async (req, res) => {
-    const email = String(req.body.email || "").trim().toLowerCase();
-
-    if (!email) {
-      throw new HttpError(400, "Email is required");
-    }
+    const email = requireEmail(req.body.email);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -104,16 +101,8 @@ router.post(
 router.post(
   "/auth/reset-password",
   asyncHandler(async (req, res) => {
-    const token = String(req.body.token || "").trim();
-    const newPassword = String(req.body.newPassword || "");
-
-    if (!token || !newPassword) {
-      throw new HttpError(400, "Token and newPassword are required");
-    }
-
-    if (newPassword.length < 6) {
-      throw new HttpError(400, "Password must be at least 6 characters");
-    }
+    const token = requireToken(req.body.token);
+    const newPassword = requirePassword(req.body.newPassword, "Password", 6);
 
     let payload;
 
@@ -172,12 +161,8 @@ router.post(
   "/auth/change-email/request",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const newEmail = String(req.body.newEmail || "").trim().toLowerCase();
-    const currentPassword = String(req.body.currentPassword || "");
-
-    if (!newEmail || !currentPassword) {
-      throw new HttpError(400, "newEmail and currentPassword are required");
-    }
+    const newEmail = requireEmail(req.body.newEmail, "New email");
+    const currentPassword = requirePassword(req.body.currentPassword, "Current password", 6);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -238,11 +223,7 @@ router.post(
 router.post(
   "/auth/change-email/confirm",
   asyncHandler(async (req, res) => {
-    const token = String(req.body.token || "").trim();
-
-    if (!token) {
-      throw new HttpError(400, "Token is required");
-    }
+    const token = requireToken(req.body.token);
 
     let payload;
 
@@ -310,18 +291,10 @@ router.post(
 router.post(
   "/auth/register",
   asyncHandler(async (req, res) => {
-    const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
+    const name = requireTrimmedString(req.body.name, "Name", { min: 2, max: 100 });
+    const email = requireEmail(req.body.email);
+    const password = requirePassword(req.body.password, "Password", 6);
     const incomingRole = String(req.body.role || "STUDENT").toUpperCase();
-
-    if (!name || !email || !password) {
-      throw new HttpError(400, "Name, email, and password are required");
-    }
-
-    if (password.length < 6) {
-      throw new HttpError(400, "Password must be at least 6 characters");
-    }
 
     if (incomingRole === "ADMIN") {
       throw new HttpError(403, "Admin accounts cannot be created from public registration");
@@ -374,12 +347,8 @@ router.post(
 router.post(
   "/auth/login",
   asyncHandler(async (req, res) => {
-    const email = String(req.body.email || "").trim().toLowerCase();
-    const password = String(req.body.password || "");
-
-    if (!email || !password) {
-      throw new HttpError(400, "Email and password are required");
-    }
+    const email = requireEmail(req.body.email);
+    const password = requirePassword(req.body.password, "Password", 6);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -424,11 +393,7 @@ router.post(
 router.post(
   "/auth/refresh",
   asyncHandler(async (req, res) => {
-    const refreshToken = String(req.body.refreshToken || "").trim();
-
-    if (!refreshToken) {
-      throw new HttpError(400, "Refresh token is required");
-    }
+    const refreshToken = requireToken(req.body.refreshToken, "Refresh token");
 
     let payload;
 
@@ -479,11 +444,7 @@ router.post(
 router.post(
   "/auth/logout",
   asyncHandler(async (req, res) => {
-    const refreshToken = String(req.body.refreshToken || "").trim();
-
-    if (!refreshToken) {
-      throw new HttpError(400, "Refresh token is required");
-    }
+    const refreshToken = requireToken(req.body.refreshToken, "Refresh token");
 
     await prisma.authSession.updateMany({
       where: {

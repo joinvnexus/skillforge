@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { validatePassword } from '@/lib/validation'
+
 export default {
   data() {
     return {
@@ -70,8 +72,9 @@ export default {
         return
       }
 
-      if (!this.newPassword || this.newPassword.length < 6) {
-        this.localError = 'Password must be at least 6 characters.'
+      const passwordError = validatePassword(this.newPassword)
+      if (passwordError) {
+        this.localError = passwordError
         return
       }
 

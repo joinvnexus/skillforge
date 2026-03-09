@@ -21,7 +21,7 @@
           {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
         </button>
 
-        <p v-if="error" class="text-center text-sm text-red-600">{{ error }}</p>
+        <p v-if="localError || error" class="text-center text-sm text-red-600">{{ localError || error }}</p>
         <p v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
         <div v-if="resetUrl" class="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
           <p class="font-semibold">Dev reset link</p>
@@ -39,13 +39,16 @@
 </template>
 
 <script>
+import { validateEmail } from '@/lib/validation'
+
 export default {
   data() {
     return {
       email: '',
       message: '',
       resetUrl: '',
-      resetPath: ''
+      resetPath: '',
+      localError: ''
     }
   },
   computed: {
@@ -61,6 +64,12 @@ export default {
       this.message = ''
       this.resetUrl = ''
       this.resetPath = ''
+      this.localError = ''
+      const emailError = validateEmail(this.email)
+      if (emailError) {
+        this.localError = emailError
+        return
+      }
       const result = await this.$store.dispatch('auth/forgotPassword', this.email)
       if (result.success) {
         this.message = result.data?.message || 'Password reset link sent. Please check your inbox.'

@@ -52,7 +52,7 @@
           {{ isLoading ? 'Creating...' : 'Sign Up' }}
         </button>
 
-        <p v-if="error" class="mt-2 text-center text-sm text-red-600">{{ error }}</p>
+        <p v-if="localError || error" class="mt-2 text-center text-sm text-red-600">{{ localError || error }}</p>
 
         <p class="text-center text-sm text-slate-600">
           Already have an account?
@@ -64,13 +64,16 @@
 </template>
 
 <script>
+import { validateEmail, validatePassword, validateRequired } from '@/lib/validation'
+
 export default {
   data() {
     return {
       displayName: '',
       email: '',
       password: '',
-      role: 'STUDENT'
+      role: 'STUDENT',
+      localError: ''
     }
   },
   computed: {
@@ -83,7 +86,23 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      this.localError = ''
       const { email, password, displayName, role } = this
+      const nameError = validateRequired(displayName, 'Display name')
+      if (nameError) {
+        this.localError = nameError
+        return
+      }
+      const emailError = validateEmail(email)
+      if (emailError) {
+        this.localError = emailError
+        return
+      }
+      const passwordError = validatePassword(password)
+      if (passwordError) {
+        this.localError = passwordError
+        return
+      }
       const result = await this.$store.dispatch('auth/signup', { email, password, displayName, role })
       if (result.success) {
         this.$router.push('/dashboard')

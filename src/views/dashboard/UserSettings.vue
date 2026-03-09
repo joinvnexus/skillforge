@@ -87,6 +87,7 @@
         >
           {{ isLoading ? 'Requesting...' : 'Request Email Change' }}
         </button>
+        <p v-if="emailFormError" class="text-sm text-red-600">{{ emailFormError }}</p>
       </form>
 
       <div v-if="confirmEmailPath" class="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
@@ -112,6 +113,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { validateEmail, validatePassword } from '@/lib/validation'
 
 const store = useStore()
 const router = useRouter()
@@ -129,6 +131,7 @@ const newEmail = ref('')
 const currentPassword = ref('')
 const confirmEmailUrl = ref('')
 const confirmEmailPath = ref('')
+const emailFormError = ref('')
 
 const displayPhotoUrl = computed(() => photoURL.value?.trim() || '')
 const userInitial = computed(() => String(displayName.value || initialName.value || 'U').charAt(0).toUpperCase())
@@ -158,8 +161,19 @@ const saveProfile = async () => {
 }
 
 const requestEmailChange = async () => {
+  emailFormError.value = ''
   confirmEmailUrl.value = ''
   confirmEmailPath.value = ''
+  const emailError = validateEmail(newEmail.value, 'New email')
+  if (emailError) {
+    emailFormError.value = emailError
+    return
+  }
+  const passwordError = validatePassword(currentPassword.value, 'Current password')
+  if (passwordError) {
+    emailFormError.value = passwordError
+    return
+  }
   const result = await store.dispatch('auth/updateEmail', {
     email: newEmail.value?.trim(),
     currentPassword: currentPassword.value

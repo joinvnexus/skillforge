@@ -31,7 +31,7 @@
           {{ isLoading ? 'Logging in...' : 'Log In' }}
         </button>
 
-        <p v-if="error" class="mt-2 text-center text-sm text-red-600">{{ error }}</p>
+        <p v-if="localError || error" class="mt-2 text-center text-sm text-red-600">{{ localError || error }}</p>
 
         <p class="text-center text-sm">
           <router-link to="/forgot-password" class="font-semibold text-sky-700 hover:text-sky-900">Forgot password?</router-link>
@@ -47,11 +47,14 @@
 </template>
 
 <script>
+import { validateEmail, validatePassword } from '@/lib/validation'
+
 export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      localError: ''
     }
   },
   computed: {
@@ -64,7 +67,18 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      this.localError = ''
       const { email, password } = this
+      const emailError = validateEmail(email)
+      if (emailError) {
+        this.localError = emailError
+        return
+      }
+      const passwordError = validatePassword(password)
+      if (passwordError) {
+        this.localError = passwordError
+        return
+      }
       const result = await this.$store.dispatch('auth/login', { email, password })
       if (result.success) {
         const redirect = this.$route.query.redirect || '/dashboard'
