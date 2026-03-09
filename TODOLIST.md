@@ -25,7 +25,8 @@ Audit date: 2026-03-09
   Done: studio detail API, section/lesson creation UI, lesson editor with resource URLs, and course preview action from instructor dashboard.
 - [x] Instructor: add profile edit endpoint + UI for title/bio/social links/expertise.  
   Done: added `GET/PATCH /instructor/me/profile` and role-based instructor settings form for title, bio, expertise, and social URLs.
-- [ ] Admin: add pagination/filter/search for orders/testimonials/users in AdminPanel.
+- [x] Admin: add pagination/filter/search for orders/testimonials/users in AdminPanel.  
+  Done: backend query support for user role/status/search, order status/search, testimonial approved/search with pagination; AdminPanel wired with filters and paged navigation.
 - [ ] Admin: add learning path/blog management UI (backend exists, dashboard UI still minimal).
 
 ## P1 - Frontend Quality/UX

@@ -83,15 +83,29 @@ router.get(
   asyncHandler(async (req, res) => {
     const { page, limit, skip } = getPagination(req.query, { limit: 20 });
     const search = String(req.query.search || "").trim();
+    const role = String(req.query.role || "").toUpperCase().trim();
+    const status = String(req.query.status || "").toUpperCase().trim();
 
-    const where = search
-      ? {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } }
-          ]
-        }
-      : {};
+    const andWhere = [];
+
+    if (search) {
+      andWhere.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } }
+        ]
+      });
+    }
+
+    if (allowedRoles.includes(role)) {
+      andWhere.push({ role });
+    }
+
+    if (allowedStatuses.includes(status)) {
+      andWhere.push({ status });
+    }
+
+    const where = andWhere.length ? { AND: andWhere } : {};
 
     const [users, total] = await Promise.all([
       prisma.user.findMany({
@@ -254,16 +268,50 @@ router.patch(
 );
 
 router.get(
-  "/admin/testimonials/pending",
-  asyncHandler(async (_req, res) => {
-    const testimonials = await prisma.testimonial.findMany({
-      where: {
-        isApproved: false
-      },
-      orderBy: [{ createdAt: "desc" }]
-    });
+  "/admin/testimonials",
+  asyncHandler(async (req, res) => {
+    const { page, limit, skip } = getPagination(req.query, { limit: 20 });
+    const approved = String(req.query.approved || "").toLowerCase().trim();
+    const search = String(req.query.search || "").trim();
 
-    res.json({ data: testimonials });
+    const andWhere = [];
+
+    if (approved === "true") {
+      andWhere.push({ isApproved: true });
+    } else if (approved === "false") {
+      andWhere.push({ isApproved: false });
+    }
+
+    if (search) {
+      andWhere.push({
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { quote: { contains: search, mode: "insensitive" } }
+        ]
+      });
+    }
+
+    const where = andWhere.length ? { AND: andWhere } : {};
+
+    const [testimonials, total] = await Promise.all([
+      prisma.testimonial.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ createdAt: "desc" }]
+      }),
+      prisma.testimonial.count({ where })
+    ]);
+
+    res.json({
+      data: testimonials,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
   })
 );
 
@@ -272,7 +320,34 @@ router.get(
   asyncHandler(async (req, res) => {
     const { page, limit, skip } = getPagination(req.query, { limit: 20 });
     const status = String(req.query.status || "").toUpperCase().trim();
-    const where = status ? { status } : {};
+    const search = String(req.query.search || "").trim();
+
+    const andWhere = [];
+
+    if (status && allowedOrderStatuses.includes(status)) {
+      andWhere.push({ status });
+    }
+
+    if (search) {
+      andWhere.push({
+        OR: [
+          { orderNumber: { contains: search, mode: "insensitive" } },
+          { paymentReference: { contains: search, mode: "insensitive" } },
+          {
+            user: {
+              is: {
+                OR: [
+                  { name: { contains: search, mode: "insensitive" } },
+                  { email: { contains: search, mode: "insensitive" } }
+                ]
+              }
+            }
+          }
+        ]
+      });
+    }
+
+    const where = andWhere.length ? { AND: andWhere } : {};
 
     const [orders, total] = await Promise.all([
       prisma.order.findMany({
