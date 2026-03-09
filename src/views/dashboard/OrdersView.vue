@@ -95,8 +95,9 @@ const startPayment = async (orderId) => {
   paymentLoadingId.value = orderId;
   try {
     await store.dispatch("orders/createPaymentIntent", orderId);
+    store.dispatch("ui/notify", { type: "success", message: "Payment initialized." });
   } catch (_error) {
-    // Error state is managed by the orders store.
+    store.dispatch("ui/notify", { type: "error", message: store.state.orders.error || "Payment initialization failed." });
   } finally {
     paymentLoadingId.value = null;
   }
@@ -117,8 +118,12 @@ const verifyPayment = async (orderId, outcome) => {
       paymentMethod: "CARD"
     });
     await Promise.all([store.dispatch("orders/fetchOrders"), store.dispatch("enrollments/fetchEnrolledCourses")]);
+    store.dispatch("ui/notify", {
+      type: outcome === "SUCCESS" ? "success" : "warning",
+      message: outcome === "SUCCESS" ? "Payment marked as paid." : "Payment marked as failed."
+    });
   } catch (_error) {
-    // Error state is managed by the orders store.
+    store.dispatch("ui/notify", { type: "error", message: store.state.orders.error || "Payment verification failed." });
   } finally {
     paymentLoadingId.value = null;
   }

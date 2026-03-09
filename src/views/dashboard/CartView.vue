@@ -63,8 +63,10 @@ const checkout = async () => {
     await store.dispatch("cart/checkoutCart", { markPaid: false, paymentMethod: "CARD" });
     await store.dispatch("orders/fetchOrders");
     message.value = "Order created. Complete payment from the Orders page.";
+    store.dispatch("ui/notify", { type: "success", message: "Order created. Complete payment from Orders." });
   } catch (err) {
     error.value = err.message;
+    store.dispatch("ui/notify", { type: "error", message: err.message });
   } finally {
     loading.value = false;
   }

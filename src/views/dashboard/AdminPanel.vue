@@ -319,7 +319,9 @@
 import { onMounted, reactive, ref } from "vue";
 import { apiRequest } from "@/lib/api";
 import DashboardState from "@/components/dashboard/DashboardState.vue";
+import { useStore } from "vuex";
 
+const store = useStore();
 const loading = ref(true);
 const error = ref(null);
 const users = ref([]);
@@ -358,6 +360,8 @@ const createBlogForm = reactive({
   status: "DRAFT",
   isFeatured: false
 });
+
+const notify = (type, message) => store.dispatch("ui/notify", { type, message });
 
 const primeFormState = () => {
   for (const user of users.value) {
@@ -449,8 +453,10 @@ const updateUser = async (userId) => {
       body: userEdits[userId]
     });
     await reloadUsers();
+    notify("success", "User updated.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -462,8 +468,10 @@ const updateOrder = async (orderId) => {
       body: orderEdits[orderId]
     });
     await reloadOrders();
+    notify("success", "Order updated.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -475,8 +483,10 @@ const approveTestimonial = async (id) => {
       body: { isApproved: true }
     });
     await reloadTestimonials();
+    notify("success", "Testimonial approved.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -488,8 +498,10 @@ const toggleFeatured = async (item) => {
       body: { isFeatured: !item.isFeatured }
     });
     await reloadTestimonials();
+    notify("success", item.isFeatured ? "Testimonial unfeatured." : "Testimonial featured.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -563,8 +575,10 @@ const createLearningPath = async () => {
     createLearningPathForm.isFeatured = false;
     await reloadLearningPaths();
     primeFormState();
+    notify("success", "Learning path created.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -577,8 +591,10 @@ const updateLearningPath = async (id) => {
     });
     await reloadLearningPaths();
     primeFormState();
+    notify("success", "Learning path updated.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -616,8 +632,10 @@ const createBlog = async () => {
     createBlogForm.isFeatured = false;
     await reloadBlogs();
     primeFormState();
+    notify("success", "Blog created.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 
@@ -630,8 +648,10 @@ const updateBlog = async (id) => {
     });
     await reloadBlogs();
     primeFormState();
+    notify("success", "Blog updated.");
   } catch (err) {
     error.value = err.message;
+    notify("error", err.message);
   }
 };
 

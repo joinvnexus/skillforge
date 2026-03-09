@@ -1,6 +1,11 @@
 import { apiRequest, clearStoredSession, getStoredSession, setStoredSession } from '@/lib/api'
 import { normalizeUser } from '@/lib/normalizers'
 
+const pushToast = (dispatch, type, message) => {
+  if (!message) return
+  dispatch('ui/notify', { type, message }, { root: true })
+}
+
 export default {
   namespaced: true,
   state: () => ({
@@ -63,7 +68,7 @@ export default {
       }
     },
 
-    async signup({ commit }, { email, password, displayName, role = 'STUDENT' }) {
+    async signup({ commit, dispatch }, { email, password, displayName, role = 'STUDENT' }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -84,17 +89,19 @@ export default {
         })
         commit('SET_USER', normalizeUser(response.data.user))
         commit('SET_NOTIFICATION', { type: 'success', message: 'Account created successfully.' })
+        pushToast(dispatch, 'success', 'Account created successfully.')
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async login({ commit }, { email, password }) {
+    async login({ commit, dispatch }, { email, password }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -113,17 +120,19 @@ export default {
         })
         commit('SET_USER', normalizeUser(response.data.user))
         commit('SET_NOTIFICATION', { type: 'success', message: 'Logged in successfully!' })
+        pushToast(dispatch, 'success', 'Logged in successfully!')
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async logout({ commit }) {
+    async logout({ commit, dispatch }) {
       commit('SET_LOADING', true)
 
       try {
@@ -139,17 +148,19 @@ export default {
         clearStoredSession()
         commit('SET_USER', null)
         commit('SET_NOTIFICATION', { type: 'success', message: 'Logged out successfully!' })
+        pushToast(dispatch, 'success', 'Logged out successfully!')
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async updateProfile({ commit }, { displayName, photoURL }) {
+    async updateProfile({ commit, dispatch }, { displayName, photoURL }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -165,17 +176,19 @@ export default {
 
         commit('SET_USER', normalizeUser(response.data))
         commit('SET_NOTIFICATION', { type: 'success', message: 'Profile updated successfully!' })
+        pushToast(dispatch, 'success', 'Profile updated successfully!')
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async updateEmail({ commit }, payload) {
+    async updateEmail({ commit, dispatch }, payload) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -189,17 +202,19 @@ export default {
           }
         })
         commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Verification link generated.' })
+        pushToast(dispatch, 'success', response.data?.message || 'Verification link generated.')
         return { success: true, data: response.data }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async confirmEmailChange({ commit }, token) {
+    async confirmEmailChange({ commit, dispatch }, token) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
       try {
@@ -211,17 +226,19 @@ export default {
           commit('SET_USER', normalizeUser(response.data.user))
         }
         commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Email updated.' })
+        pushToast(dispatch, 'success', response.data?.message || 'Email updated.')
         return { success: true, data: response.data }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async forgotPassword({ commit }, email) {
+    async forgotPassword({ commit, dispatch }, email) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -231,6 +248,7 @@ export default {
           body: { email }
         })
         commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Password reset link generated.' })
+        pushToast(dispatch, 'success', response.data?.message || 'Password reset link generated.')
         return {
           success: true,
           data: response.data
@@ -238,13 +256,14 @@ export default {
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)
       }
     },
 
-    async resetPassword({ commit }, { token, newPassword }) {
+    async resetPassword({ commit, dispatch }, { token, newPassword }) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
@@ -254,10 +273,12 @@ export default {
           body: { token, newPassword }
         })
         commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Password reset successful.' })
+        pushToast(dispatch, 'success', response.data?.message || 'Password reset successful.')
         return { success: true }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        pushToast(dispatch, 'error', error.message)
         return { success: false, error: error.message }
       } finally {
         commit('SET_LOADING', false)

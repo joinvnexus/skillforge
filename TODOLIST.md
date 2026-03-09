@@ -34,7 +34,8 @@ Audit date: 2026-03-09
 
 - [x] Standardize loading/error/empty states across all dashboard pages.  
   Done: introduced shared `DashboardState` UI and applied it across dashboard overview, admin panel, instructor studio, orders, order details, enrollments, wishlist, and cart.
-- [ ] Add global success/error toast system (currently many pages use inline error text only).
+- [x] Add global success/error toast system (currently many pages use inline error text only).  
+  Done: added centralized `ui` toast queue + global `ToastStack` renderer and wired auth/cart/orders/admin flows to emit success/error toasts.
 - [ ] Improve accessibility: keyboard focus flow, form labels/help text, aria for interactive cards/buttons.
 - [ ] Replace external avatar fallback dependency with local fallback component (for reliability).
 - [ ] Add image upload flow (Supabase storage/S3) instead of URL-only profile image input.
