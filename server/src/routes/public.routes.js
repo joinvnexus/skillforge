@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { asyncHandler } from "../lib/async-handler.js";
+import { env } from "../config/env.js";
 import { HttpError } from "../lib/http-error.js";
 import { getPagination } from "../lib/pagination.js";
 import { prisma } from "../lib/prisma.js";
@@ -44,6 +45,136 @@ const coursePreviewInclude = {
     }
   }
 };
+
+const grantOrderEnrollments = async (tx, order) => {
+  const items = await tx.orderItem.findMany({
+    where: {
+      orderId: order.id
+    },
+    select: {
+      courseId: true
+    }
+  });
+
+  if (!items.length) {
+    return;
+  }
+
+  const courseIds = items.map((item) => item.courseId);
+  const existingEnrollments = await tx.enrollment.findMany({
+    where: {
+      userId: order.userId,
+      courseId: {
+        in: courseIds
+      }
+    },
+    select: {
+      courseId: true
+    }
+  });
+
+  const enrolledSet = new Set(existingEnrollments.map((entry) => entry.courseId));
+
+  for (const item of items) {
+    if (enrolledSet.has(item.courseId)) {
+      continue;
+    }
+
+    await tx.enrollment.create({
+      data: {
+        userId: order.userId,
+        courseId: item.courseId,
+        orderId: order.id
+      }
+    });
+
+    await tx.course.update({
+      where: {
+        id: item.courseId
+      },
+      data: {
+        studentCount: {
+          increment: 1
+        }
+      }
+    });
+  }
+};
+
+router.get(
+  "/payments/mock-webhook",
+  asyncHandler(async (_req, res) => {
+    res.json({
+      data: {
+        ok: true,
+        message: "Use POST /api/v1/payments/mock-webhook with x-payment-webhook-secret."
+      }
+    });
+  })
+);
+
+router.post(
+  "/payments/mock-webhook",
+  asyncHandler(async (req, res) => {
+    const secret = String(req.headers["x-payment-webhook-secret"] || "");
+
+    if (!secret || secret !== env.PAYMENT_WEBHOOK_SECRET) {
+      throw new HttpError(401, "Invalid webhook secret");
+    }
+
+    const paymentReference = String(req.body.paymentReference || "").trim();
+    const outcome = String(req.body.outcome || "").toUpperCase();
+
+    if (!paymentReference || !["SUCCESS", "FAILED"].includes(outcome)) {
+      throw new HttpError(400, "paymentReference and valid outcome are required");
+    }
+
+    const order = await prisma.order.findFirst({
+      where: {
+        paymentReference
+      }
+    });
+
+    if (!order) {
+      throw new HttpError(404, "Order not found for paymentReference");
+    }
+
+    if (order.status === "PAID" || order.status === "FAILED") {
+      return res.json({ data: { success: true, orderId: order.id, status: order.status } });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const paid = outcome === "SUCCESS";
+      const updatedOrder = await tx.order.update({
+        where: {
+          id: order.id
+        },
+        data: {
+          status: paid ? "PAID" : "FAILED",
+          paidAt: paid ? new Date() : null
+        }
+      });
+
+      if (paid) {
+        await grantOrderEnrollments(tx, updatedOrder);
+      }
+
+      await tx.notification.create({
+        data: {
+          userId: updatedOrder.userId,
+          type: "PAYMENT",
+          title: paid ? "Payment confirmed" : "Payment failed",
+          message: paid
+            ? `Your order ${updatedOrder.orderNumber} has been paid successfully.`
+            : `Payment failed for order ${updatedOrder.orderNumber}.`,
+          linkUrl: "/dashboard/orders"
+        }
+      });
+    });
+
+    res.json({ data: { success: true, orderId: order.id, status: outcome === "SUCCESS" ? "PAID" : "FAILED" } });
+  })
+);
 
 router.get(
   "/home",

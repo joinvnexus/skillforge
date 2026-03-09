@@ -4,7 +4,8 @@ const state = {
   items: [],
   loading: false,
   error: null,
-  latestOrder: null
+  latestOrder: null,
+  paymentIntents: {}
 };
 
 const mutations = {
@@ -18,6 +19,13 @@ const mutations = {
   UPDATE_ORDER(state, order) {
     state.items = state.items.map((item) => (item.id === order.id ? order : item));
     state.latestOrder = order;
+  },
+  SET_PAYMENT_INTENT(state, intent) {
+    if (!intent?.orderId) return;
+    state.paymentIntents = {
+      ...state.paymentIntents,
+      [intent.orderId]: intent
+    };
   },
   SET_LOADING(state, loading) {
     state.loading = loading;
@@ -72,6 +80,47 @@ const actions = {
         body: {
           paymentMethod,
           paymentReference
+        }
+      });
+      commit("UPDATE_ORDER", response.data);
+      return response.data;
+    } catch (error) {
+      commit("SET_ERROR", error.message);
+      throw error;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  async createPaymentIntent({ commit }, orderId) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+      const response = await apiRequest(`/student/me/orders/${orderId}/payment-intent`, {
+        method: "POST",
+        auth: true
+      });
+      commit("SET_PAYMENT_INTENT", response.data);
+      return response.data;
+    } catch (error) {
+      commit("SET_ERROR", error.message);
+      throw error;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  async verifyPayment({ commit }, { orderId, paymentReference, outcome = "SUCCESS", paymentMethod = "CARD" }) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+      const response = await apiRequest(`/student/me/orders/${orderId}/payment-verify`, {
+        method: "POST",
+        auth: true,
+        body: {
+          paymentReference,
+          outcome,
+          paymentMethod
         }
       });
       commit("UPDATE_ORDER", response.data);

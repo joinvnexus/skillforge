@@ -31,13 +31,32 @@
 
         <div v-if="order.status !== 'PAID'" class="mt-4 flex flex-wrap items-center gap-2">
           <button
+            v-if="!intentByOrderId[order.id]"
+            class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800"
+            :disabled="paymentLoadingId === order.id"
+            @click="startPayment(order.id)"
+          >
+            {{ paymentLoadingId === order.id ? "Preparing..." : "Start Payment" }}
+          </button>
+          <button
+            v-if="intentByOrderId[order.id]"
             class="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
             :disabled="paymentLoadingId === order.id"
-            @click="payOrder(order.id)"
+            @click="verifyPayment(order.id, 'SUCCESS')"
           >
-            {{ paymentLoadingId === order.id ? "Confirming..." : "Pay Now" }}
+            {{ paymentLoadingId === order.id ? "Confirming..." : "Mark Paid" }}
           </button>
-          <span class="text-xs text-slate-500">This confirms payment and unlocks enrolled courses.</span>
+          <button
+            v-if="intentByOrderId[order.id]"
+            class="rounded-md border border-rose-300 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+            :disabled="paymentLoadingId === order.id"
+            @click="verifyPayment(order.id, 'FAILED')"
+          >
+            {{ paymentLoadingId === order.id ? "Updating..." : "Mark Failed" }}
+          </button>
+          <span class="text-xs text-slate-500">
+            {{ intentByOrderId[order.id] ? "Verify payment outcome (success/fail)." : "Initialize payment first." }}
+          </span>
         </div>
       </article>
     </div>
@@ -52,6 +71,7 @@ const store = useStore();
 const orders = computed(() => store.getters["orders/orders"]);
 const loading = computed(() => store.state.orders.loading);
 const error = computed(() => store.state.orders.error);
+const intentByOrderId = computed(() => store.state.orders.paymentIntents || {});
 const paymentLoadingId = ref(null);
 
 const formatDate = (value) => {
@@ -64,11 +84,31 @@ onMounted(() => {
   store.dispatch("orders/fetchOrders");
 });
 
-const payOrder = async (orderId) => {
+const startPayment = async (orderId) => {
   paymentLoadingId.value = orderId;
   try {
-    const paymentReference = `manual-${Date.now()}`;
-    await store.dispatch("orders/payOrder", { orderId, paymentMethod: "CARD", paymentReference });
+    await store.dispatch("orders/createPaymentIntent", orderId);
+  } catch (_error) {
+    // Error state is managed by the orders store.
+  } finally {
+    paymentLoadingId.value = null;
+  }
+};
+
+const verifyPayment = async (orderId, outcome) => {
+  paymentLoadingId.value = orderId;
+  try {
+    const intent = intentByOrderId.value[orderId];
+    if (!intent?.paymentReference) {
+      await store.dispatch("orders/createPaymentIntent", orderId);
+    }
+    const resolvedIntent = intentByOrderId.value[orderId] || intent;
+    await store.dispatch("orders/verifyPayment", {
+      orderId,
+      paymentReference: resolvedIntent?.paymentReference,
+      outcome,
+      paymentMethod: "CARD"
+    });
     await Promise.all([store.dispatch("orders/fetchOrders"), store.dispatch("enrollments/fetchEnrolledCourses")]);
   } catch (_error) {
     // Error state is managed by the orders store.

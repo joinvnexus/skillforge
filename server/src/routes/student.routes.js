@@ -1,4 +1,5 @@
 import { Router } from "express";
+import crypto from "node:crypto";
 
 import { asyncHandler } from "../lib/async-handler.js";
 import { HttpError } from "../lib/http-error.js";
@@ -11,6 +12,7 @@ const router = Router();
 const allowedPaymentMethods = ["FREE", "CARD", "BANK", "MOBILE_WALLET", "MANUAL"];
 const createOrderNumber = () => `ORD-${Date.now()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 const courseUnitPrice = (course) => Number(course.salePrice ?? course.price ?? 0);
+const createPaymentReference = () => `pi_${crypto.randomBytes(10).toString("hex")}`;
 
 const grantOrderEnrollments = async (tx, userId, order) => {
   const orderItems = await tx.orderItem.findMany({
@@ -65,6 +67,91 @@ const grantOrderEnrollments = async (tx, userId, order) => {
       }
     });
   }
+};
+
+const loadOrderWithItems = async (orderId) => {
+  return prisma.order.findUnique({
+    where: {
+      id: orderId
+    },
+    include: {
+      items: {
+        include: {
+          course: {
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              thumbnailUrl: true
+            }
+          }
+        }
+      }
+    }
+  });
+};
+
+const finalizeOrderPayment = async ({ orderId, userId, outcome, paymentMethod, paymentReference }) => {
+  const normalizedOutcome = String(outcome || "").toUpperCase();
+
+  if (!["SUCCESS", "FAILED"].includes(normalizedOutcome)) {
+    throw new HttpError(400, "Invalid payment outcome");
+  }
+
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      userId
+    }
+  });
+
+  if (!order) {
+    throw new HttpError(404, "Order not found");
+  }
+
+  if (!order.paymentReference || order.paymentReference !== paymentReference) {
+    throw new HttpError(400, "Payment reference mismatch");
+  }
+
+  if (order.status === "PAID" || order.status === "FAILED") {
+    return loadOrderWithItems(order.id);
+  }
+
+  const paid = normalizedOutcome === "SUCCESS";
+  const resolvedMethod = allowedPaymentMethods.includes(String(paymentMethod || "").toUpperCase())
+    ? String(paymentMethod || "").toUpperCase()
+    : order.paymentMethod;
+
+  await prisma.$transaction(async (tx) => {
+    const updatedOrder = await tx.order.update({
+      where: {
+        id: order.id
+      },
+      data: {
+        status: paid ? "PAID" : "FAILED",
+        paymentMethod: resolvedMethod,
+        paidAt: paid ? new Date() : null
+      }
+    });
+
+    if (paid) {
+      await grantOrderEnrollments(tx, userId, updatedOrder);
+    }
+
+    await tx.notification.create({
+      data: {
+        userId,
+        type: "PAYMENT",
+        title: paid ? "Payment confirmed" : "Payment failed",
+        message: paid
+          ? `Your order ${updatedOrder.orderNumber} has been paid successfully.`
+          : `Payment failed for order ${updatedOrder.orderNumber}. Please try again.`,
+        linkUrl: "/dashboard/orders"
+      }
+    });
+  });
+
+  return loadOrderWithItems(order.id);
 };
 
 const syncCourseMetrics = async (courseId) => {
@@ -410,6 +497,8 @@ router.post(
     const orderStatus = isPaid ? "PAID" : "PENDING";
 
     const order = await prisma.$transaction(async (tx) => {
+      const paymentReference = totalAmount > 0 && !isPaid ? createPaymentReference() : null;
+
       const createdOrder = await tx.order.create({
         data: {
           orderNumber: createOrderNumber(),
@@ -419,6 +508,7 @@ router.post(
           subtotal,
           discountAmount: 0,
           totalAmount,
+          paymentReference,
           paidAt: isPaid ? new Date() : null
         }
       });
@@ -449,32 +539,14 @@ router.post(
       return createdOrder;
     });
 
-    const fullOrder = await prisma.order.findUnique({
-      where: {
-        id: order.id
-      },
-      include: {
-        items: {
-          include: {
-            course: {
-              select: {
-                id: true,
-                slug: true,
-                title: true,
-                thumbnailUrl: true
-              }
-            }
-          }
-        }
-      }
-    });
+    const fullOrder = await loadOrderWithItems(order.id);
 
     res.status(201).json({ data: fullOrder });
   })
 );
 
 router.post(
-  "/student/me/orders/:orderId/pay",
+  "/student/me/orders/:orderId/payment-intent",
   asyncHandler(async (req, res) => {
     const order = await prisma.order.findFirst({
       where: {
@@ -488,79 +560,88 @@ router.post(
     }
 
     if (order.status === "PAID") {
-      const existing = await prisma.order.findUnique({
-        where: { id: order.id },
-        include: {
-          items: {
-            include: {
-              course: {
-                select: {
-                  id: true,
-                  slug: true,
-                  title: true,
-                  thumbnailUrl: true
-                }
-              }
-            }
-          }
-        }
-      });
-      return res.json({ data: existing });
+      throw new HttpError(400, "Order is already paid");
     }
 
-    const requestedMethod = String(req.body.paymentMethod || "CARD").toUpperCase();
-    const paymentMethod = allowedPaymentMethods.includes(requestedMethod) ? requestedMethod : "CARD";
-    const paymentReference = req.body.paymentReference ? String(req.body.paymentReference).trim() : null;
-
-    const paidOrder = await prisma.$transaction(async (tx) => {
-      const updatedOrder = await tx.order.update({
-        where: {
-          id: order.id
-        },
-        data: {
-          status: "PAID",
-          paymentMethod: paymentMethod === "FREE" && Number(order.totalAmount) > 0 ? "CARD" : paymentMethod,
-          paymentReference,
-          paidAt: new Date()
-        }
+    if (!order.paymentReference) {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { paymentReference: createPaymentReference() }
       });
+    }
 
-      await grantOrderEnrollments(tx, req.auth.userId, updatedOrder);
-
-      await tx.notification.create({
-        data: {
-          userId: req.auth.userId,
-          type: "PAYMENT",
-          title: "Payment confirmed",
-          message: `Your order ${updatedOrder.orderNumber} has been paid successfully.`,
-          linkUrl: "/dashboard/orders"
-        }
-      });
-
-      return updatedOrder;
+    const refreshedOrder = await prisma.order.findUnique({
+      where: { id: order.id }
     });
 
-    const fullOrder = await prisma.order.findUnique({
+    res.json({
+      data: {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        amount: order.totalAmount,
+        currency: order.currency,
+        paymentReference: refreshedOrder?.paymentReference,
+        status: order.status
+      }
+    });
+  })
+);
+
+router.post(
+  "/student/me/orders/:orderId/payment-verify",
+  asyncHandler(async (req, res) => {
+    const paymentReference = String(req.body.paymentReference || "").trim();
+    const outcome = String(req.body.outcome || "SUCCESS").toUpperCase();
+    const paymentMethod = String(req.body.paymentMethod || "CARD").toUpperCase();
+
+    if (!paymentReference) {
+      throw new HttpError(400, "paymentReference is required");
+    }
+
+    const order = await finalizeOrderPayment({
+      orderId: req.params.orderId,
+      userId: req.auth.userId,
+      outcome,
+      paymentMethod,
+      paymentReference
+    });
+
+    res.json({ data: order });
+  })
+);
+
+router.post(
+  "/student/me/orders/:orderId/pay",
+  asyncHandler(async (req, res) => {
+    const order = await prisma.order.findFirst({
       where: {
-        id: paidOrder.id
+        id: req.params.orderId,
+        userId: req.auth.userId
       },
-      include: {
-        items: {
-          include: {
-            course: {
-              select: {
-                id: true,
-                slug: true,
-                title: true,
-                thumbnailUrl: true
-              }
-            }
-          }
-        }
+      select: {
+        paymentReference: true
       }
     });
 
-    res.json({ data: fullOrder });
+    if (!order) {
+      throw new HttpError(404, "Order not found");
+    }
+
+    if (!order.paymentReference) {
+      throw new HttpError(400, "Payment intent not initialized");
+    }
+
+    const paymentMethod = String(req.body.paymentMethod || "CARD").toUpperCase();
+
+    const paidOrder = await finalizeOrderPayment({
+      orderId: req.params.orderId,
+      userId: req.auth.userId,
+      outcome: "SUCCESS",
+      paymentMethod,
+      paymentReference: order.paymentReference
+    });
+
+    res.json({ data: paidOrder });
   })
 );
 
