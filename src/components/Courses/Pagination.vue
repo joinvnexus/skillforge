@@ -1,29 +1,33 @@
-<!-- src/componentes/couses/Pagination.vue -->
 <template>
   <div class="mt-8 flex justify-center" data-aos="fade-up">
-    <nav class="flex items-center space-x-2">
+    <nav class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm" aria-label="Pagination">
       <button
         @click="prevPage"
-        :disabled="currentPage === 1"
-        class="px-4 py-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
+        :disabled="isPrevDisabled"
+        class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Previous
       </button>
-      
+
       <button
         v-for="page in visiblePages"
         :key="page"
         @click="changePage(page)"
-        :class="{ 'bg-blue-600 text-white border-blue-600': currentPage === page }"
-        class="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+        :aria-current="currentPage === page ? 'page' : undefined"
+        :class="[
+          'min-w-10 rounded-xl px-3 py-2 text-sm font-semibold transition',
+          currentPage === page
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'text-slate-700 hover:bg-slate-100'
+        ]"
       >
         {{ page }}
       </button>
-      
+
       <button
         @click="nextPage"
-        :disabled="currentPage === totalPages"
-        class="px-4 py-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
+        :disabled="isNextDisabled"
+        class="rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Next
       </button>
@@ -33,6 +37,7 @@
 
 <script>
 export default {
+  name: "CoursePagination",
   props: {
     currentPage: {
       type: Number,
@@ -44,28 +49,37 @@ export default {
     }
   },
   computed: {
+    isPrevDisabled() {
+      return this.currentPage <= 1;
+    },
+    isNextDisabled() {
+      return this.currentPage >= this.totalPages;
+    },
     visiblePages() {
-      const range = 2
-      let start = Math.max(1, this.currentPage - range)
-      let end = Math.min(this.totalPages, start + range * 2)
-      
+      const range = 2;
+      let start = Math.max(1, this.currentPage - range);
+      let end = Math.min(this.totalPages, start + range * 2);
+
       if (end === this.totalPages) {
-        start = Math.max(1, end - range * 2)
+        start = Math.max(1, end - range * 2);
       }
-      
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+
+      return Array.from({ length: end - start + 1 }, (_, index) => start + index);
     }
   },
   methods: {
     changePage(page) {
-      this.$emit('page-changed', page)
+      if (page === this.currentPage) return;
+      this.$emit("page-changed", page);
     },
     prevPage() {
-      this.$emit('page-changed', this.currentPage - 1)
+      if (this.isPrevDisabled) return;
+      this.$emit("page-changed", this.currentPage - 1);
     },
     nextPage() {
-      this.$emit('page-changed', this.currentPage + 1)
+      if (this.isNextDisabled) return;
+      this.$emit("page-changed", this.currentPage + 1);
     }
   }
-}
+};
 </script>

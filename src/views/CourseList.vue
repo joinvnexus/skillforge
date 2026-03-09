@@ -26,8 +26,8 @@
             </p>
             <div class="flex items-center">
               <span class="mr-2 text-slate-600">Sort by:</span>
-              <select 
-              v-model="sortBy"
+              <select
+              v-model="localSortBy"
                @change="updateSort"
                 class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none">
                 <option value="newest">Newest</option>
@@ -90,6 +90,11 @@
       ...mapGetters('filters', ['hasFilters']),
 
     },
+    data() {
+      return {
+        localSortBy: 'newest'
+      }
+    },
 
     methods: {
       ...mapActions('courses', ['fetchCourses']),
@@ -100,13 +105,13 @@
       }
     },
     created() {
+      this.localSortBy = this.sortBy
       this.updateSortBy(this.sortBy)
       this.fetchCourses()
     },
     // Initialize AOS on component mount
     mounted() {
 
-      this.fetchCourses()
       // Initialize AOS for animations
       AOS.init({
         duration: 800,
@@ -117,6 +122,9 @@
       })
     },
     watch: {
+      sortBy(newVal) {
+        this.localSortBy = newVal
+      },
 
       '$store.state.ui.loading': function (newVal) {
         if (newVal) {

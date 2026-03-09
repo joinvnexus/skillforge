@@ -1,74 +1,58 @@
 <template>
-  <section 
-    class="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex items-center bg-cover bg-center text-white py-16 px-4 sm:px-6"
-    :style="{ backgroundImage: `url(${course.image})` }"
+  <section
+    class="relative flex min-h-[420px] items-center bg-cover bg-center px-4 py-16 text-white sm:px-6 md:min-h-[520px]"
+    :style="{ backgroundImage: `url(${heroImage})` }"
   >
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-black/60"></div>
-    
-    <div class="container mx-auto relative z-10">
+    <div class="absolute inset-0 bg-slate-950/65"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-slate-950/70 via-slate-900/30 to-transparent"></div>
+
+    <div class="container relative z-10 mx-auto max-w-7xl">
       <div class="max-w-3xl">
-        <!-- Breadcrumbs -->
-        <div class="text-sm md:text-base mb-4 text-white/80">
-          <router-link 
-            to="/courses" 
-            class="text-white hover:text-blue-300 transition-colors duration-200"
-          >
-            Courses
-          </router-link> 
-          <span class="mx-1">/</span> 
+        <div class="mb-4 text-sm text-white/80 md:text-base">
+          <router-link to="/courses" class="transition-colors hover:text-blue-300">Courses</router-link>
+          <span class="mx-1">/</span>
           <span>{{ course.title }}</span>
         </div>
-        
-        <!-- Title -->
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+
+        <h1 class="mb-4 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
           {{ course.title }}
         </h1>
-        
-        <!-- Meta Info -->
-        <div class="flex flex-wrap gap-4 md:gap-6 mb-6 text-sm md:text-base">
-          <!-- Rating -->
+
+        <div class="mb-6 flex flex-wrap gap-4 text-sm md:gap-6 md:text-base">
           <div class="flex items-center">
-            <div class="flex mr-1 text-yellow-400">
-              <i 
-                v-for="i in 5" 
-                :key="i" 
+            <div class="mr-1 flex text-yellow-400">
+              <i
+                v-for="i in 5"
+                :key="i"
                 class="fas fa-star"
-                :class="{ 'text-gray-300': i > Math.round(course.rating) }"
+                :class="{ 'text-slate-500': i > Math.round(course.rating || 0) }"
               ></i>
             </div>
-            <span>({{ course.rating.toFixed(1) }})</span>
+            <span>({{ (course.rating || 0).toFixed(1) }})</span>
           </div>
-          
-          <!-- Students -->
           <div class="flex items-center">
             <i class="fas fa-users mr-1.5"></i>
-            <span>{{ course.students.toLocaleString() }} students</span>
+            <span>{{ formattedStudents }} students</span>
           </div>
-          
-          <!-- Level -->
           <div class="flex items-center">
             <i class="fas fa-signal mr-1.5"></i>
-            <span>{{ course.level }}</span>
+            <span>{{ course.level || "All Levels" }}</span>
           </div>
         </div>
-        
-        <!-- Description -->
-        <p class="text-lg md:text-xl mb-8 leading-relaxed">
-          {{ course.descriptionExtended }}
+
+        <p class="mb-8 text-base leading-relaxed text-white/90 md:text-xl">
+          {{ heroDescription }}
         </p>
-        
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-4">
-          <button 
+
+        <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+          <button
             @click="$emit('enroll')"
-            class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
+            class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-7 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            Enroll Now for ${{ course.price }}
+            Enroll Now for {{ coursePrice }}
           </button>
-          
-          <button 
-            class="px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+          <button
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/60 bg-white/10 px-7 py-3 font-semibold text-white transition hover:bg-white/20"
           >
             <i class="far fa-heart"></i>
             <span>Add to Wishlist</span>
@@ -81,54 +65,28 @@
 
 <script>
 export default {
-  name: 'CourseHero',
+  name: "CourseHero",
   props: {
     course: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    heroImage() {
+      return this.course.image || "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80";
     },
-    description: { type: String, required: true },
-    features: { type: Array, default: () => [] },
-    duration: { type: String, default: '' }
+    heroDescription() {
+      return this.course.descriptionExtended || this.course.description || "Build practical skills with a project-based curriculum and guided lessons.";
+    },
+    formattedStudents() {
+      const total = Number(this.course.students || 0);
+      return total.toLocaleString();
+    },
+    coursePrice() {
+      const price = Number(this.course.price || 0);
+      return price === 0 ? "Free" : `$${price}`;
+    }
   }
-}
+};
 </script>
-
-<style scoped>
-/* Animation for buttons */
-button {
-  transition: all 0.3s ease;
-}
-
-/* Pulse animation for primary button */
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(78, 107, 255, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(78, 107, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(78, 107, 255, 0); }
-}
-
-/* Apply pulse animation on hover */
-button:first-child:hover {
-  animation: pulse 1.5s infinite;
-}
-
-/* Responsive adjustments for very small screens */
-@media (max-width: 400px) {
-  .course-hero {
-    min-height: 450px;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-  
-  .actions {
-    flex-direction: column;
-  }
-  
-  button {
-    width: 100%;
-    padding: 0.75rem();
-  }
-}
-</style>

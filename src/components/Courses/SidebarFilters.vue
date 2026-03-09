@@ -340,6 +340,7 @@ export default {
       'selectedLevels',
       'priceRange'
     ]),
+    ...mapState('courses', ['allCourses']),
     ...mapGetters('filters', [
       'allCategories',
       'allLevels',
@@ -408,8 +409,8 @@ export default {
       this.updatePriceRange([0, this.maxPrice])
     },
     getCategoryCount(category) {
-      // Implement based on your data
-      return Math.floor(Math.random() * 50) + 10
+      if (!Array.isArray(this.allCourses) || !this.allCourses.length) return 0
+      return this.allCourses.filter((course) => course.category === category).length
     },
     getLevelColor(level) {
       const colors = {
