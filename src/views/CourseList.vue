@@ -4,7 +4,6 @@
   <div class="min-h-screen py-6">
     <HeroSection />
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <!-- Page Header -->
       <div class="section-shell mb-8 p-7 text-center" data-aos="fade-in">
         <h1 class="mb-2 text-3xl font-bold text-[var(--text)] md:text-4xl">Explore Our Courses</h1>
         <p class="mx-auto max-w-2xl text-lg text-[var(--muted)]">
@@ -12,24 +11,22 @@
         </p>
       </div>
 
-      <div class="flex flex-col lg:flex-row gap-6">
-        <!-- Sidebar Filters with fixed responsive width -->
-        <SidebarFilters class="lg:w-64 xl:w-72 flex-shrink-0" />
-        
-        <!-- Main Content Area - takes remaining space -->
-        <main class="flex-1 min-w-0">
-          <!-- Sorting and Results Count -->
-          <div class="section-shell mb-6 flex flex-col items-center justify-between gap-3 p-4 sm:flex-row" data-aos="fade-left">
-            <p class="mb-2 text-[var(--muted)] sm:mb-0">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <SidebarFilters class="flex-shrink-0 lg:w-64 xl:w-72" :filtered-courses-count="courseCount" />
+
+        <main class="min-w-0 flex-1">
+          <div class="section-shell mb-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between" data-aos="fade-left">
+            <p class="text-[var(--muted)]">
               Showing {{ paginatedCourses.length }} of {{ courseCount }} courses
               <span v-if="hasFilters" class="text-sm text-[var(--muted)]/80">(filtered)</span>
             </p>
-            <div class="flex items-center">
-              <span class="mr-2 text-[var(--muted)]">Sort by:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-semibold text-[var(--muted)]">Sort by</span>
               <select
-              v-model="localSortBy"
-               @change="updateSort"
-                class="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none">
+                v-model="localSortBy"
+                @change="updateSort"
+                class="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none"
+              >
                 <option value="newest">Newest</option>
                 <option value="popular">Most Popular</option>
                 <option value="rated">Highest Rated</option>
@@ -38,7 +35,7 @@
               </select>
             </div>
           </div>
-          <!-- Default -->
+
           <LoadingSpinner v-if="loading" />
           <ErrorState v-else-if="error" :error="error" @retry="fetchCourses" />
           <NoResults v-else-if="courseCount === 0" @reset="resetFilters" />
@@ -49,14 +46,13 @@
             @bookmark-toggle="handleWishlistToggle"
           />
 
-          <!-- Pagination -->
-          <Pagination 
-          :current-page="currentPage" 
-          :total-pages="totalPages" 
-          @page-changed="changePage"
-          :loading="loading"
-          :error="error"
-           />
+          <Pagination
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @page-changed="changePage"
+            :loading="loading"
+            :error="error"
+          />
         </main>
       </div>
     </div>
