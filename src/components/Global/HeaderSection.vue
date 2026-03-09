@@ -68,10 +68,20 @@
                 type="button"
                 class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-100"
               >
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-800 to-slate-600 text-xs font-bold text-white">
+                <img
+                  v-if="hasUserPhoto"
+                  :src="userPhotoURL"
+                  alt="Profile"
+                  class="h-8 w-8 rounded-lg border border-slate-200 object-cover"
+                  @error="onUserPhotoError"
+                />
+                <span
+                  v-else
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-slate-800 to-slate-600 text-xs font-bold text-white"
+                >
                   {{ userInitial }}
                 </span>
-                <span class="max-w-24 truncate">{{ userName }}</span>
+                <!-- <span class="max-w-24 truncate">{{ userName }}</span> -->
               </button>
               <transition name="fade-slide">
                 <div v-if="isProfileMenuOpen" class="absolute right-0 mt-2 w-60 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
@@ -150,6 +160,22 @@
 
           <div class="mt-3 border-t border-slate-200 pt-3">
             <template v-if="isAuthenticated">
+              <div class="mb-2 flex items-center gap-2 px-3">
+                <img
+                  v-if="hasUserPhoto"
+                  :src="userPhotoURL"
+                  alt="Profile"
+                  class="h-8 w-8 rounded-full border border-slate-200 object-cover"
+                  @error="onUserPhotoError"
+                />
+                <span
+                  v-else
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white"
+                >
+                  {{ userInitial }}
+                </span>
+                <span class="truncate text-sm font-semibold text-slate-800">{{ userName }}</span>
+              </div>
               <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-slate-500">{{ roleLabel }}</p>
               <router-link @click="closeMobileMenu" to="/dashboard" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Dashboard</router-link>
               <router-link @click="closeMobileMenu" to="/dashboard/profile" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Profile</router-link>
@@ -207,9 +233,12 @@ const searchQuery = ref('')
 const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
 const profileMenuRef = ref(null)
+const userPhotoError = ref(false)
 const isAuthenticated = computed(() => store.getters['auth/isAuthenticated'])
 const userName = computed(() => store.getters['auth/userDisplayName'] || 'User')
 const userInitial = computed(() => String(userName.value || 'U').charAt(0).toUpperCase())
+const userPhotoURL = computed(() => store.getters['auth/userPhotoURL'] || '')
+const hasUserPhoto = computed(() => Boolean(userPhotoURL.value) && !userPhotoError.value)
 const role = computed(() => store.getters['auth/userRole'])
 const roleLabel = computed(() => role.value || 'STUDENT')
 const isStudent = computed(() => role.value === 'STUDENT')
@@ -256,6 +285,10 @@ const closeProfileMenu = () => {
   isProfileMenuOpen.value = false
 }
 
+const onUserPhotoError = () => {
+  userPhotoError.value = true
+}
+
 const handleClickOutside = (event) => {
   if (!profileMenuRef.value) return
   if (!profileMenuRef.value.contains(event.target)) {
@@ -276,6 +309,7 @@ watch(
   () => [isAuthenticated.value, role.value],
   () => {
     hydrateStudentCollections()
+    userPhotoError.value = false
     if (!isAuthenticated.value) {
       closeProfileMenu()
     }
@@ -288,6 +322,13 @@ watch(
   () => {
     closeMobileMenu()
     closeProfileMenu()
+  }
+)
+
+watch(
+  () => userPhotoURL.value,
+  () => {
+    userPhotoError.value = false
   }
 )
 
