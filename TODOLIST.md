@@ -23,7 +23,8 @@ Audit date: 2026-03-09
   Done: enrollments API now returns sections/lessons + completion data; dashboard `My Enrolled Courses` supports lesson-level complete/incomplete actions that persist via progress endpoint.
 - [x] Instructor: expand course studio (sections, lessons, upload resources, preview course).  
   Done: studio detail API, section/lesson creation UI, lesson editor with resource URLs, and course preview action from instructor dashboard.
-- [ ] Instructor: add profile edit endpoint + UI for title/bio/social links/expertise.
+- [x] Instructor: add profile edit endpoint + UI for title/bio/social links/expertise.  
+  Done: added `GET/PATCH /instructor/me/profile` and role-based instructor settings form for title, bio, expertise, and social URLs.
 - [ ] Admin: add pagination/filter/search for orders/testimonials/users in AdminPanel.
 - [ ] Admin: add learning path/blog management UI (backend exists, dashboard UI still minimal).
 

@@ -83,6 +83,23 @@ const resolveInstructorProfile = async (userId) => {
   return instructor;
 };
 
+const resolveExpertise = (value) => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (!Array.isArray(value)) {
+    throw new HttpError(400, "Expertise must be an array");
+  }
+
+  const expertise = value
+    .map((item) => String(item || "").trim())
+    .filter(Boolean)
+    .slice(0, 20);
+
+  return expertise;
+};
+
 router.use("/instructor", requireAuth, requireRole("INSTRUCTOR"));
 
 router.get(
@@ -119,6 +136,84 @@ router.get(
         publishedCourses,
         totalStudents: courseTotals._sum.studentCount || 0,
         totalReviews: courseTotals._sum.reviewCount || 0
+      }
+    });
+  })
+);
+
+router.get(
+  "/instructor/me/profile",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+
+    res.json({
+      data: {
+        id: instructor.id,
+        title: instructor.title,
+        bio: instructor.bio,
+        photoUrl: instructor.photoUrl,
+        expertise: instructor.expertise || [],
+        websiteUrl: instructor.websiteUrl,
+        linkedinUrl: instructor.linkedinUrl,
+        twitterUrl: instructor.twitterUrl,
+        githubUrl: instructor.githubUrl,
+        youtubeUrl: instructor.youtubeUrl
+      }
+    });
+  })
+);
+
+router.patch(
+  "/instructor/me/profile",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+    const updates = {};
+
+    if ("title" in req.body) {
+      updates.title = requireTrimmedString(req.body.title, "Title", { min: 2, max: 120 });
+    }
+
+    if ("bio" in req.body) {
+      updates.bio = requireTrimmedString(req.body.bio, "Bio", { min: 10, max: 3000 });
+    }
+
+    if ("photoUrl" in req.body) {
+      updates.photoUrl = optionalUrl(req.body.photoUrl, "Photo URL");
+    }
+
+    if ("expertise" in req.body) {
+      updates.expertise = resolveExpertise(req.body.expertise);
+    }
+
+    if ("websiteUrl" in req.body) updates.websiteUrl = optionalUrl(req.body.websiteUrl, "Website URL");
+    if ("linkedinUrl" in req.body) updates.linkedinUrl = optionalUrl(req.body.linkedinUrl, "LinkedIn URL");
+    if ("twitterUrl" in req.body) updates.twitterUrl = optionalUrl(req.body.twitterUrl, "Twitter URL");
+    if ("githubUrl" in req.body) updates.githubUrl = optionalUrl(req.body.githubUrl, "GitHub URL");
+    if ("youtubeUrl" in req.body) updates.youtubeUrl = optionalUrl(req.body.youtubeUrl, "YouTube URL");
+
+    if (Object.keys(updates).length === 0) {
+      throw new HttpError(400, "No instructor profile fields provided");
+    }
+
+    const updated = await prisma.instructorProfile.update({
+      where: {
+        id: instructor.id
+      },
+      data: updates
+    });
+
+    res.json({
+      data: {
+        id: updated.id,
+        title: updated.title,
+        bio: updated.bio,
+        photoUrl: updated.photoUrl,
+        expertise: updated.expertise || [],
+        websiteUrl: updated.websiteUrl,
+        linkedinUrl: updated.linkedinUrl,
+        twitterUrl: updated.twitterUrl,
+        githubUrl: updated.githubUrl,
+        youtubeUrl: updated.youtubeUrl
       }
     });
   })

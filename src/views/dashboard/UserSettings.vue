@@ -56,6 +56,82 @@
       </form>
     </div>
 
+    <div v-if="isInstructor" class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 class="text-lg font-semibold text-slate-900">Instructor Profile</h2>
+      <p class="mt-1 text-sm text-slate-600">Update your public instructor identity and social links.</p>
+
+      <form class="mt-4 space-y-3" @submit.prevent="saveInstructorProfile">
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Title</label>
+          <input
+            v-model="instructorForm.title"
+            type="text"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="Senior Web Instructor"
+          />
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Bio</label>
+          <textarea
+            v-model="instructorForm.bio"
+            rows="4"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="Share your teaching journey and expertise."
+          ></textarea>
+        </div>
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Expertise (comma separated)</label>
+          <input
+            v-model="instructorForm.expertiseText"
+            type="text"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="Vue.js, Node.js, Prisma"
+          />
+        </div>
+        <div class="grid gap-3 md:grid-cols-2">
+          <input
+            v-model="instructorForm.websiteUrl"
+            type="url"
+            class="rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="Website URL"
+          />
+          <input
+            v-model="instructorForm.linkedinUrl"
+            type="url"
+            class="rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="LinkedIn URL"
+          />
+          <input
+            v-model="instructorForm.twitterUrl"
+            type="url"
+            class="rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="Twitter URL"
+          />
+          <input
+            v-model="instructorForm.githubUrl"
+            type="url"
+            class="rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="GitHub URL"
+          />
+          <input
+            v-model="instructorForm.youtubeUrl"
+            type="url"
+            class="rounded-lg border border-slate-300 px-3 py-2 focus:border-slate-400 focus:outline-none"
+            placeholder="YouTube URL"
+          />
+        </div>
+
+        <button
+          type="submit"
+          :disabled="instructorLoading"
+          class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-70"
+        >
+          {{ instructorLoading ? 'Saving...' : 'Save Instructor Profile' }}
+        </button>
+        <p v-if="instructorFormError" class="text-sm text-red-600">{{ instructorFormError }}</p>
+      </form>
+    </div>
+
     <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 class="text-lg font-semibold text-slate-900">Change Email</h2>
       <p class="mt-1 text-sm text-slate-600">
@@ -114,6 +190,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { apiRequest } from '@/lib/api'
 import { validateEmail, validateOptionalUrl, validatePassword, validateTrimmedLength } from '@/lib/validation'
 
 const store = useStore()
@@ -123,6 +200,8 @@ const currentUser = computed(() => store.getters['auth/currentUser'])
 const userEmail = computed(() => store.getters['auth/userEmail'])
 const initialName = computed(() => store.getters['auth/userDisplayName'] || '')
 const initialPhoto = computed(() => store.getters['auth/userPhotoURL'] || '')
+const role = computed(() => store.getters['auth/userRole'] || 'STUDENT')
+const isInstructor = computed(() => role.value === 'INSTRUCTOR')
 const isLoading = computed(() => store.getters['auth/isLoading'])
 
 const displayName = ref(initialName.value)
@@ -134,6 +213,18 @@ const confirmEmailUrl = ref('')
 const confirmEmailPath = ref('')
 const emailFormError = ref('')
 const profileFormError = ref('')
+const instructorLoading = ref(false)
+const instructorFormError = ref('')
+const instructorForm = ref({
+  title: '',
+  bio: '',
+  expertiseText: '',
+  websiteUrl: '',
+  linkedinUrl: '',
+  twitterUrl: '',
+  githubUrl: '',
+  youtubeUrl: ''
+})
 
 const displayPhotoUrl = computed(() => photoURL.value?.trim() || '')
 const userInitial = computed(() => String(displayName.value || initialName.value || 'U').charAt(0).toUpperCase())
@@ -153,6 +244,40 @@ watch(
   () => {
     avatarLoadError.value = false
   }
+)
+
+const loadInstructorProfile = async () => {
+  if (!isInstructor.value) return
+  instructorLoading.value = true
+  instructorFormError.value = ''
+  try {
+    const response = await apiRequest('/instructor/me/profile', { auth: true })
+    const data = response.data || {}
+    instructorForm.value = {
+      title: data.title || '',
+      bio: data.bio || '',
+      expertiseText: Array.isArray(data.expertise) ? data.expertise.join(', ') : '',
+      websiteUrl: data.websiteUrl || '',
+      linkedinUrl: data.linkedinUrl || '',
+      twitterUrl: data.twitterUrl || '',
+      githubUrl: data.githubUrl || '',
+      youtubeUrl: data.youtubeUrl || ''
+    }
+  } catch (error) {
+    instructorFormError.value = error.message
+  } finally {
+    instructorLoading.value = false
+  }
+}
+
+watch(
+  () => isInstructor.value,
+  (value) => {
+    if (value) {
+      loadInstructorProfile()
+    }
+  },
+  { immediate: true }
 )
 
 const saveProfile = async () => {
@@ -203,6 +328,63 @@ const requestEmailChange = async () => {
         confirmEmailPath.value = `/confirm-email-change?token=${encodeURIComponent(result.data.debug.token || '')}`
       }
     }
+  }
+}
+
+const saveInstructorProfile = async () => {
+  instructorFormError.value = ''
+  const titleError = validateTrimmedLength(instructorForm.value.title, 'Title', { min: 2, max: 120 })
+  if (titleError) {
+    instructorFormError.value = titleError
+    return
+  }
+  const bioError = validateTrimmedLength(instructorForm.value.bio, 'Bio', { min: 10, max: 3000 })
+  if (bioError) {
+    instructorFormError.value = bioError
+    return
+  }
+
+  const urlChecks = [
+    ['Website URL', instructorForm.value.websiteUrl],
+    ['LinkedIn URL', instructorForm.value.linkedinUrl],
+    ['Twitter URL', instructorForm.value.twitterUrl],
+    ['GitHub URL', instructorForm.value.githubUrl],
+    ['YouTube URL', instructorForm.value.youtubeUrl]
+  ]
+
+  for (const [label, value] of urlChecks) {
+    const err = validateOptionalUrl(value, label)
+    if (err) {
+      instructorFormError.value = err
+      return
+    }
+  }
+
+  instructorLoading.value = true
+  try {
+    const expertise = instructorForm.value.expertiseText
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)
+
+    await apiRequest('/instructor/me/profile', {
+      method: 'PATCH',
+      auth: true,
+      body: {
+        title: instructorForm.value.title.trim(),
+        bio: instructorForm.value.bio.trim(),
+        expertise,
+        websiteUrl: instructorForm.value.websiteUrl?.trim() || null,
+        linkedinUrl: instructorForm.value.linkedinUrl?.trim() || null,
+        twitterUrl: instructorForm.value.twitterUrl?.trim() || null,
+        githubUrl: instructorForm.value.githubUrl?.trim() || null,
+        youtubeUrl: instructorForm.value.youtubeUrl?.trim() || null
+      }
+    })
+  } catch (error) {
+    instructorFormError.value = error.message
+  } finally {
+    instructorLoading.value = false
   }
 }
 
