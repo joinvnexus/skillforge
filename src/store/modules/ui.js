@@ -1,7 +1,6 @@
 const state = {
   loading: false,
   error: null,
-  selectedCourse: null,
   currentPage: 1,
   itemsPerPage: 6
 }
@@ -13,21 +12,12 @@ const mutations = {
   SET_ERROR(state, error) {
     state.error = error
   },
-  SET_SELECTED_COURSE(state, course) {
-    state.selectedCourse = course
-  },
   SET_CURRENT_PAGE(state, page) {
     state.currentPage = page
   }
 }
 
 const actions = {
-  openQuickView({ commit }, course) {
-    commit('SET_SELECTED_COURSE', course)
-  },
-  closeQuickView({ commit }) {
-    commit('SET_SELECTED_COURSE', null)
-  },
   changePage({ commit }, page) {
     commit('SET_CURRENT_PAGE', page)
     window.scrollTo({ top: 0, behavior: 'smooth' })

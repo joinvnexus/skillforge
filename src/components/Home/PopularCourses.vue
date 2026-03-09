@@ -84,18 +84,18 @@
 
               <!-- Action Buttons -->
               <div class="flex space-x-2">
-                <button
-                  @click="openQuickView(course)"
-                  class="flex-1 px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                <router-link
+                  :to="`/courses/${course.slug || course.id}`"
+                  class="flex-1 rounded-lg bg-gray-100 px-4 py-2 text-center text-sm text-gray-800 transition-colors hover:bg-gray-200"
                 >
-                  Quick View
-                </button>
-                <button
-                  @click="enrollCourse(course)"
-                  class="btn-brand flex-1 rounded-lg px-4 py-2 text-sm"
+                  View Details
+                </router-link>
+                <router-link
+                  :to="`/courses/${course.slug || course.id}`"
+                  class="btn-brand flex-1 rounded-lg px-4 py-2 text-center text-sm"
                 >
                   Enroll Now
-                </button>
+                </router-link>
               </div>
             </div>
           </div>
@@ -116,27 +116,19 @@
       </div>
     </div>
 
-    <!-- Quick View Modal -->
-    <CourseQuickView
-      v-if="selectedCourse"
-      :course="selectedCourse"
-      @close="closeQuickView"
-    />
   </section>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import CourseQuickView from './CourseQuickView.vue'
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
 import ErrorState from '@/components/UI/ErrorState.vue'
 
 export default {
   name: 'PopularCourses',
-  components: { CourseQuickView, LoadingSpinner, ErrorState },
+  components: { LoadingSpinner, ErrorState },
   computed: {
     ...mapState('courses', ['loading', 'error']),
-    ...mapState('ui', ['selectedCourse']),
     ...mapGetters('courses', ['getPopularCourses']),
     popularCourses() {
       return this.getPopularCourses.slice(0, 4) // Show top 4 popular courses
@@ -146,17 +138,8 @@ export default {
     ...mapActions('courses', [
       'fetchCourses'
     ]),
-    ...mapActions('ui', [
-      'openQuickView',
-      'closeQuickView'
-    ]),
     fetchPopularCourses() {
       this.fetchCourses()
-    },
-    enrollCourse(course) {
-      // Implement enrollment logic
-      console.log('Enrolling in:', course.title)
-      // this.$router.push(`/checkout/${course.id}`)
     }
   },
   created() {

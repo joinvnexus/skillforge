@@ -18,7 +18,7 @@
       <ErrorState v-else-if="error" :error="error" @retry="fetchCourses" />
 
       <!-- Courses Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div v-else class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         <div  
           v-for="(course, index) in getFeaturedCourses" 
           :key="course.id"
@@ -59,35 +59,26 @@
           </div>
 
           <!-- Quick View Overlay -->
-          <div 
-            class="absolute inset-0 bg-slate-900/90 text-white flex flex-col justify-center p-6 opacity-0 hover:opacity-100 transition-opacity duration-300"
+          <div
+            class="absolute inset-0 flex flex-col justify-center bg-slate-900/90 p-6 text-white opacity-0 transition-opacity duration-300 hover:opacity-100"
             v-show="hoveredCourse === index"
           >
             <h3 class="text-xl font-semibold mb-4">{{ course.title }}</h3>
             <p class="mb-4">{{ course.descriptionExtended }}</p>
-            <button 
-              class="mt-auto px-4 py-2 bg-white text-slate-900 rounded hover:bg-slate-100 transition-colors"
-              @click="openQuickView(course)"
+            <router-link
+              :to="`/courses/${course.slug || course.id}`"
+              class="mt-auto inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-slate-900 transition-colors hover:bg-slate-100"
             >
-              Quick View
-            </button>
+              View Details
+            </router-link>
           </div> 
         </div>
       </div>
     </div>
-
-    <!-- Quick View Modal -->
-    <CourseQuickView
-      v-if="selectedCourse"
-      :course="selectedCourse"
-      @close="closeQuickView"
-      @enroll="enrollCourse"
-    />
   </section>
 </template>
 
 <script>
-import CourseQuickView from './CourseQuickView.vue'
 import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
 import ErrorState from '@/components/UI/ErrorState.vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
@@ -95,7 +86,6 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
   name: 'CoursePreviews',
   components: {
-    CourseQuickView,
     LoadingSpinner,
     ErrorState
   },
@@ -106,20 +96,13 @@ export default {
   },
   computed: {
     ...mapState('ui', ['loading', 'error']),
-    ...mapState('ui', ['selectedCourse']),
     ...mapGetters('courses', ['getFeaturedCourses'])
   },
   created() {
     this.fetchCourses()
   },
   methods: {
-    ...mapActions('courses', ['fetchCourses']),
-    ...mapActions('ui', ['openQuickView', 'closeQuickView']),
-    enrollCourse(course) {
-      // Implement enrollment logic
-      console.log('Enrolling in:', course.title)
-      this.closeQuickView()
-    }
+    ...mapActions('courses', ['fetchCourses'])
   }
 }
 </script>
