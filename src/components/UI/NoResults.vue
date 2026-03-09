@@ -1,9 +1,10 @@
 <template>
-  <div class="text-center py-12 bg-white rounded-lg shadow-sm">
-    <p class="text-gray-600 text-lg">No courses match your filters.</p>
+  <div class="section-shell py-12 text-center">
+    <p class="text-lg font-semibold text-slate-900">No courses match your filters.</p>
+    <p class="mt-1 text-sm text-slate-500">Try resetting filters and search again.</p>
     <button
       @click="$emit('reset')"
-      class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+      class="btn-brand mt-5 rounded-xl px-5 py-2 text-sm"
     >
       Reset Filters
     </button>

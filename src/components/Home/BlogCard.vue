@@ -1,8 +1,8 @@
 <template>
-  <section class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4">
+  <section class="py-16">
+    <div class="mx-auto max-w-7xl px-4">
       <!-- Section Title -->
-      <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center">
+      <h2 class="text-4xl font-bold text-slate-900 mb-10 text-center">
         Latest Articles
       </h2>
 
@@ -11,7 +11,7 @@
         <article
           v-for="post in allPosts"
           :key="post.id"
-          class="relative bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
+          class="section-shell interactive-lift relative rounded-xl overflow-hidden cursor-pointer"
           @click="viewPost(post)"
         >
           <!-- Blog Image with Overlay -->
@@ -50,12 +50,12 @@
               {{ post.category }}
             </span>
 
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
-            <p class="text-gray-600 mb-4 line-clamp-3">{{ post.snippet }}</p>
+            <h3 class="text-xl font-semibold text-slate-900 mb-2">{{ post.title }}</h3>
+            <p class="text-slate-600 mb-4 line-clamp-3">{{ post.snippet }}</p>
             <div class="flex justify-between items-center">
               <span class="text-sm text-gray-500">{{ formatDate(post.published_at) }}</span>
               <button
-                class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md font-medium shadow-md hover:scale-105 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+                class="btn-brand px-4 py-2 rounded-md text-sm"
                 @click.stop="viewPost(post)"
               >
                 Read More
@@ -69,7 +69,7 @@
       <div class="flex justify-center mt-12">
         <router-link
           to="/blog"
-          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-md shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
+          class="btn-brand inline-flex items-center rounded-xl px-6 py-3 font-semibold"
         >
           View All Articles
           <svg

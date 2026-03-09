@@ -1,9 +1,10 @@
 <template>
-  <div class="text-center py-12 text-red-500">
-    {{ error }}
+  <div class="section-shell py-10 text-center">
+    <p class="text-lg font-semibold text-red-700">Something went wrong</p>
+    <p class="mx-auto mt-2 max-w-xl text-sm text-red-600">{{ error }}</p>
     <button
       @click="$emit('retry')"
-      class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+      class="btn-brand mt-5 rounded-xl px-5 py-2 text-sm"
     >
       Try Again
     </button>

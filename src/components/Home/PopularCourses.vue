@@ -1,41 +1,31 @@
 <template>
-  <section class="py-12 bg-gray-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <section class="py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Section Header -->
       <div class="text-center mb-12">
-        <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl">
           <span class="block">Most Popular Courses</span>
-          <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+          <span class="block text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-sky-500">
             Learn what others are taking
           </span>
         </h2>
-        <p class="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+        <p class="mt-3 max-w-2xl mx-auto text-xl text-slate-500 sm:mt-4">
           Join thousands of students in our top-rated courses
         </p>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <LoadingSpinner v-if="loading" />
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12 text-red-500">
-        {{ error }}
-        <button
-          @click="fetchPopularCourses"
-          class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
+      <ErrorState v-else-if="error" :error="error" @retry="fetchPopularCourses" />
 
       <!-- Courses Grid -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         <div 
           v-for="course in popularCourses"
           :key="course.id"
-          class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
+          class="section-shell interactive-lift overflow-hidden flex flex-col"
         >
           <!-- Course Image -->
           <div class="relative h-48 w-full">
@@ -102,7 +92,7 @@
                 </button>
                 <button
                   @click="enrollCourse(course)"
-                  class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  class="btn-brand flex-1 rounded-lg px-4 py-2 text-sm"
                 >
                   Enroll Now
                 </button>
@@ -116,7 +106,7 @@
       <div class="mt-10 text-center">
         <router-link
           to="/courses"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          class="btn-brand inline-flex items-center rounded-xl px-6 py-3 text-base font-medium"
         >
           View All Courses
           <svg class="ml-3 -mr-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,10 +128,12 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import CourseQuickView from './CourseQuickView.vue'
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
+import ErrorState from '@/components/UI/ErrorState.vue'
 
 export default {
   name: 'PopularCourses',
-  components: { CourseQuickView },
+  components: { CourseQuickView, LoadingSpinner, ErrorState },
   computed: {
     ...mapState('courses', ['loading', 'error']),
     ...mapState('ui', ['selectedCourse']),

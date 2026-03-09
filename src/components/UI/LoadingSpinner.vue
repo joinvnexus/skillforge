@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-center py-12">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
-            >
-
+    <div class="flex items-center gap-3 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm text-slate-600 shadow-sm">
+      <span :class="spinnerClasses" class="inline-block animate-spin rounded-full border-2 border-slate-200 border-t-sky-600"></span>
+      <span>Loading...</span>
     </div>
   </div>
 </template>
@@ -10,40 +10,21 @@
 <script>
 export default {
   name: 'LoadingSpinner',
-  // Optional props for customization
   props: {
     size: {
       type: String,
       default: 'medium',
       validator: (value) => ['small', 'medium', 'large'].includes(value)
-    },
-    color: {
-      type: String,
-      default: 'blue-500'
     }
   },
   computed: {
     spinnerClasses() {
       return {
-        'small': 'h-8 w-8 border-t-2 border-b-2',
-        'medium': 'h-12 w-12 border-t-2 border-b-2',
-        'large': 'h-16 w-16 border-t-3 border-b-3'
+        small: 'h-4 w-4',
+        medium: 'h-5 w-5',
+        large: 'h-6 w-6'
       }[this.size]
-    },
-    spinnerColor() {
-      return `border-${this.color}`
     }
   }
 }
 </script>
-
-<style scoped>
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-</style>

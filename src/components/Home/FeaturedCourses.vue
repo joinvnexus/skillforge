@@ -1,43 +1,33 @@
 <template>
-  <section class="py-16 bg-gray-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <section class="py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Section Title -->
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Featured <span class="text-blue-600">Courses</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          Featured <span class="text-teal-700">Courses</span>
         </h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
           Learn from industry experts with our top-rated courses
         </p>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <LoadingSpinner v-if="loading" />
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12 text-red-500">
-        {{ error }}
-        <button 
-          @click="fetchCourses" 
-          class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
+      <ErrorState v-else-if="error" :error="error" @retry="fetchCourses" />
 
       <!-- Courses Grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div  
           v-for="(course, index) in getFeaturedCourses" 
           :key="course.id"
-          class="relative bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col"
+          class="relative section-shell interactive-lift overflow-hidden h-full flex flex-col"
           @mouseenter="hoveredCourse = index"
           @mouseleave="hoveredCourse = null"
         >
           <!-- Course Image -->
-          <div class="h-48 overflow-hidden">
+          <div class="h-48 overflow-hidden rounded-t-xl">
             <img 
               :src="course.image" 
               :alt="course.title"
@@ -48,8 +38,8 @@
 
           <!-- Course Content -->
           <div class="p-6 flex-grow">
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ course.title }}</h3>
-            <p class="text-gray-600 mb-1">By {{ course.instructor }}</p>
+            <h3 class="text-xl font-semibold text-slate-900 mb-2">{{ course.title }}</h3>
+            <p class="text-slate-600 mb-1">By {{ course.instructor }}</p>
             <div class="flex items-center mb-3">
               <div class="flex text-yellow-400 mr-2">
                 <span v-for="star in 5" :key="star">
@@ -63,20 +53,20 @@
                   </svg>
                 </span>
               </div>
-              <span class="text-gray-600">{{ course.rating }} ({{ course.students }} students)</span>
+              <span class="text-slate-600">{{ course.rating }} ({{ course.students }} students)</span>
             </div>
-            <p class="text-gray-600 mb-4">{{ course.description }}</p>
+            <p class="text-slate-600 mb-4">{{ course.description }}</p>
           </div>
 
           <!-- Quick View Overlay -->
           <div 
-            class="absolute inset-0 bg-blue-600 bg-opacity-90 text-white flex flex-col justify-center p-6 opacity-0 hover:opacity-100 transition-opacity duration-300"
+            class="absolute inset-0 bg-slate-900/90 text-white flex flex-col justify-center p-6 opacity-0 hover:opacity-100 transition-opacity duration-300"
             v-show="hoveredCourse === index"
           >
             <h3 class="text-xl font-semibold mb-4">{{ course.title }}</h3>
             <p class="mb-4">{{ course.descriptionExtended }}</p>
             <button 
-              class="mt-auto px-4 py-2 bg-white text-blue-600 rounded hover:bg-gray-100 transition-colors"
+              class="mt-auto px-4 py-2 bg-white text-slate-900 rounded hover:bg-slate-100 transition-colors"
               @click="openQuickView(course)"
             >
               Quick View
@@ -98,12 +88,16 @@
 
 <script>
 import CourseQuickView from './CourseQuickView.vue'
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
+import ErrorState from '@/components/UI/ErrorState.vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'CoursePreviews',
   components: {
-    CourseQuickView
+    CourseQuickView,
+    LoadingSpinner,
+    ErrorState
   },
   data() {
     return {

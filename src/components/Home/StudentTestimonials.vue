@@ -1,31 +1,21 @@
 <template>
-  <section class="py-20 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <section class="py-20 relative overflow-hidden">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Section Header -->
       <div class="text-center mb-14">
-        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">
-          What Our <span class="text-blue-600">Students Say</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">
+          What Our <span class="text-teal-700">Students Say</span>
         </h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
           Hear from developers who transformed their careers with our courses.
         </p>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <LoadingSpinner v-if="loading" />
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12 text-red-500">
-        {{ error }}
-        <button 
-          @click="fetchTestimonials" 
-          class="ml-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Retry
-        </button>
-      </div>
+      <ErrorState v-else-if="error" :error="error" @retry="fetchTestimonials" />
 
       <!-- Testimonials Grid -->
       <div 
@@ -35,7 +25,7 @@
         <div 
           v-for="testimonial in allTestimonials"
           :key="testimonial.id"
-          class="relative bg-white/80 backdrop-blur-md border border-gray-100  rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:bg-white"
+          class="section-shell glass-surface interactive-lift relative rounded-2xl overflow-hidden"
         >
           <div class="p-8 flex flex-col items-center text-center animate-fade-in">
             <!-- Decorative Quote Mark -->
@@ -72,8 +62,8 @@
 
             <!-- Student Info -->
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">{{ testimonial.name }}</h3>
-              <p class="text-blue-600 font-medium">{{ testimonial.title }}</p>
+              <h3 class="text-lg font-semibold text-slate-900">{{ testimonial.name }}</h3>
+              <p class="text-teal-700 font-medium">{{ testimonial.title }}</p>
             </div>
           </div>
         </div>
@@ -88,9 +78,12 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+import LoadingSpinner from '@/components/UI/LoadingSpinner.vue'
+import ErrorState from '@/components/UI/ErrorState.vue'
 
 export default {
   name: 'StudentTestimonials',
+  components: { LoadingSpinner, ErrorState },
   
   computed: {
     ...mapState('testimonials', ['loading', 'error']),

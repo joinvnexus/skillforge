@@ -25,7 +25,7 @@
       <div
         v-for="(course, index) in courses"
         :key="course.id"
-        class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer border-2 border-transparent hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        class="group section-shell interactive-lift overflow-hidden flex flex-col h-full cursor-pointer border-2 border-transparent hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
         :data-aos="'fade-up'"
         :data-aos-delay="(index % 4) * 100"
         :aria-label="`Course: ${course.title}`"
@@ -235,7 +235,7 @@
               class="block w-full py-3 px-4 rounded-lg font-semibold text-white text-center transition-all duration-200 flex items-center justify-center gap-2"
               :class="course.price === 0 
                 ? 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-200 dark:hover:shadow-emerald-900/30' 
-                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900/30'"
+                : 'bg-gradient-to-r from-teal-600 to-sky-600 hover:from-teal-700 hover:to-sky-700 hover:shadow-lg hover:shadow-sky-200 dark:hover:shadow-sky-900/30'"
               :aria-label="course.price === 0 ? `Enroll in ${course.title} for free` : `View ${course.title} course details`"
             >
               <span>{{ course.price === 0 ? 'Enroll for Free' : 'View Course' }}</span>
