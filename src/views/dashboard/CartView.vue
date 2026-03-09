@@ -30,12 +30,13 @@
 
       <div class="flex flex-col gap-2 md:flex-row">
         <button class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800" :disabled="loading" @click="checkout">
-          {{ loading ? "Processing..." : "Checkout (Mock Paid)" }}
+          {{ loading ? "Processing..." : "Create Order (Pending Payment)" }}
         </button>
         <button class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" @click="clear">
           Clear Cart
         </button>
       </div>
+      <p v-if="message" class="text-sm text-emerald-700">{{ message }}</p>
       <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
     </div>
   </section>
@@ -48,6 +49,7 @@ import { useStore } from "vuex";
 const store = useStore();
 const loading = ref(false);
 const error = ref(null);
+const message = ref(null);
 const items = computed(() => store.getters["cart/cartItems"]);
 const subtotal = computed(() => store.getters["cart/cartSubtotal"]);
 
@@ -57,10 +59,11 @@ const clear = () => store.dispatch("cart/clearCart");
 const checkout = async () => {
   loading.value = true;
   error.value = null;
+  message.value = null;
   try {
-    await store.dispatch("cart/checkoutCart", { markPaid: true, paymentMethod: "CARD" });
-    await store.dispatch("enrollments/fetchEnrolledCourses");
+    await store.dispatch("cart/checkoutCart", { markPaid: false, paymentMethod: "CARD" });
     await store.dispatch("orders/fetchOrders");
+    message.value = "Order created. Complete payment from the Orders page.";
   } catch (err) {
     error.value = err.message;
   } finally {

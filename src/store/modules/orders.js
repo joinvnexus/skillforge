@@ -15,6 +15,10 @@ const mutations = {
     state.items.unshift(order);
     state.latestOrder = order;
   },
+  UPDATE_ORDER(state, order) {
+    state.items = state.items.map((item) => (item.id === order.id ? order : item));
+    state.latestOrder = order;
+  },
   SET_LOADING(state, loading) {
     state.loading = loading;
   },
@@ -49,6 +53,28 @@ const actions = {
         body: payload
       });
       commit("ADD_ORDER", response.data);
+      return response.data;
+    } catch (error) {
+      commit("SET_ERROR", error.message);
+      throw error;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  async payOrder({ commit }, { orderId, paymentMethod = "CARD", paymentReference = null }) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+      const response = await apiRequest(`/student/me/orders/${orderId}/pay`, {
+        method: "POST",
+        auth: true,
+        body: {
+          paymentMethod,
+          paymentReference
+        }
+      });
+      commit("UPDATE_ORDER", response.data);
       return response.data;
     } catch (error) {
       commit("SET_ERROR", error.message);

@@ -65,7 +65,7 @@ const actions = {
       {
         courseIds,
         paymentMethod: payload.paymentMethod || "CARD",
-        markPaid: payload.markPaid !== undefined ? payload.markPaid : true
+        markPaid: payload.markPaid !== undefined ? payload.markPaid : false
       },
       { root: true }
     );

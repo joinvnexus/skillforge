@@ -8,7 +8,8 @@ Audit date: 2026-03-09
   Done: `POST /auth/forgot-password`, `POST /auth/reset-password`, store actions wired, pages added (`/forgot-password`, `/reset-password`).
 - [x] Implement email change flow with verification.  
   Done: request + token confirm endpoints, settings UI request form, confirm page (`/confirm-email-change`).
-- [ ] Replace "Checkout (Mock Paid)" with real payment lifecycle (init, success, fail, webhook/verification).
+- [ ] Replace "Checkout (Mock Paid)" with real payment lifecycle (init, success, fail, webhook/verification).  
+  Progress: implemented `PENDING -> PAID` order flow (`create order` + `pay order`) and removed mock-paid checkout label.
 - [ ] Add centralized form validation (frontend + backend) for auth/profile/course create/edit.
 - [ ] Add role-safe profile update endpoint (single `/me/profile` route or role-aware service) and enforce consistent API contract.
 

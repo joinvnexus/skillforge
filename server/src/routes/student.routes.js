@@ -12,6 +12,61 @@ const allowedPaymentMethods = ["FREE", "CARD", "BANK", "MOBILE_WALLET", "MANUAL"
 const createOrderNumber = () => `ORD-${Date.now()}-${Math.floor(Math.random() * 10000).toString().padStart(4, "0")}`;
 const courseUnitPrice = (course) => Number(course.salePrice ?? course.price ?? 0);
 
+const grantOrderEnrollments = async (tx, userId, order) => {
+  const orderItems = await tx.orderItem.findMany({
+    where: {
+      orderId: order.id
+    },
+    select: {
+      courseId: true
+    }
+  });
+
+  if (!orderItems.length) {
+    return;
+  }
+
+  const courseIds = orderItems.map((item) => item.courseId);
+  const existingEnrollments = await tx.enrollment.findMany({
+    where: {
+      userId,
+      courseId: {
+        in: courseIds
+      }
+    },
+    select: {
+      courseId: true
+    }
+  });
+
+  const enrolledCourseIdSet = new Set(existingEnrollments.map((entry) => entry.courseId));
+
+  for (const item of orderItems) {
+    if (enrolledCourseIdSet.has(item.courseId)) {
+      continue;
+    }
+
+    await tx.enrollment.create({
+      data: {
+        userId,
+        courseId: item.courseId,
+        orderId: order.id
+      }
+    });
+
+    await tx.course.update({
+      where: {
+        id: item.courseId
+      },
+      data: {
+        studentCount: {
+          increment: 1
+        }
+      }
+    });
+  }
+};
+
 const syncCourseMetrics = async (courseId) => {
   const aggregate = await prisma.review.aggregate({
     where: {
@@ -299,7 +354,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const rawCourseIds = Array.isArray(req.body.courseIds) ? req.body.courseIds : [];
     const courseIds = [...new Set(rawCourseIds.map((item) => String(item || "").trim()).filter(Boolean))];
-    const markPaid = req.body.markPaid !== undefined ? Boolean(req.body.markPaid) : true;
+    const markPaid = req.body.markPaid !== undefined ? Boolean(req.body.markPaid) : false;
     const requestedMethod = String(req.body.paymentMethod || "CARD").toUpperCase();
     const paymentMethod = allowedPaymentMethods.includes(requestedMethod) ? requestedMethod : "CARD";
 
@@ -327,19 +382,6 @@ router.post(
       throw new HttpError(404, "Some selected courses are unavailable");
     }
 
-    const existingEnrollments = await prisma.enrollment.findMany({
-      where: {
-        userId: req.auth.userId,
-        courseId: {
-          in: courseIds
-        }
-      },
-      select: {
-        courseId: true
-      }
-    });
-
-    const enrolledCourseIdSet = new Set(existingEnrollments.map((entry) => entry.courseId));
     const orderItems = courses.map((course) => {
       const totalPrice = courseUnitPrice(course);
       return {
@@ -377,30 +419,7 @@ router.post(
       });
 
       if (isPaid) {
-        for (const course of courses) {
-          if (enrolledCourseIdSet.has(course.id)) {
-            continue;
-          }
-
-          await tx.enrollment.create({
-            data: {
-              userId: req.auth.userId,
-              courseId: course.id,
-              orderId: createdOrder.id
-            }
-          });
-
-          await tx.course.update({
-            where: {
-              id: course.id
-            },
-            data: {
-              studentCount: {
-                increment: 1
-              }
-            }
-          });
-        }
+        await grantOrderEnrollments(tx, req.auth.userId, createdOrder);
       }
 
       await tx.notification.create({
@@ -439,6 +458,97 @@ router.post(
     });
 
     res.status(201).json({ data: fullOrder });
+  })
+);
+
+router.post(
+  "/student/me/orders/:orderId/pay",
+  asyncHandler(async (req, res) => {
+    const order = await prisma.order.findFirst({
+      where: {
+        id: req.params.orderId,
+        userId: req.auth.userId
+      }
+    });
+
+    if (!order) {
+      throw new HttpError(404, "Order not found");
+    }
+
+    if (order.status === "PAID") {
+      const existing = await prisma.order.findUnique({
+        where: { id: order.id },
+        include: {
+          items: {
+            include: {
+              course: {
+                select: {
+                  id: true,
+                  slug: true,
+                  title: true,
+                  thumbnailUrl: true
+                }
+              }
+            }
+          }
+        }
+      });
+      return res.json({ data: existing });
+    }
+
+    const requestedMethod = String(req.body.paymentMethod || "CARD").toUpperCase();
+    const paymentMethod = allowedPaymentMethods.includes(requestedMethod) ? requestedMethod : "CARD";
+    const paymentReference = req.body.paymentReference ? String(req.body.paymentReference).trim() : null;
+
+    const paidOrder = await prisma.$transaction(async (tx) => {
+      const updatedOrder = await tx.order.update({
+        where: {
+          id: order.id
+        },
+        data: {
+          status: "PAID",
+          paymentMethod: paymentMethod === "FREE" && Number(order.totalAmount) > 0 ? "CARD" : paymentMethod,
+          paymentReference,
+          paidAt: new Date()
+        }
+      });
+
+      await grantOrderEnrollments(tx, req.auth.userId, updatedOrder);
+
+      await tx.notification.create({
+        data: {
+          userId: req.auth.userId,
+          type: "PAYMENT",
+          title: "Payment confirmed",
+          message: `Your order ${updatedOrder.orderNumber} has been paid successfully.`,
+          linkUrl: "/dashboard/orders"
+        }
+      });
+
+      return updatedOrder;
+    });
+
+    const fullOrder = await prisma.order.findUnique({
+      where: {
+        id: paidOrder.id
+      },
+      include: {
+        items: {
+          include: {
+            course: {
+              select: {
+                id: true,
+                slug: true,
+                title: true,
+                thumbnailUrl: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    res.json({ data: fullOrder });
   })
 );
 

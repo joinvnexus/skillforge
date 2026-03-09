@@ -17,6 +17,7 @@
           <div>
             <p class="text-sm font-semibold text-slate-900">{{ order.orderNumber }}</p>
             <p class="text-xs text-slate-500">{{ formatDate(order.createdAt) }}</p>
+            <p v-if="order.paymentReference" class="text-xs text-slate-500">Ref: {{ order.paymentReference }}</p>
           </div>
           <div class="flex items-center gap-2">
             <span class="rounded bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">{{ order.status }}</span>
@@ -27,19 +28,31 @@
         <ul class="mt-3 space-y-1 text-sm text-slate-600">
           <li v-for="item in order.items || []" :key="item.id">{{ item.course?.title || "Course" }}</li>
         </ul>
+
+        <div v-if="order.status !== 'PAID'" class="mt-4 flex flex-wrap items-center gap-2">
+          <button
+            class="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+            :disabled="paymentLoadingId === order.id"
+            @click="payOrder(order.id)"
+          >
+            {{ paymentLoadingId === order.id ? "Confirming..." : "Pay Now" }}
+          </button>
+          <span class="text-xs text-slate-500">This confirms payment and unlocks enrolled courses.</span>
+        </div>
       </article>
     </div>
   </section>
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
 const orders = computed(() => store.getters["orders/orders"]);
 const loading = computed(() => store.state.orders.loading);
 const error = computed(() => store.state.orders.error);
+const paymentLoadingId = ref(null);
 
 const formatDate = (value) => {
   if (!value) return "N/A";
@@ -50,4 +63,17 @@ const formatDate = (value) => {
 onMounted(() => {
   store.dispatch("orders/fetchOrders");
 });
+
+const payOrder = async (orderId) => {
+  paymentLoadingId.value = orderId;
+  try {
+    const paymentReference = `manual-${Date.now()}`;
+    await store.dispatch("orders/payOrder", { orderId, paymentMethod: "CARD", paymentReference });
+    await Promise.all([store.dispatch("orders/fetchOrders"), store.dispatch("enrollments/fetchEnrolledCourses")]);
+  } catch (_error) {
+    // Error state is managed by the orders store.
+  } finally {
+    paymentLoadingId.value = null;
+  }
+};
 </script>
