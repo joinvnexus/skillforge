@@ -1,39 +1,36 @@
 <template>
   <div class="course-overview space-y-8 md:space-y-10">
-    <!-- Course Description -->
     <div>
-      <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-6">About This Course</h2>
-      <p class="text-gray-600 leading-relaxed text-lg">{{ description }}</p>
+      <h2 class="mb-4 text-2xl font-bold text-[var(--text)] md:mb-6 md:text-3xl">About This Course</h2>
+      <p class="text-lg leading-relaxed text-[var(--muted)]">{{ description }}</p>
     </div>
-    
-    <!-- What You'll Learn -->
+
     <div class="what-you-learn">
-      <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 md:mb-6">What You'll Learn</h3>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
-        <li 
-          v-for="(feature, index) in features" 
+      <h3 class="mb-4 text-xl font-bold text-[var(--text)] md:mb-6 md:text-2xl">What You'll Learn</h3>
+      <ul class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mb-10 md:gap-6">
+        <li
+          v-for="(feature, index) in features"
           :key="index"
-          class="flex items-start gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200"
+          class="flex items-start gap-3 rounded-lg p-3 transition-colors duration-200 hover:bg-[var(--bg-alt)]"
         >
-          <i class="fas fa-check text-blue-500 mt-1 flex-shrink-0"></i>
-          <span class="text-gray-700">{{ feature }}</span>
+          <i class="fas fa-check mt-1 flex-shrink-0 text-[var(--brand)]"></i>
+          <span class="text-[var(--muted)]">{{ feature }}</span>
         </li>
       </ul>
     </div>
-    
-    <!-- Course Features -->
-    <div class="course-features grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 py-8 border-t border-b border-gray-200">
-      <div 
+
+    <div class="course-features grid grid-cols-1 gap-6 border-b border-t border-[var(--line)] py-8 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
+      <div
         v-for="(feature, index) in courseFeatures"
         :key="index"
-        class="feature flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-all duration-300 hover:shadow-sm"
+        class="feature flex items-start gap-4 rounded-xl p-4 transition-all duration-300 hover:bg-[var(--surface-soft)]"
       >
-        <div class="p-3 bg-blue-100 rounded-lg text-blue-500">
+        <div class="rounded-lg bg-[var(--bg-alt)] p-3 text-[var(--brand)]">
           <i :class="feature.icon" class="text-xl"></i>
         </div>
         <div>
-          <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">{{ feature.title }}</h4>
-          <p class="text-lg font-semibold text-gray-800">{{ feature.value || 'N/A' }}</p>
+          <h4 class="mb-1 text-sm font-medium uppercase tracking-wider text-[var(--muted)]">{{ feature.title }}</h4>
+          <p class="text-lg font-semibold text-[var(--text)]">{{ feature.value || "N/A" }}</p>
         </div>
       </div>
     </div>
@@ -42,51 +39,32 @@
 
 <script>
 export default {
-  name: 'CourseOverview',
+  name: "CourseOverview",
   props: {
     description: { type: String, required: true },
     features: { type: Array, default: () => [] },
-    duration: { type: String, default: '' },
-    lessons: { type: [Number, String], default: '' },
-    level: { type: String, default: '' }
+    duration: { type: String, default: "" },
+    lessons: { type: [Number, String], default: "" },
+    level: { type: String, default: "" }
   },
   computed: {
     courseFeatures() {
       return [
-        { icon: 'fas fa-film', title: 'Duration', value: this.duration },
-        { icon: 'fas fa-book', title: 'Lessons', value: this.lessons },
-        { icon: 'fas fa-signal', title: 'Level', value: this.level }
-      ]
+        { icon: "fas fa-film", title: "Duration", value: this.duration },
+        { icon: "fas fa-book", title: "Lessons", value: this.lessons },
+        { icon: "fas fa-signal", title: "Level", value: this.level }
+      ];
     }
   }
-}
+};
 </script>
 
 <style scoped>
-/* Animation for feature items */
 .feature {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature:hover {
   transform: translateY(-2px);
-}
-
-/* Pulse animation for check icons */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-.what-you-learn li:hover i {
-  animation: pulse 0.5s ease;
-}
-
-/* Responsive adjustments for very small screens */
-@media (max-width: 400px) {
-  .what-you-learn ul {
-    grid-template-columns: 1fr;
-  }
 }
 </style>

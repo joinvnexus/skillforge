@@ -1,39 +1,29 @@
 <template>
-  <section v-if="relatedCourses.length" class="py-12 md:py-16 bg-gray-50">
+  <section v-if="relatedCourses.length" class="bg-[var(--surface-soft)] py-12 md:py-16">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-          Related Courses
-        </h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          You might also like these courses
-        </p>
+      <div class="mb-10 text-center">
+        <h2 class="mb-2 text-3xl font-bold text-[var(--text)] md:text-4xl">Related Courses</h2>
+        <p class="mx-auto max-w-2xl text-lg text-[var(--muted)]">You might also like these courses</p>
       </div>
-      
-      <div v-if="loading" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+
+      <div v-if="loading" class="py-8 text-center">
+        <div class="inline-block h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-[var(--brand)]"></div>
       </div>
-      
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <RelatedCourseCard
-          v-for="course in relatedCourses"
-          :key="course.id"
-          :course="course"
-        />
+
+      <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <RelatedCourseCard v-for="course in relatedCourses" :key="course.id" :course="course" />
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import RelatedCourseCard from '@/components/Courses/RelatedCourseCard.vue'
+import { mapState, mapActions } from "vuex";
+import RelatedCourseCard from "@/components/Courses/RelatedCourseCard.vue";
 
 export default {
-  name: 'RelatedCourses',
-  components: {
-    RelatedCourseCard
-  },
+  name: "RelatedCourses",
+  components: { RelatedCourseCard },
   props: {
     currentCourseId: {
       type: [String, Number],
@@ -41,37 +31,26 @@ export default {
     }
   },
   computed: {
-    ...mapState('courses', ['relatedCourses']),
-    ...mapState('ui', ['loading'])
+    ...mapState("courses", ["relatedCourses"]),
+    ...mapState("ui", ["loading"])
   },
   methods: {
-    ...mapActions('courses', ['fetchCourseById']),
+    ...mapActions("courses", ["fetchCourseById"]),
     async loadRelatedCourses() {
       try {
-        await this.fetchCourseById(this.currentCourseId)
+        await this.fetchCourseById(this.currentCourseId);
       } catch (error) {
-        console.error('Error loading related courses:', error)
+        console.error("Error loading related courses:", error);
       }
     }
   },
   created() {
-    this.loadRelatedCourses()
+    this.loadRelatedCourses();
   },
   watch: {
     currentCourseId() {
-      this.loadRelatedCourses()
+      this.loadRelatedCourses();
     }
   }
-}
+};
 </script>
-
-<style>
-.related-courses-grid .course-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.related-courses-grid .course-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-</style>
