@@ -48,6 +48,12 @@ export const signPasswordResetToken = (payload) => {
   });
 };
 
+export const signEmailChangeToken = (payload) => {
+  return jwt.sign(payload, env.JWT_EMAIL_CHANGE_SECRET, {
+    expiresIn: env.JWT_EMAIL_CHANGE_EXPIRES_IN
+  });
+};
+
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, env.JWT_ACCESS_SECRET);
 };
@@ -58,4 +64,8 @@ export const verifyRefreshToken = (token) => {
 
 export const verifyPasswordResetToken = (token) => {
   return jwt.verify(token, env.JWT_PASSWORD_RESET_SECRET);
+};
+
+export const verifyEmailChangeToken = (token) => {
+  return jwt.verify(token, env.JWT_EMAIL_CHANGE_SECRET);
 };

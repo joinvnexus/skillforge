@@ -175,12 +175,43 @@ export default {
       }
     },
 
-    async updateEmail({ commit }, newEmail) {
+    async updateEmail({ commit }, payload) {
       commit('SET_LOADING', true)
       commit('SET_ERROR', null)
 
       try {
-        throw new Error(`Email update is not implemented yet. Requested email: ${newEmail}`)
+        const response = await apiRequest('/auth/change-email/request', {
+          method: 'POST',
+          auth: true,
+          body: {
+            newEmail: payload.email,
+            currentPassword: payload.currentPassword
+          }
+        })
+        commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Verification link generated.' })
+        return { success: true, data: response.data }
+      } catch (error) {
+        commit('SET_ERROR', error.message)
+        commit('SET_NOTIFICATION', { type: 'error', message: error.message })
+        return { success: false, error: error.message }
+      } finally {
+        commit('SET_LOADING', false)
+      }
+    },
+
+    async confirmEmailChange({ commit }, token) {
+      commit('SET_LOADING', true)
+      commit('SET_ERROR', null)
+      try {
+        const response = await apiRequest('/auth/change-email/confirm', {
+          method: 'POST',
+          body: { token }
+        })
+        if (response.data?.user) {
+          commit('SET_USER', normalizeUser(response.data.user))
+        }
+        commit('SET_NOTIFICATION', { type: 'success', message: response.data?.message || 'Email updated.' })
+        return { success: true, data: response.data }
       } catch (error) {
         commit('SET_ERROR', error.message)
         commit('SET_NOTIFICATION', { type: 'error', message: error.message })

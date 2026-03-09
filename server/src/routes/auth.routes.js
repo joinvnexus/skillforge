@@ -9,8 +9,10 @@ import {
   expiryFromNow,
   hashToken,
   signAccessToken,
+  signEmailChangeToken,
   signPasswordResetToken,
   signRefreshToken,
+  verifyEmailChangeToken,
   verifyPasswordResetToken,
   verifyRefreshToken
 } from "../lib/tokens.js";
@@ -161,6 +163,145 @@ router.post(
       data: {
         success: true,
         message: "Password has been reset successfully"
+      }
+    });
+  })
+);
+
+router.post(
+  "/auth/change-email/request",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const newEmail = String(req.body.newEmail || "").trim().toLowerCase();
+    const currentPassword = String(req.body.currentPassword || "");
+
+    if (!newEmail || !currentPassword) {
+      throw new HttpError(400, "newEmail and currentPassword are required");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.auth.userId
+      }
+    });
+
+    if (!user) {
+      throw new HttpError(404, "User not found");
+    }
+
+    if (newEmail === user.email) {
+      throw new HttpError(400, "New email must be different from current email");
+    }
+
+    const emailInUse = await prisma.user.findUnique({
+      where: {
+        email: newEmail
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (emailInUse) {
+      throw new HttpError(409, "This email is already in use");
+    }
+
+    const passwordMatches = await bcrypt.compare(currentPassword, user.passwordHash);
+
+    if (!passwordMatches) {
+      throw new HttpError(401, "Current password is incorrect");
+    }
+
+    const token = signEmailChangeToken({
+      userId: user.id,
+      currentEmail: user.email,
+      newEmail,
+      purpose: "EMAIL_CHANGE"
+    });
+
+    const responseData = {
+      success: true,
+      message: "Email change verification link has been generated."
+    };
+
+    if (env.NODE_ENV !== "production") {
+      responseData.debug = {
+        token,
+        confirmUrl: `${env.CLIENT_URL}/confirm-email-change?token=${encodeURIComponent(token)}`
+      };
+    }
+
+    res.json({ data: responseData });
+  })
+);
+
+router.post(
+  "/auth/change-email/confirm",
+  asyncHandler(async (req, res) => {
+    const token = String(req.body.token || "").trim();
+
+    if (!token) {
+      throw new HttpError(400, "Token is required");
+    }
+
+    let payload;
+
+    try {
+      payload = verifyEmailChangeToken(token);
+    } catch (_error) {
+      throw new HttpError(401, "Invalid or expired email-change token");
+    }
+
+    if (
+      payload?.purpose !== "EMAIL_CHANGE" ||
+      !payload?.userId ||
+      !payload?.currentEmail ||
+      !payload?.newEmail
+    ) {
+      throw new HttpError(401, "Invalid email-change token payload");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: payload.userId
+      }
+    });
+
+    if (!user) {
+      throw new HttpError(404, "User not found");
+    }
+
+    if (user.email !== payload.currentEmail) {
+      throw new HttpError(409, "Current email no longer matches token");
+    }
+
+    const emailInUse = await prisma.user.findUnique({
+      where: {
+        email: payload.newEmail
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (emailInUse && emailInUse.id !== user.id) {
+      throw new HttpError(409, "This email is already in use");
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        email: payload.newEmail
+      }
+    });
+
+    res.json({
+      data: {
+        success: true,
+        message: "Email changed successfully",
+        user: sanitizeUser(updatedUser)
       }
     });
   })

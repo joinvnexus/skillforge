@@ -98,6 +98,12 @@ const router = createRouter({
       meta: { requiresGuest: true, title: "Reset Password" },
     },
     {
+      path: "/confirm-email-change",
+      name: "ConfirmEmailChange",
+      component: () => import("@/views/ConfirmEmailChange.vue"),
+      meta: { title: "Confirm Email Change" },
+    },
+    {
       path: "/dashboard",
       name: "Dashboard",
       component: () => import("@/views/Dashboard.vue"),
