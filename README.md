@@ -52,6 +52,13 @@ A modern online learning platform built with Vue 3, inspired by Skillshare. This
    ```sh
    VITE_API_BASE_URL=http://localhost:4000/api/v1
    ```
+   For profile photo uploads via Supabase Storage:
+   ```sh
+   VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-public-anon-key
+   VITE_SUPABASE_AVATAR_BUCKET=avatars
+   ```
+   Create the `avatars` bucket as public (or update bucket name accordingly).
 5. Start backend using setup from `server/README.md`.
 
 ## Usage

@@ -35,7 +35,38 @@
         </div>
 
         <div>
-          <label class="mb-1 block text-sm font-medium text-slate-700">Profile Image URL</label>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Profile Photo</label>
+          <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <input
+                ref="avatarInput"
+                type="file"
+                accept="image/*"
+                class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-md file:border-0 file:bg-slate-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800"
+                @change="onAvatarFileChange"
+              />
+              <button
+                type="button"
+                class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-70"
+                :disabled="avatarUploading || !selectedAvatarFile || !avatarUploadConfigured"
+                @click="uploadAvatar"
+              >
+                {{ avatarUploading ? 'Uploading...' : 'Upload Photo' }}
+              </button>
+            </div>
+            <p class="mt-2 text-xs text-slate-500">
+              Upload JPG/PNG/WebP (max 5MB). Public URL is auto-set after upload.
+            </p>
+            <p v-if="!avatarUploadConfigured" class="mt-1 text-xs text-amber-700">
+              Upload disabled: set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+            </p>
+            <p v-if="avatarUploadError" class="mt-1 text-xs text-red-600">{{ avatarUploadError }}</p>
+            <p v-if="selectedAvatarName" class="mt-1 text-xs text-slate-600">Selected: {{ selectedAvatarName }}</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium text-slate-700">Profile Image URL (Optional)</label>
           <input
             v-model="photoURL"
             type="url"
@@ -191,6 +222,7 @@ import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { apiRequest } from '@/lib/api'
+import { isAvatarUploadConfigured, uploadProfileAvatar } from '@/lib/storage'
 import { validateEmail, validateOptionalUrl, validatePassword, validateTrimmedLength } from '@/lib/validation'
 
 const store = useStore()
@@ -206,6 +238,11 @@ const isLoading = computed(() => store.getters['auth/isLoading'])
 
 const displayName = ref(initialName.value)
 const photoURL = ref(initialPhoto.value)
+const avatarInput = ref(null)
+const selectedAvatarFile = ref(null)
+const selectedAvatarName = ref('')
+const avatarUploading = ref(false)
+const avatarUploadError = ref('')
 const avatarLoadError = ref(false)
 const newEmail = ref('')
 const currentPassword = ref('')
@@ -227,6 +264,7 @@ const instructorForm = ref({
 })
 
 const displayPhotoUrl = computed(() => photoURL.value?.trim() || '')
+const avatarUploadConfigured = computed(() => isAvatarUploadConfigured())
 const userInitial = computed(() => String(displayName.value || initialName.value || 'U').charAt(0).toUpperCase())
 
 watch(
@@ -234,6 +272,9 @@ watch(
   () => {
     displayName.value = initialName.value
     photoURL.value = initialPhoto.value
+    selectedAvatarFile.value = null
+    selectedAvatarName.value = ''
+    avatarUploadError.value = ''
     avatarLoadError.value = false
   },
   { immediate: true }
@@ -297,6 +338,49 @@ const saveProfile = async () => {
     displayName: displayName.value?.trim() || undefined,
     photoURL: photoURL.value?.trim() || ''
   })
+}
+
+const onAvatarFileChange = (event) => {
+  avatarUploadError.value = ''
+  const [file] = event?.target?.files || []
+  selectedAvatarFile.value = file || null
+  selectedAvatarName.value = file?.name || ''
+}
+
+const uploadAvatar = async () => {
+  avatarUploadError.value = ''
+
+  if (!avatarUploadConfigured.value) {
+    avatarUploadError.value = 'Supabase upload env keys are missing.'
+    return
+  }
+
+  if (!selectedAvatarFile.value) {
+    avatarUploadError.value = 'Please choose an image file first.'
+    return
+  }
+
+  const userId = currentUser.value?.id
+  if (!userId) {
+    avatarUploadError.value = 'User session not found. Please login again.'
+    return
+  }
+
+  avatarUploading.value = true
+  try {
+    const publicUrl = await uploadProfileAvatar(selectedAvatarFile.value, userId)
+    photoURL.value = publicUrl
+    selectedAvatarFile.value = null
+    selectedAvatarName.value = ''
+    if (avatarInput.value) {
+      avatarInput.value.value = ''
+    }
+    await store.dispatch('ui/notify', { type: 'success', message: 'Profile photo uploaded. Click Save Settings.' }, { root: true })
+  } catch (error) {
+    avatarUploadError.value = error.message || 'Avatar upload failed.'
+  } finally {
+    avatarUploading.value = false
+  }
 }
 
 const requestEmailChange = async () => {

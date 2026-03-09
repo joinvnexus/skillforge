@@ -40,7 +40,8 @@ Audit date: 2026-03-09
   Done: added global focus-visible + skip link flow, improved header/nav ARIA and escape handling, upgraded auth form field semantics/help text/live errors, and added ARIA labels for key dashboard actions.
 - [x] Replace external avatar fallback dependency with local fallback component (for reliability).  
   Done: replaced `ui-avatars` fallback with local SVG data-avatar generator utility and wired normalizers/user profile to use local fallback rendering.
-- [ ] Add image upload flow (Supabase storage/S3) instead of URL-only profile image input.
+- [x] Add image upload flow (Supabase storage/S3) instead of URL-only profile image input.  
+  Done: added Supabase storage upload helper, settings file-upload UI (image validation + upload state), and env/docs wiring for avatar bucket setup.
 
 ## P2 - Data/Content/SEO
 
