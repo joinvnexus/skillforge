@@ -1,3 +1,5 @@
+import { avatarDataUri } from "./avatar";
+
 const toNumber = (value, fallback = 0) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -22,8 +24,7 @@ const formatDateLabel = (value) => {
 };
 
 const avatarFromName = (name) => {
-  const safeName = encodeURIComponent(name || "User");
-  return `https://ui-avatars.com/api/?name=${safeName}&background=eff6ff&color=2563eb`;
+  return avatarDataUri(name || "User");
 };
 
 export const normalizeUser = (user) => {

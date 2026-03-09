@@ -33,7 +33,7 @@
 </template>
 
 <script>
-const fallbackAvatar = 'https://ui-avatars.com/api/?name=User&background=e2e8f0&color=0f172a'
+import { avatarDataUri } from '@/lib/avatar'
 
 export default {
   data() {
@@ -49,7 +49,7 @@ export default {
       return this.$store.getters['auth/isLoading']
     },
     avatar() {
-      return this.user?.photoURL || this.user?.avatarUrl || fallbackAvatar
+      return this.user?.photoURL || this.user?.avatarUrl || avatarDataUri(this.user?.displayName || this.user?.name || 'User')
     }
   },
   created() {

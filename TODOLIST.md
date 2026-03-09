@@ -38,7 +38,8 @@ Audit date: 2026-03-09
   Done: added centralized `ui` toast queue + global `ToastStack` renderer and wired auth/cart/orders/admin flows to emit success/error toasts.
 - [x] Improve accessibility: keyboard focus flow, form labels/help text, aria for interactive cards/buttons.  
   Done: added global focus-visible + skip link flow, improved header/nav ARIA and escape handling, upgraded auth form field semantics/help text/live errors, and added ARIA labels for key dashboard actions.
-- [ ] Replace external avatar fallback dependency with local fallback component (for reliability).
+- [x] Replace external avatar fallback dependency with local fallback component (for reliability).  
+  Done: replaced `ui-avatars` fallback with local SVG data-avatar generator utility and wired normalizers/user profile to use local fallback rendering.
 - [ ] Add image upload flow (Supabase storage/S3) instead of URL-only profile image input.
 
 ## P2 - Data/Content/SEO
