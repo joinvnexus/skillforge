@@ -140,6 +140,12 @@ const router = createRouter({
           meta: { title: "Orders", requiresRole: ["STUDENT"] }
         },
         {
+          path: "orders/:orderId",
+          name: "OrderDetailsView",
+          component: () => import("@/views/dashboard/OrderDetailsView.vue"),
+          meta: { title: "Order Details", requiresRole: ["STUDENT"] }
+        },
+        {
           path: "profile",
           name: "UserProfile",
           component: () => import("@/views/dashboard/UserProfile.vue"),

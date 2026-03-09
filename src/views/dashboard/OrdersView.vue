@@ -22,6 +22,12 @@
           <div class="flex items-center gap-2">
             <span class="rounded bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">{{ order.status }}</span>
             <span class="text-sm font-bold text-slate-900">${{ Number(order.totalAmount || 0).toFixed(2) }}</span>
+            <router-link
+              :to="`/dashboard/orders/${order.id}`"
+              class="rounded border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Details
+            </router-link>
           </div>
         </div>
 

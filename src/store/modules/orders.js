@@ -5,7 +5,8 @@ const state = {
   loading: false,
   error: null,
   latestOrder: null,
-  paymentIntents: {}
+  paymentIntents: {},
+  selectedOrder: null
 };
 
 const mutations = {
@@ -27,6 +28,9 @@ const mutations = {
       [intent.orderId]: intent
     };
   },
+  SET_SELECTED_ORDER(state, order) {
+    state.selectedOrder = order;
+  },
   SET_LOADING(state, loading) {
     state.loading = loading;
   },
@@ -43,6 +47,22 @@ const actions = {
       const response = await apiRequest("/student/me/orders", { auth: true });
       commit("SET_ITEMS", response.data || []);
       return response.data || [];
+    } catch (error) {
+      commit("SET_ERROR", error.message);
+      throw error;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  async fetchOrderById({ commit }, orderId) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+      const response = await apiRequest(`/student/me/orders/${orderId}`, { auth: true });
+      commit("SET_SELECTED_ORDER", response.data);
+      commit("UPDATE_ORDER", response.data);
+      return response.data;
     } catch (error) {
       commit("SET_ERROR", error.message);
       throw error;
@@ -136,7 +156,8 @@ const actions = {
 
 const getters = {
   orders: (state) => state.items,
-  latestOrder: (state) => state.latestOrder
+  latestOrder: (state) => state.latestOrder,
+  selectedOrder: (state) => state.selectedOrder
 };
 
 export default {

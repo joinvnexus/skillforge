@@ -91,6 +91,30 @@ const loadOrderWithItems = async (orderId) => {
   });
 };
 
+const loadUserOrderWithItems = async (userId, orderId) => {
+  return prisma.order.findFirst({
+    where: {
+      id: orderId,
+      userId
+    },
+    include: {
+      items: {
+        include: {
+          course: {
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              thumbnailUrl: true,
+              shortDescription: true
+            }
+          }
+        }
+      }
+    }
+  });
+};
+
 const finalizeOrderPayment = async ({ orderId, userId, outcome, paymentMethod, paymentReference }) => {
   const normalizedOutcome = String(outcome || "").toUpperCase();
 
@@ -445,6 +469,19 @@ router.get(
     });
 
     res.json({ data: orders });
+  })
+);
+
+router.get(
+  "/student/me/orders/:orderId",
+  asyncHandler(async (req, res) => {
+    const order = await loadUserOrderWithItems(req.auth.userId, req.params.orderId);
+
+    if (!order) {
+      throw new HttpError(404, "Order not found");
+    }
+
+    res.json({ data: order });
   })
 );
 

@@ -17,7 +17,8 @@ Audit date: 2026-03-09
 
 ## P1 - Role Workflow Completion
 
-- [ ] Student: add order details page (single order view with items, status timeline, payment reference).
+- [x] Student: add order details page (single order view with items, status timeline, payment reference).  
+  Done: `GET /student/me/orders/:orderId`, dashboard route `/dashboard/orders/:orderId`, itemized details card, and status timeline view.
 - [ ] Student: add enrollment lesson progress UI tied to `/student/me/lessons/:lessonId/progress`.
 - [ ] Instructor: expand course studio (sections, lessons, upload resources, preview course).
 - [ ] Instructor: add profile edit endpoint + UI for title/bio/social links/expertise.
