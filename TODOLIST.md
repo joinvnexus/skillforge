@@ -19,7 +19,8 @@ Audit date: 2026-03-09
 
 - [x] Student: add order details page (single order view with items, status timeline, payment reference).  
   Done: `GET /student/me/orders/:orderId`, dashboard route `/dashboard/orders/:orderId`, itemized details card, and status timeline view.
-- [ ] Student: add enrollment lesson progress UI tied to `/student/me/lessons/:lessonId/progress`.
+- [x] Student: add enrollment lesson progress UI tied to `/student/me/lessons/:lessonId/progress`.  
+  Done: enrollments API now returns sections/lessons + completion data; dashboard `My Enrolled Courses` supports lesson-level complete/incomplete actions that persist via progress endpoint.
 - [ ] Instructor: expand course studio (sections, lessons, upload resources, preview course).
 - [ ] Instructor: add profile edit endpoint + UI for title/bio/social links/expertise.
 - [ ] Admin: add pagination/filter/search for orders/testimonials/users in AdminPanel.

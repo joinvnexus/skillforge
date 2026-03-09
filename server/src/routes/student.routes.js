@@ -330,6 +330,13 @@ router.get(
       },
       orderBy: [{ enrolledAt: "desc" }],
       include: {
+        lessonProgress: {
+          select: {
+            lessonId: true,
+            isCompleted: true,
+            updatedAt: true
+          }
+        },
         course: {
           include: {
             category: {
@@ -348,6 +355,26 @@ router.get(
                     id: true,
                     name: true,
                     avatarUrl: true
+                  }
+                }
+              }
+            },
+            sections: {
+              orderBy: {
+                position: "asc"
+              },
+              include: {
+                lessons: {
+                  orderBy: {
+                    position: "asc"
+                  },
+                  select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    durationMinutes: true,
+                    position: true,
+                    sectionId: true
                   }
                 }
               }

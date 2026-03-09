@@ -20,6 +20,32 @@ const mutations = {
       course.progress = progress
     }
   },
+  UPDATE_LESSON_PROGRESS(state, { enrollmentId, lessonId, isCompleted, progress }) {
+    const course = state.enrolledCourses.find((item) => item.enrollmentId === enrollmentId)
+    if (!course) return
+
+    course.progress = progress
+    const completedSet = new Set(course.completedLessonIds || [])
+
+    if (isCompleted) {
+      completedSet.add(lessonId)
+    } else {
+      completedSet.delete(lessonId)
+    }
+
+    course.completedLessonIds = Array.from(completedSet)
+    course.sections = (course.sections || []).map((section) => ({
+      ...section,
+      lessons: (section.lessons || []).map((lesson) =>
+        lesson.id === lessonId
+          ? {
+              ...lesson,
+              isCompleted
+            }
+          : lesson
+      )
+    }))
+  },
   SET_LOADING(state, loading) {
     state.loading = loading
   },
@@ -86,20 +112,26 @@ const actions = {
     }
   },
 
-  async updateProgress({ commit }, { lessonId, enrollmentId, progress }) {
+  async updateProgress({ commit }, { lessonId, enrollmentId, isCompleted, watchSeconds = 0 }) {
     try {
       if (lessonId) {
-        await apiRequest(`/student/me/lessons/${lessonId}/progress`, {
+        const response = await apiRequest(`/student/me/lessons/${lessonId}/progress`, {
           method: 'PATCH',
           auth: true,
           body: {
             enrollmentId,
-            isCompleted: progress === 100
+            isCompleted,
+            watchSeconds
           }
         })
-      }
 
-      commit('UPDATE_COURSE_PROGRESS', { courseId: enrollmentId, progress })
+        commit('UPDATE_LESSON_PROGRESS', {
+          enrollmentId,
+          lessonId,
+          isCompleted,
+          progress: response.data?.enrollment?.progressPercent ?? 0
+        })
+      }
     } catch (error) {
       commit('SET_ERROR', error.message)
       throw error

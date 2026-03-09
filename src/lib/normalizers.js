@@ -105,11 +105,31 @@ export const normalizeCourse = (course) => {
 
 export const normalizeEnrollment = (enrollment) => {
   const course = normalizeCourse(enrollment.course);
+  const completedLessonIds = new Set(
+    (enrollment.lessonProgress || []).filter((entry) => entry.isCompleted).map((entry) => entry.lessonId)
+  );
+  const sections = (enrollment.course?.sections || []).map((section) => ({
+    id: section.id,
+    title: section.title,
+    position: section.position,
+    lessons: (section.lessons || []).map((lesson) => ({
+      id: lesson.id,
+      title: lesson.title,
+      slug: lesson.slug,
+      sectionId: lesson.sectionId,
+      position: lesson.position,
+      durationMinutes: lesson.durationMinutes || 0,
+      duration: lesson.durationMinutes ? `${lesson.durationMinutes} min` : "N/A",
+      isCompleted: completedLessonIds.has(lesson.id)
+    }))
+  }));
 
   return {
     ...course,
     enrollmentId: enrollment.id,
     progress: enrollment.progressPercent ?? 0,
+    sections,
+    completedLessonIds: Array.from(completedLessonIds),
     enrolled_at: enrollment.enrolledAt || enrollment.enrolled_at,
     completed_at: enrollment.completedAt || enrollment.completed_at,
     last_accessed_at: enrollment.lastAccessedAt || enrollment.last_accessed_at
