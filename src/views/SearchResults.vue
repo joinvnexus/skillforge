@@ -3,10 +3,10 @@
     <!-- Search Header -->
     <div class="section-shell mb-8 flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900 md:text-3xl">
+        <h1 class="text-2xl font-bold text-[var(--text)] md:text-3xl">
           Results for "{{ searchQuery }}"
         </h1>
-        <p class="mt-1 text-slate-500">
+        <p class="mt-1 text-[var(--muted)]">
           {{ filteredCourses.length }} {{ filteredCourses.length === 1 ? 'result' : 'results' }} found
         </p>
       </div>
@@ -18,7 +18,7 @@
             :value="sortBy"
             @change="onSortChange"
             id="sort"
-            class="block w-full rounded-xl border border-slate-300 bg-white py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none sm:text-sm"
+            class="block w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] py-2 pl-3 pr-10 text-base text-[var(--text)] focus:border-[var(--accent)] focus:outline-none sm:text-sm"
           >
             <option value="newest">Sort by: Relevance</option>
             <option value="createdAt">Sort by: Newest</option>
@@ -28,7 +28,7 @@
         </div>
         <button 
           @click="clearSearch"
-          class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          class="inline-flex items-center rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg-alt)]"
         >
           Clear Search
         </button>
@@ -40,11 +40,11 @@
       <!-- Filters Sidebar -->
       <div class="lg:w-64 space-y-6">
         <div class="section-shell p-4">
-          <h3 class="mb-3 font-semibold text-slate-900">Filters</h3>
+          <h3 class="mb-3 font-semibold text-[var(--text)]">Filters</h3>
           
           <!-- Category Filter -->
           <div class="mb-4">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">Category</h4>
+            <h4 class="mb-2 text-sm font-medium text-[var(--text)]">Category</h4>
             <div class="space-y-2">
               <div v-for="category in allCategories"
                :key="category" class="flex items-center">
@@ -53,10 +53,10 @@
                   @change="toggleCategory(category)"
                   :value="category"
                   type="checkbox"
-                  id="category-${category}"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  :id="`category-${category}`"
+                  class="h-4 w-4 rounded border-[var(--line)] text-[var(--brand)] focus:ring-[var(--accent)]"
                 >
-                <label :for="`category-${category}`" class="ml-3 text-sm text-gray-600">
+                <label :for="`category-${category}`" class="ml-3 text-sm text-[var(--muted)]">
                   {{ category }}
                 </label>
               </div>
@@ -65,7 +65,7 @@
           
           <!-- Level Filter -->
           <div class="mb-4">
-            <h4 class="text-sm font-medium text-gray-700 mb-2">Level</h4>
+            <h4 class="mb-2 text-sm font-medium text-[var(--text)]">Level</h4>
             <div class="space-y-2">
               <div v-for="level in allLevels"
                :key="level" class="flex items-center">
@@ -75,9 +75,9 @@
                   :value="level"
                   :checked="selectedLevels.includes(level)"
                   @change="toggleLevel(level)"
-                  class="rounded text-blue-600"
+                  class="rounded border-[var(--line)] text-[var(--brand)]"
                 />
-                <label :for="`level-${level}`" class="ml-3 text-sm text-gray-600">
+                <label :for="`level-${level}`" class="ml-3 text-sm text-[var(--muted)]">
                   {{ level }}
                 </label>
               </div>
@@ -86,7 +86,7 @@
           
           <!-- Price Range Slider -->
           <div class="px-2 mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="mb-2 block text-sm font-medium text-[var(--text)]">
               Price Range (up to ${{ priceRange[1] }})<br>
             </label>
             <vue-slider
@@ -98,12 +98,12 @@
               :tooltip-formatter="value => '$' + value"
               :height="6"
               :dot-size="20"
-              :process-style="{ backgroundColor: '#3b82f6' }"
-              :tooltip-style="{ backgroundColor: '#3b82f6', borderColor: '#3b82f6' }"
+              :process-style="{ backgroundColor: 'var(--brand)' }"
+              :tooltip-style="{ backgroundColor: 'var(--brand)', borderColor: 'var(--brand)' }"
               @change="handlePriceRangeChange"
               class="mb-2"
             />
-            <div class="flex justify-between text-xs text-gray-500">
+            <div class="flex justify-between text-xs text-[var(--muted)]">
               <span>$0</span>
               <span>$1000</span>
             </div>
@@ -113,7 +113,7 @@
         <!-- Reset Filters -->
         <button 
           @click="resetFilters"
-          class="w-full text-sm text-blue-600 hover:text-blue-800 hover:underline"
+          class="w-full text-sm text-[var(--brand-strong)] hover:underline"
         >
           Reset all filters
         </button>
@@ -124,8 +124,8 @@
         <!-- Loading State -->
         <div v-if="loading" class="flex justify-center py-20">
           <div class="flex flex-col items-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            <p class="mt-3 text-gray-500">Loading courses...</p>
+            <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-[var(--brand)]"></div>
+            <p class="mt-3 text-[var(--muted)]">Loading courses...</p>
           </div>
         </div>
         
@@ -135,13 +135,13 @@
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <h3 class="mt-2 text-lg font-medium text-gray-900">No courses found</h3>
-            <p class="mt-1 text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+            <h3 class="mt-2 text-lg font-medium text-[var(--text)]">No courses found</h3>
+            <p class="mt-1 text-[var(--muted)]">Try adjusting your search or filter to find what you're looking for.</p>
             <div class="mt-6">
               <button 
                 @click="clearSearch"
                 type="button"
-                class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                class="btn-brand inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
               >
                 Clear search
               </button>
@@ -154,7 +154,7 @@
           <div 
             v-for="course in paginatedCourses" 
             :key="course.id" 
-            class="section-shell interactive-lift overflow-hidden rounded-2xl border border-slate-100 bg-white flex flex-col"
+            class="section-shell interactive-lift flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)]"
           >
             <div class="relative">
               <img 
@@ -163,7 +163,7 @@
                 class="h-48 w-full object-cover"
                 loading="lazy"
               >
-              <div class="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">
+              <div class="absolute right-2 top-2 rounded bg-[var(--brand)] px-2 py-1 text-xs font-semibold text-white">
                 {{ course.price === 0 ? 'FREE' : `$${course.price}` }}
               </div>
             </div>
@@ -175,14 +175,14 @@
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                   </svg>
                 </div>
-                <span class="text-xs text-gray-500 ml-1">({{ course.rating }})</span>
+                <span class="ml-1 text-xs text-[var(--muted)]">({{ course.rating }})</span>
               </div>
               
-              <h3 class="font-semibold text-lg mb-2 text-gray-900 line-clamp-2">
+              <h3 class="mb-2 text-lg font-semibold text-[var(--text)] line-clamp-2">
                 {{ course.title }}
               </h3>
               
-              <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
+              <p class="mb-4 flex-1 text-sm text-[var(--muted)] line-clamp-3">
                 {{ course.description }}
               </p>
               
@@ -190,16 +190,16 @@
                 <span 
                   v-for="tag in course.tags.slice(0, 3)" 
                   :key="tag" 
-                  class="bg-blue-50 text-blue-600 px-2 py-1 rounded-full text-xs"
+                  class="rounded-full bg-[var(--bg-alt)] px-2 py-1 text-xs text-[var(--brand-strong)]"
                 >
                   {{ tag }}
                 </span>
-                <span v-if="course.tags.length > 3" class="text-gray-400 text-xs">
+                <span v-if="course.tags.length > 3" class="text-xs text-[var(--muted)]/70">
                   +{{ course.tags.length - 3 }} more
                 </span>
               </div>
               
-              <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div class="flex items-center justify-between border-t border-[var(--line)] pt-3">
                 <div class="flex items-center">
                   <img 
                     :src="course.instructorImage" 
@@ -207,9 +207,9 @@
                     class="h-8 w-8 rounded-full object-cover mr-2"
                     loading="lazy"
                   >
-                  <span class="text-sm text-gray-600">{{ course.instructorName }}</span>
+                  <span class="text-sm text-[var(--muted)]">{{ course.instructorName }}</span>
                 </div>
-                <span class="text-xs text-gray-500">{{ course.duration }}</span>
+                <span class="text-xs text-[var(--muted)]">{{ course.duration }}</span>
               </div>
             </div>
           </div>
@@ -221,14 +221,14 @@
             <button 
               @click="changePage(currentPage - 1)"
               :disabled="currentPage === 1"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="relative inline-flex items-center rounded-md border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--bg-alt)]"
             >
               Previous
             </button>
             <button 
               @click="changePage(currentPage + 1)"
               :disabled="currentPage === totalPages"
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="relative ml-3 inline-flex items-center rounded-md border border-[var(--line)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--bg-alt)]"
             >
               Next
             </button>
@@ -236,7 +236,7 @@
           
           <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-[var(--muted)]">
                 Showing <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> to 
                 <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredCourses.length) }}</span> of 
                 <span class="font-medium">{{ filteredCourses.length }}</span> results
@@ -248,7 +248,7 @@
                 <button 
                    @click="changePage(currentPage - 1)"
                    :disabled="currentPage === 1"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  class="relative inline-flex items-center rounded-l-md border border-[var(--line)] bg-[var(--surface)] px-2 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--bg-alt)]"
                 >
                   <span class="sr-only">Previous</span>
                   <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -260,7 +260,7 @@
                   v-for="page in visiblePages"
                   :key="page"
                    @click="changePage(page)"
-                  :class="[page === currentPage ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50', 'relative inline-flex items-center px-4 py-2 border text-sm font-medium']"
+                  :class="[page === currentPage ? 'z-10 bg-[var(--bg-alt)] border-[var(--brand)] text-[var(--brand-strong)]' : 'bg-[var(--surface)] border-[var(--line)] text-[var(--muted)] hover:bg-[var(--bg-alt)]', 'relative inline-flex items-center border px-4 py-2 text-sm font-medium']"
                 >
                   {{ page }}
                 </button>
@@ -268,7 +268,7 @@
                 <button 
                   @click="changePage(currentPage + 1)"
                   :disabled="currentPage === totalPages"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  class="relative inline-flex items-center rounded-r-md border border-[var(--line)] bg-[var(--surface)] px-2 py-2 text-sm font-medium text-[var(--muted)] hover:bg-[var(--bg-alt)]"
                 >
                   <span class="sr-only">Next</span>
                   <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

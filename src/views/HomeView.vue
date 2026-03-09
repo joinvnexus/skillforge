@@ -1,5 +1,5 @@
 <template>
-  <main class="mx-auto max-w-[1600px] space-y-10 px-2 pb-12">
+  <main id="main-content" class="mx-auto max-w-[1600px] space-y-10 px-2 pb-12">
     <HeroSection />
     <FeaturesSection />
     <FeaturedCourses />

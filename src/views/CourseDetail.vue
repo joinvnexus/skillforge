@@ -7,7 +7,7 @@
     
     <!-- Error State -->
     <div v-else-if="error" class="error-message flex items-center justify-center min-h-[300px]">
-      <ErrorMessage :message="error" />
+      <ErrorMessage :error="error" />
     </div>
     
     <!-- Course Content -->
@@ -15,8 +15,6 @@
       <!-- Hero Section -->
       <CourseHero 
         :course="course"
-        :description="course.description"
-        
         @enroll="handleEnroll"
       />
       
@@ -128,6 +126,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('ui', ['loading', 'error']),
     ...mapState('courses', [
       'currentCourse',
       'relatedCourses',
@@ -195,7 +194,6 @@ export default {
   created() {
     const courseId = this.$route.params.id
     this.fetchCourseById(courseId).then(() => {
-      console.log('Loaded course:', this.course)
       if (this.course) {
           //this.fetchCourseById(this.course.tags) // Fetch related courses based on tags
       }

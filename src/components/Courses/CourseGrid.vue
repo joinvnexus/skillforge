@@ -2,30 +2,29 @@
 <template>
   <div id="course-listing" class="min-h-[400px]">
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-16 px-4">
-      <div class="w-12 h-12 border-3 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
-      <p class="mt-4 text-gray-600">Loading courses...</p>
+    <div v-if="loading" class="flex flex-col items-center justify-center px-4 py-16">
+      <div class="h-12 w-12 animate-spin rounded-full border-2 border-[var(--line)] border-t-[var(--brand)]"></div>
+      <p class="mt-4 text-[var(--muted)]">Loading courses...</p>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!courses || courses.length === 0" 
-         class="text-center py-16 px-4">
-      <div class="w-16 h-16 text-gray-400 mx-auto mb-6">
+    <div v-else-if="!courses || courses.length === 0" class="py-16 px-4 text-center">
+      <div class="mx-auto mb-6 h-16 w-16 text-[var(--muted)]/70">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
-      <h3 class="text-xl font-semibold text-gray-800 mb-2">No courses found</h3>
-      <p class="text-gray-600">Try adjusting your filters or check back later.</p>
+      <h3 class="mb-2 text-xl font-semibold text-[var(--text)]">No courses found</h3>
+      <p class="text-[var(--muted)]">Try adjusting your filters or check back later.</p>
     </div>
 
     <!-- Courses Grid - Adjusted breakpoints for sidebar layout -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 p-2">
+    <div v-else class="grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 sm:gap-6 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       <div
         v-for="(course, index) in courses"
         :key="course.id"
-        class="group section-shell interactive-lift overflow-hidden flex flex-col h-full cursor-pointer border-2 border-transparent hover:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+        class="group section-shell interactive-lift flex h-full cursor-pointer flex-col overflow-hidden border-2 border-transparent hover:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
         :data-aos="'fade-up'"
         :data-aos-delay="(index % 4) * 100"
         :aria-label="`Course: ${course.title}`"
@@ -34,7 +33,7 @@
         @click="navigateToCourse(course.id)"
       >
         <!-- Course Image Container -->
-        <div class="relative pt-[56.25%] bg-gray-100 dark:bg-gray-700 overflow-hidden">
+        <div class="relative overflow-hidden bg-[var(--surface-soft)] pt-[56.25%]">
           <!-- Course Image -->
           <img
             :src="course.image || '/placeholder-course.jpg'"
@@ -61,7 +60,7 @@
             <!-- Featured Badge -->
             <span
               v-if="course.isFeatured"
-              class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-600/95 backdrop-blur-sm text-white"
+              class="inline-flex items-center gap-1 rounded-full bg-[var(--brand)]/95 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
               aria-label="Featured course"
             >
               <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -73,7 +72,7 @@
             <!-- Free Badge -->
             <span
               v-if="course.price === 0"
-              class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/95 backdrop-blur-sm text-white"
+              class="rounded-full bg-[var(--brand-strong)]/95 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
               aria-label="Free course"
             >
               FREE
@@ -91,7 +90,7 @@
             <!-- New Badge -->
             <span
               v-if="isCourseNew(course.createdAt)"
-              class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/95 backdrop-blur-sm text-white"
+              class="rounded-full bg-[var(--accent)]/95 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm"
               aria-label="New course"
             >
               NEW
@@ -108,9 +107,9 @@
         </div>
 
         <!-- Course Content -->
-        <div class="flex-1 p-5 flex flex-col">
+        <div class="flex flex-1 flex-col p-5">
           <!-- Title -->
-          <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <h3 class="mb-2 line-clamp-2 text-lg font-bold text-[var(--text)] transition-colors group-hover:text-[var(--brand-strong)]">
             <router-link
               :to="'/courses/' + course.id"
               class="hover:no-underline focus:outline-none"
@@ -121,12 +120,12 @@
           </h3>
           
           <!-- Instructor -->
-          <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+          <p class="mb-3 text-sm text-[var(--muted)]">
             By <span class="font-medium">{{ course.instructor || 'Unknown Instructor' }}</span>
           </p>
           
           <!-- Description -->
-          <p class="text-sm text-gray-700 dark:text-gray-400 mb-4 flex-1 line-clamp-2" 
+          <p class="mb-4 flex-1 line-clamp-2 text-sm text-[var(--muted)]"
              :title="course.description">
             {{ course.description || 'No description available' }}
           </p>
@@ -138,7 +137,7 @@
                 <span v-for="star in 5" :key="star">
                   <svg
                     class="w-4 h-4"
-                    :class="star <= Math.round(course.rating || 0) ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'"
+                    :class="star <= Math.round(course.rating || 0) ? 'text-yellow-400' : 'text-[var(--line)]'"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -146,14 +145,14 @@
                   </svg>
                 </span>
               </div>
-              <span class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">
+              <span class="ml-2 text-sm font-semibold text-[var(--text)]">
                 {{ (course.rating || 0).toFixed(1) }}
               </span>
             </div>
             
             <!-- Review Count -->
             <span v-if="course.reviewCount" 
-                  class="text-sm text-gray-500 dark:text-gray-400">
+                  class="text-sm text-[var(--muted)]">
               ({{ formatNumber(course.reviewCount) }})
             </span>
             
@@ -166,7 +165,7 @@
           </div>
           
           <!-- Course Meta Info -->
-          <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <div class="mb-4 flex items-center justify-between text-sm text-[var(--muted)]">
             <!-- Duration -->
             <div class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,20 +195,20 @@
           </div>
           
           <!-- Price and Action Button -->
-          <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between mb-4">
+          <div class="mt-auto border-t border-[var(--line)] pt-4">
+            <div class="mb-4 flex items-center justify-between">
               <!-- Price -->
               <div class="flex items-baseline gap-2">
                 <span v-if="course.originalPrice && course.originalPrice > course.price" 
-                      class="text-sm text-gray-500 dark:text-gray-400 line-through">
+                      class="text-sm text-[var(--muted)] line-through">
                   ${{ course.originalPrice }}
                 </span>
                 <span class="text-xl font-bold" 
-                      :class="course.price === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'">
+                      :class="course.price === 0 ? 'text-[var(--brand-strong)]' : 'text-[var(--text)]'">
                   {{ course.price === 0 ? 'Free' : `$${course.price}` }}
                 </span>
                 <span v-if="course.price > 0 && course.price < 20" 
-                      class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                      class="text-xs font-medium text-[var(--brand-strong)]">
                   Great value!
                 </span>
               </div>
@@ -218,10 +217,10 @@
               <button
                 v-if="showBookmark"
                 @click.stop="toggleBookmark(course.id)"
-                class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                class="rounded-full p-2 transition-colors hover:bg-[var(--bg-alt)]"
                 :aria-label="course.bookmarked ? 'Remove from bookmarks' : 'Add to bookmarks'"
               >
-                <svg class="w-5 h-5" :class="course.bookmarked ? 'fill-red-500 text-red-500' : 'text-gray-400'" 
+                <svg class="h-5 w-5" :class="course.bookmarked ? 'fill-red-500 text-red-500' : 'text-[var(--muted)]/70'"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -232,10 +231,10 @@
             <!-- Action Button -->
             <router-link
               :to="'/courses/' + course.id"
-              class="block w-full py-3 px-4 rounded-lg font-semibold text-white text-center transition-all duration-200 flex items-center justify-center gap-2"
+              class="btn-brand flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-center font-semibold text-white transition-all duration-200"
               :class="course.price === 0 
-                ? 'bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-200 dark:hover:shadow-emerald-900/30' 
-                : 'bg-gradient-to-r from-teal-600 to-sky-600 hover:from-teal-700 hover:to-sky-700 hover:shadow-lg hover:shadow-sky-200 dark:hover:shadow-sky-900/30'"
+                ? 'opacity-95' 
+                : ''"
               :aria-label="course.price === 0 ? `Enroll in ${course.title} for free` : `View ${course.title} course details`"
             >
               <span>{{ course.price === 0 ? 'Enroll for Free' : 'View Course' }}</span>
@@ -251,7 +250,7 @@
                  class="mt-3 text-center">
               <button
                 @click.stop="addToCart(course)"
-                class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+                class="text-sm font-medium text-[var(--brand-strong)] transition-colors hover:text-[var(--brand)]"
               >
                 + Add to cart
               </button>
@@ -307,12 +306,12 @@ export default {
     
     getLevelClass(level) {
       const classes = {
-        'Beginner': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-        'Intermediate': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-        'Advanced': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-        'All Levels': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+        'Beginner': 'bg-[var(--bg-alt)] text-[var(--brand-strong)]',
+        'Intermediate': 'bg-yellow-100 text-yellow-800',
+        'Advanced': 'bg-red-100 text-red-700',
+        'All Levels': 'bg-[var(--surface-soft)] text-[var(--brand-strong)]'
       };
-      return classes[level] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      return classes[level] || 'bg-[var(--surface-soft)] text-[var(--muted)]';
     },
     
     isCourseNew(createdAt) {
@@ -357,15 +356,8 @@ export default {
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-/* Dark mode transitions */
-@media (prefers-color-scheme: dark) {
-  .dark\:bg-gray-800 {
-    transition: background-color 0.3s ease;
-  }
 }
 
 /* Custom animation for skeleton loading */
