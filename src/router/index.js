@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "../store";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "../views/home/index.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,17 +13,17 @@ const router = createRouter({
     {
       path: "/about",
       name: "about",
-      component: () => import("../views/AboutView.vue"),
+      component: () => import("../views/about/index.vue"),
     },
     {
       path: "/courses",
       name: "courses",
-      component: () => import("../views/CourseList.vue"),
+      component: () => import("../views/course-list/index.vue"),
     },
     {
       path: "/courses/:id",
       name: "CourseDetail",
-      component: () => import("@/views/CourseDetail.vue"),
+      component: () => import("@/views/course-detail/index.vue"),
       props: true,
     },
     {
@@ -47,66 +47,66 @@ const router = createRouter({
     {
       path: "/search",
       name: "SearchResults",
-      component: () => import("@/views/SearchResults.vue"),
+      component: () => import("@/views/search-results/index.vue"),
     },
     {
       path: "/login",
       name: "Login",
-      component: () => import("../views/Login.vue"),
+      component: () => import("../views/login/index.vue"),
       meta: { requiresGuest: true },
     },
     {
       path: "/signup",
       name: "Signup",
-      component: () => import("../views/Signup.vue"),
+      component: () => import("../views/signup/index.vue"),
       meta: { requiresGuest: true },
     },
     {
       path: "/blog",
       name: "Blog",
-      component: () => import("@/views/BlogView.vue"),
+      component: () => import("@/views/blog/index.vue"),
       meta: { title: "Blog" },
     },
     {
       path: "/resources",
       name: "Resources",
-      component: () => import("@/views/ResourcesView.vue"),
+      component: () => import("@/views/resources/index.vue"),
       meta: { title: "Resources" },
     },
     {
       path: "/contact",
       name: "Contact",
-      component: () => import("@/views/ContactView.vue"),
+      component: () => import("@/views/contact/index.vue"),
       meta: { title: "Contact Us" },
     },
     {
       path: "/support",
       name: "Support",
-      component: () => import("@/views/SupportView.vue"),
+      component: () => import("@/views/support/index.vue"),
       meta: { title: "Support Center" },
     },
     {
       path: "/forgot-password",
       name: "ForgotPassword",
-      component: () => import("@/views/ForgotPassword.vue"),
+      component: () => import("@/views/forgot-password/index.vue"),
       meta: { requiresGuest: true, title: "Forgot Password" },
     },
     {
       path: "/reset-password",
       name: "ResetPassword",
-      component: () => import("@/views/ResetPassword.vue"),
+      component: () => import("@/views/reset-password/index.vue"),
       meta: { requiresGuest: true, title: "Reset Password" },
     },
     {
       path: "/confirm-email-change",
       name: "ConfirmEmailChange",
-      component: () => import("@/views/ConfirmEmailChange.vue"),
+      component: () => import("@/views/confirm-email-change/index.vue"),
       meta: { title: "Confirm Email Change" },
     },
     {
       path: "/dashboard",
       name: "Dashboard",
-      component: () => import("@/views/Dashboard.vue"),
+      component: () => import("@/views/dashboard-shell/index.vue"),
       meta: { requiresAuth: true },
       children: [
         {

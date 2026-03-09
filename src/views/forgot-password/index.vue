@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import AuthForgotPassword from '../components/auth/AuthForgotPassword.vue'
+import AuthForgotPassword from '@/components/auth/AuthForgotPassword.vue'
 
 export default {
   components: { AuthForgotPassword }
