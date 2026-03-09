@@ -70,7 +70,7 @@
 
   // Import components
   import HeroSection from '@/components/Courses/HeroSection.vue'
-   import SidebarFilters from '@/components/Courses/SidebarFilters.vue'
+  import SidebarFilters from '@/components/Courses/SidebarFilters.vue'
   import CourseGrid from '@/components/Courses/CourseGrid.vue'
   import Pagination from '@/components/Courses/Pagination.vue'
   import ErrorState from '@/components/UI/ErrorState.vue'
