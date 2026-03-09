@@ -9,6 +9,9 @@ import ui from './modules/ui'
 import blog from './modules/blog'
 import enrollments from './modules/enrollments'
 import auth from './modules/auth'
+import wishlist from './modules/wishlist'
+import cart from './modules/cart'
+import orders from './modules/orders'
 
 const store = createStore({
   modules: {
@@ -21,7 +24,10 @@ const store = createStore({
     filters,
     ui,
     enrollments,
-    auth
+    auth,
+    wishlist,
+    cart,
+    orders
   }
 })
 

@@ -46,5 +46,10 @@ const navItems = computed(() => {
   }
 
   return [...common, { label: 'My Courses', to: '/dashboard/my-courses' }]
+    .concat([
+      { label: 'Wishlist', to: '/dashboard/wishlist' },
+      { label: 'Cart', to: '/dashboard/cart' },
+      { label: 'Orders', to: '/dashboard/orders' }
+    ])
 })
 </script>

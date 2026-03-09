@@ -42,7 +42,12 @@
           <LoadingSpinner v-if="loading" />
           <ErrorState v-else-if="error" :error="error" @retry="fetchCourses" />
           <NoResults v-else-if="courseCount === 0" @reset="resetFilters" />
-          <CourseGrid v-else :courses="paginatedCourses" />
+          <CourseGrid
+            v-else
+            :courses="paginatedCourses"
+            @add-to-cart="handleAddToCart"
+            @bookmark-toggle="handleWishlistToggle"
+          />
 
           <!-- Pagination -->
           <Pagination 
@@ -85,6 +90,7 @@
     // Updated computed and methods
     computed: {
       ...mapState('ui', ['loading', 'error', 'currentPage']),
+      ...mapState('auth', ['user']),
       ...mapState('filters', ['sortBy']),
       ...mapGetters('ui', ['paginatedCourses', 'totalPages', 'courseCount']),
       ...mapGetters('filters', ['hasFilters']),
@@ -100,14 +106,40 @@
       ...mapActions('courses', ['fetchCourses']),
       ...mapActions('filters', ['updateSortBy', 'resetFilters']),
       ...mapActions('ui', ['changePage']),
+      ...mapActions('cart', ['addToCart']),
+      ...mapActions('wishlist', ['addToWishlist', 'removeFromWishlist', 'fetchWishlist']),
       updateSort(e) {
         this.updateSortBy(e.target.value)
+      },
+      ensureAuthOrRedirect() {
+        if (this.user) return true
+        this.$router.push({ name: 'Login', query: { redirect: this.$route.fullPath } })
+        return false
+      },
+      handleAddToCart(course) {
+        if (!this.ensureAuthOrRedirect()) return
+        this.addToCart(course)
+      },
+      async handleWishlistToggle(courseId) {
+        if (!this.ensureAuthOrRedirect()) return
+        const course = this.paginatedCourses.find((item) => item.id === courseId)
+        const inWishlist = this.$store.getters['wishlist/isWishlisted'](courseId)
+        if (inWishlist) {
+          await this.removeFromWishlist(courseId)
+          return
+        }
+        if (course) {
+          await this.addToWishlist(course)
+        }
       }
     },
     created() {
       this.localSortBy = this.sortBy
       this.updateSortBy(this.sortBy)
       this.fetchCourses()
+      if (this.user) {
+        this.fetchWishlist().catch(() => {})
+      }
     },
     // Initialize AOS on component mount
     mounted() {

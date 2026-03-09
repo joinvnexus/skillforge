@@ -195,6 +195,54 @@ router.patch(
   })
 );
 
+router.delete(
+  "/instructor/courses/:courseId",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+
+    const course = await prisma.course.findFirst({
+      where: {
+        id: req.params.courseId,
+        instructorId: instructor.id
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if (!course) {
+      throw new HttpError(404, "Course not found");
+    }
+
+    await prisma.course.delete({
+      where: {
+        id: course.id
+      }
+    });
+
+    const totalCourses = await prisma.course.count({
+      where: {
+        instructorId: instructor.id
+      }
+    });
+
+    await prisma.instructorProfile.update({
+      where: {
+        id: instructor.id
+      },
+      data: {
+        totalCourses
+      }
+    });
+
+    res.json({
+      data: {
+        success: true
+      }
+    });
+  })
+);
+
 router.patch(
   "/instructor/courses/:courseId/status",
   asyncHandler(async (req, res) => {

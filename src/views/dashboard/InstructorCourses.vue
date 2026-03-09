@@ -38,6 +38,12 @@
             >
               Send Review
             </button>
+            <button
+              class="rounded-md border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50"
+              @click="deleteCourse(course.id)"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </article>
@@ -75,6 +81,18 @@ const setStatus = async (courseId, status) => {
       method: 'PATCH',
       auth: true,
       body: { status }
+    })
+    await reload()
+  } catch (err) {
+    error.value = err.message
+  }
+}
+
+const deleteCourse = async (courseId) => {
+  try {
+    await apiRequest(`/instructor/courses/${courseId}`, {
+      method: 'DELETE',
+      auth: true
     })
     await reload()
   } catch (err) {

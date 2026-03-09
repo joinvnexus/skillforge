@@ -16,5 +16,6 @@ app.use(store) // Use the Vuex store
 
 // Initialize auth before mounting the app
 store.dispatch('auth/initializeAuth').then(() => {
+  store.dispatch('cart/initializeCart')
   app.mount('#app')
 })

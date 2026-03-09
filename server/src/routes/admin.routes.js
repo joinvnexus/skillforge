@@ -266,6 +266,55 @@ router.get(
   })
 );
 
+router.get(
+  "/admin/orders",
+  asyncHandler(async (req, res) => {
+    const { page, limit, skip } = getPagination(req.query, { limit: 20 });
+    const status = String(req.query.status || "").toUpperCase().trim();
+    const where = status ? { status } : {};
+
+    const [orders, total] = await Promise.all([
+      prisma.order.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: [{ createdAt: "desc" }],
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          items: {
+            include: {
+              course: {
+                select: {
+                  id: true,
+                  slug: true,
+                  title: true
+                }
+              }
+            }
+          }
+        }
+      }),
+      prisma.order.count({ where })
+    ]);
+
+    res.json({
+      data: orders,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  })
+);
+
 router.patch(
   "/admin/testimonials/:id",
   asyncHandler(async (req, res) => {

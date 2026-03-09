@@ -110,6 +110,24 @@ const router = createRouter({
           meta: { title: "My Courses", requiresRole: ["STUDENT"] }
         },
         {
+          path: "wishlist",
+          name: "WishlistView",
+          component: () => import("@/views/dashboard/WishlistView.vue"),
+          meta: { title: "Wishlist", requiresRole: ["STUDENT"] }
+        },
+        {
+          path: "cart",
+          name: "CartView",
+          component: () => import("@/views/dashboard/CartView.vue"),
+          meta: { title: "Cart", requiresRole: ["STUDENT"] }
+        },
+        {
+          path: "orders",
+          name: "OrdersView",
+          component: () => import("@/views/dashboard/OrdersView.vue"),
+          meta: { title: "Orders", requiresRole: ["STUDENT"] }
+        },
+        {
           path: "profile",
           name: "UserProfile",
           component: () => import("@/views/dashboard/UserProfile.vue"),
