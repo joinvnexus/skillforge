@@ -6,8 +6,8 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Page Header -->
       <div class="section-shell mb-8 p-7 text-center" data-aos="fade-in">
-        <h1 class="mb-2 text-3xl font-bold text-slate-900 md:text-4xl">Explore Our Courses</h1>
-        <p class="mx-auto max-w-2xl text-lg text-slate-600">
+        <h1 class="mb-2 text-3xl font-bold text-[var(--text)] md:text-4xl">Explore Our Courses</h1>
+        <p class="mx-auto max-w-2xl text-lg text-[var(--muted)]">
           Find the perfect course to advance your skills
         </p>
       </div>
@@ -20,16 +20,16 @@
         <main class="flex-1 min-w-0">
           <!-- Sorting and Results Count -->
           <div class="section-shell mb-6 flex flex-col items-center justify-between gap-3 p-4 sm:flex-row" data-aos="fade-left">
-            <p class="mb-2 text-slate-600 sm:mb-0">
+            <p class="mb-2 text-[var(--muted)] sm:mb-0">
               Showing {{ paginatedCourses.length }} of {{ courseCount }} courses
-              <span v-if="hasFilters" class="text-sm text-slate-500">(filtered)</span>
+              <span v-if="hasFilters" class="text-sm text-[var(--muted)]/80">(filtered)</span>
             </p>
             <div class="flex items-center">
-              <span class="mr-2 text-slate-600">Sort by:</span>
+              <span class="mr-2 text-[var(--muted)]">Sort by:</span>
               <select
               v-model="localSortBy"
                @change="updateSort"
-                class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none">
+                class="rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none">
                 <option value="newest">Newest</option>
                 <option value="popular">Most Popular</option>
                 <option value="rated">Highest Rated</option>

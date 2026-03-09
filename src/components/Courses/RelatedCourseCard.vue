@@ -1,5 +1,5 @@
 <template>
-  <article class="section-shell interactive-lift flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white">
+  <article class="section-shell interactive-lift flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)]">
     <div class="relative">
       <img
         :src="course.image || '/placeholder-course.jpg'"
@@ -8,20 +8,20 @@
       />
       <span
         v-if="course.price === 0"
-        class="absolute right-2 top-2 rounded-full bg-emerald-500 px-2.5 py-1 text-xs font-semibold text-white"
+        class="absolute right-2 top-2 rounded-full bg-[var(--brand)] px-2.5 py-1 text-xs font-semibold text-white"
       >
         FREE
       </span>
     </div>
 
     <div class="flex flex-1 flex-col p-4">
-      <h3 class="mb-1 text-lg font-semibold text-slate-900">
-        <router-link :to="'/courses/' + course.id" class="transition-colors hover:text-blue-600">
+      <h3 class="mb-1 text-lg font-semibold text-[var(--text)]">
+        <router-link :to="'/courses/' + course.id" class="transition-colors hover:text-[var(--brand-strong)]">
           {{ course.title }}
         </router-link>
       </h3>
-      <p class="mb-2 text-sm text-slate-600">By {{ course.instructor || "Unknown Instructor" }}</p>
-      <p class="mb-3 line-clamp-2 text-sm text-slate-600">
+      <p class="mb-2 text-sm text-[var(--muted)]">By {{ course.instructor || "Unknown Instructor" }}</p>
+      <p class="mb-3 line-clamp-2 text-sm text-[var(--muted)]">
         {{ course.description || "No description available" }}
       </p>
 
@@ -32,7 +32,7 @@
               <span v-for="star in 5" :key="star">
                 <svg
                   class="h-4 w-4"
-                  :class="{ 'text-slate-300': star > Math.round(course.rating || 0) }"
+                  :class="{ 'text-[var(--line)]': star > Math.round(course.rating || 0) }"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -40,16 +40,16 @@
                 </svg>
               </span>
             </div>
-            <span class="text-sm text-slate-600">{{ (course.rating || 0).toFixed(1) }}</span>
+            <span class="text-sm text-[var(--muted)]">{{ (course.rating || 0).toFixed(1) }}</span>
           </div>
-          <span class="font-semibold text-slate-900">
+          <span class="font-semibold text-[var(--text)]">
             {{ course.price === 0 ? "Free" : "$" + course.price }}
           </span>
         </div>
 
         <router-link
           :to="'/courses/' + course.id"
-          class="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
+          class="btn-brand inline-flex w-full items-center justify-center rounded-xl px-4 py-2 text-center text-sm font-semibold text-white"
         >
           View Course
         </router-link>

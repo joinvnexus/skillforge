@@ -9,7 +9,7 @@
     <div class="container relative z-10 mx-auto max-w-7xl">
       <div class="max-w-3xl">
         <div class="mb-4 text-sm text-white/80 md:text-base">
-          <router-link to="/courses" class="transition-colors hover:text-blue-300">Courses</router-link>
+          <router-link to="/courses" class="transition-colors hover:text-[var(--accent)]">Courses</router-link>
           <span class="mx-1">/</span>
           <span>{{ course.title }}</span>
         </div>
@@ -47,7 +47,7 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
           <button
             @click="$emit('enroll')"
-            class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-7 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            class="btn-brand inline-flex items-center justify-center rounded-xl px-7 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
           >
             Enroll Now for {{ coursePrice }}
           </button>

@@ -1,8 +1,8 @@
 <template>
   <section class="px-4 py-16">
     <div class="container mx-auto max-w-7xl">
-      <h2 class="mb-12 text-center text-3xl font-bold text-slate-900 md:text-4xl animate-slide-up">
-        Explore Our <span class="text-blue-600">Features</span>
+      <h2 class="mb-12 text-center text-3xl font-bold text-[var(--text)] md:text-4xl animate-slide-up">
+        Explore Our <span class="text-[var(--brand-strong)]">Features</span>
       </h2>
 
       <div v-if="isLoading" class="flex items-center justify-center py-12">
@@ -23,20 +23,20 @@
             <div class="mb-6 flex justify-center">
               <div
                 v-html="feature.icon"
-                class="flex h-20 w-20 items-center justify-center rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 shadow-inner transition-all duration-300 hover:scale-105 hover:shadow-md"
+                class="feature-icon flex h-20 w-20 items-center justify-center rounded-2xl shadow-inner transition-all duration-300 hover:scale-105 hover:shadow-md"
               ></div>
             </div>
-            <h3 class="mb-3 text-xl font-semibold text-slate-900">{{ feature.title }}</h3>
-            <p class="text-slate-600">{{ feature.description }}</p>
+            <h3 class="mb-3 text-xl font-semibold text-[var(--text)]">{{ feature.title }}</h3>
+            <p class="text-[var(--muted)]">{{ feature.description }}</p>
           </article>
         </div>
 
         <div class="mt-16">
           <div class="mb-12 text-center animate-slide-up">
-            <h3 class="mb-3 text-2xl font-bold text-slate-900 md:text-3xl">
-              Structured <span class="text-blue-600">Learning Paths</span>
+            <h3 class="mb-3 text-2xl font-bold text-[var(--text)] md:text-3xl">
+              Structured <span class="text-[var(--brand-strong)]">Learning Paths</span>
             </h3>
-            <p class="mx-auto max-w-2xl text-lg text-slate-600">
+            <p class="mx-auto max-w-2xl text-lg text-[var(--muted)]">
               Choose a path that fits your goals and keep a clear progression from beginner to advanced.
             </p>
           </div>
@@ -50,14 +50,14 @@
               <div class="mb-6 flex justify-center">
                 <div
                   v-html="path.svg"
-                  class="flex h-16 w-16 items-center justify-center rounded-xl border border-indigo-100 bg-gradient-to-r from-indigo-100 to-indigo-50 text-indigo-600 shadow-inner transition-transform duration-300 hover:scale-105"
+                  class="path-icon flex h-16 w-16 items-center justify-center rounded-xl shadow-inner transition-transform duration-300 hover:scale-105"
                 ></div>
               </div>
-              <h4 class="mb-2 text-lg font-semibold text-slate-900">{{ path.title }}</h4>
-              <p class="mb-4 text-slate-600">{{ path.description }}</p>
+              <h4 class="mb-2 text-lg font-semibold text-[var(--text)]">{{ path.title }}</h4>
+              <p class="mb-4 text-[var(--muted)]">{{ path.description }}</p>
               <router-link
                 :to="path.link"
-                class="inline-flex items-center gap-1 rounded-full border border-indigo-200 px-6 py-2 font-medium text-blue-600 transition-colors duration-300 hover:bg-indigo-50 hover:text-blue-700"
+                class="inline-flex items-center gap-1 rounded-full border border-[var(--line)] px-6 py-2 font-medium text-[var(--brand-strong)] transition-colors duration-300 hover:bg-[var(--bg-alt)]"
               >
                 Learn More <span aria-hidden="true">&rarr;</span>
               </router-link>
@@ -95,6 +95,26 @@ export default {
 <style>
 .animate-slide-up {
   animation: slideUp 1s ease-out forwards;
+}
+
+.feature-icon {
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, #ffffff 76%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 16%, #ffffff 84%),
+    color-mix(in srgb, var(--brand) 10%, #ffffff 90%)
+  );
+  color: var(--brand-strong);
+}
+
+.path-icon {
+  border: 1px solid color-mix(in srgb, var(--brand) 24%, #ffffff 76%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--brand) 12%, #ffffff 88%),
+    color-mix(in srgb, var(--accent) 10%, #ffffff 90%)
+  );
+  color: var(--brand-strong);
 }
 
 .animate-fade-in {

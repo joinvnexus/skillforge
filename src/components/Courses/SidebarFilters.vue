@@ -4,7 +4,7 @@
     <div class="lg:hidden mb-4">
       <button
         @click="mobileFiltersOpen = !mobileFiltersOpen"
-        class="w-full flex items-center justify-between p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow"
+        class="w-full flex items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface)] p-4 shadow-md transition-shadow hover:shadow-lg"
       >
         <div class="flex items-center gap-3">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,7 @@
               @input="handleSearchInput"
               type="text"
               placeholder="React, JavaScript, Python..."
-              class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 transition-colors"
+            class="w-full rounded-lg border border-[var(--line)] py-3 pl-10 pr-4 placeholder-gray-400 transition-colors focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]"
             />
             <button
               v-if="searchQuery"
@@ -117,7 +117,7 @@
                     @change="toggleCategory(category)"
                     class="sr-only peer"
                   />
-                  <div class="w-5 h-5 border-2 border-gray-300 rounded-md peer-checked:border-blue-600 peer-checked:bg-blue-600 flex items-center justify-center transition-all">
+                  <div class="flex h-5 w-5 items-center justify-center rounded-md border-2 border-[var(--line)] transition-all peer-checked:border-[var(--brand)] peer-checked:bg-[var(--brand)]">
                     <svg v-if="selectedCategories.includes(category)" 
                          class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
@@ -126,7 +126,7 @@
                 </div>
                 <span class="text-gray-700 group-hover:text-gray-900">{{ category }}</span>
               </div>
-              <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+              <span class="rounded bg-[var(--surface-soft)] px-2 py-1 text-xs text-[var(--muted)]/80">
                 {{ getCategoryCount(category) }}
               </span>
             </label>
@@ -195,7 +195,7 @@
                 step="10"
                 @input="handlePriceRangeInput"
                 @change="handlePriceRangeChange"
-                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                class="slider h-2 w-full cursor-pointer appearance-none rounded-lg bg-[var(--line)]"
               />
               <div class="absolute top-0 left-0 right-0 flex justify-between text-xs text-gray-500">
                 <span>$0</span>
@@ -213,8 +213,8 @@
                 :class="[
                   'py-2 px-3 rounded-lg text-sm font-medium transition-all',
                   isPriceOptionSelected(option)
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'btn-brand text-white'
+                    : 'bg-[var(--surface-soft)] text-[var(--text)] hover:bg-[var(--bg-alt)]'
                 ]"
               >
                 {{ option.label }}
@@ -270,7 +270,7 @@
         <div class="lg:hidden pt-4 border-t border-gray-100">
           <button
             @click="mobileFiltersOpen = false"
-            class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+            class="btn-brand w-full rounded-lg px-4 py-3 font-semibold text-white shadow-md transition-colors hover:shadow-lg"
           >
             Show {{ filteredCoursesCount }} Courses
           </button>

@@ -1,6 +1,6 @@
 <template>
   <section class="px-4 py-20">
-    <div class="section-shell relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-sky-600 to-indigo-600 px-6 py-14 text-center text-white sm:px-10">
+    <div class="cta-shell section-shell relative overflow-hidden rounded-[2rem] px-6 py-14 text-center text-white sm:px-10">
       <div class="pointer-events-none absolute -left-16 -top-14 h-40 w-40 rounded-full bg-white/15 blur-2xl"></div>
       <div class="pointer-events-none absolute -bottom-24 -right-10 h-52 w-52 rounded-full bg-cyan-200/20 blur-2xl"></div>
 
@@ -8,13 +8,13 @@
         <h2 class="text-3xl font-bold leading-tight sm:text-4xl">
           Ready to Start Learning?
         </h2>
-        <p class="text-base leading-relaxed text-sky-100 sm:text-lg">
+        <p class="text-base leading-relaxed text-white/85 sm:text-lg">
           Take the next step toward practical skill growth. Join structured tracks, real projects, and mentor-led learning in one place.
         </p>
         <div class="flex flex-wrap justify-center gap-3 pt-1">
           <router-link
             to="/courses"
-            class="interactive-lift inline-flex items-center rounded-xl bg-white px-6 py-3 font-semibold text-sky-700 shadow-sm transition hover:bg-slate-100"
+            class="interactive-lift inline-flex items-center rounded-xl bg-white px-6 py-3 font-semibold text-[var(--brand-strong)] shadow-sm transition hover:bg-slate-100"
           >
             Browse Courses
           </router-link>
@@ -40,3 +40,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.cta-shell {
+  background: linear-gradient(135deg, var(--brand), var(--accent));
+}
+</style>
