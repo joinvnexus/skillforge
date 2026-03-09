@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 pt-29">
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <!-- Loading State -->
     <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -91,7 +91,7 @@
           <div class="max-w-3xl mx-auto text-center space-y-6">
             <h2 class="text-3xl font-bold text-gray-900">Ready to Master Vue.js?</h2>
             <p class="text-lg text-gray-600">Join thousands of developers who've advanced their careers with our comprehensive training program.</p>
-            <router-link to="/signup" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10">
+            <router-link to="/signup" class="btn-brand inline-flex items-center justify-center rounded-xl px-8 py-3 text-base font-medium md:px-10 md:py-4 md:text-lg">
               Enroll in Advanced Path
             </router-link>
             <p class="flex items-center justify-center space-x-2 text-gray-600 text-sm">

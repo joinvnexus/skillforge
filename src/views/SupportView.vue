@@ -1,55 +1,60 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Support Center</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Find answers to common questions or get in touch with our support team.
-        </p>
-      </div>
-      
-      <!-- Search -->
-      <div class="max-w-2xl mx-auto mb-12">
+  <section class="mx-auto max-w-7xl px-4 py-8">
+    <div class="section-shell p-7 md:p-10">
+      <header class="mb-8 text-center">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Support</p>
+        <h1 class="mt-2 text-4xl font-bold text-slate-900">Support Center</h1>
+        <p class="mx-auto mt-3 max-w-2xl text-slate-600">Search common questions or browse categories to resolve issues quickly.</p>
+      </header>
+
+      <div class="mx-auto mb-10 max-w-2xl">
         <div class="relative">
-          <input v-model="searchQuery" type="text" placeholder="Search for help..." class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg" />
-          <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search for help..."
+            class="w-full rounded-2xl border border-slate-300 px-6 py-4 text-lg focus:border-sky-500 focus:outline-none"
+          />
+          <svg class="absolute right-4 top-1/2 h-6 w-6 -translate-y-1/2 transform text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
       </div>
-      
-      <!-- FAQ Categories -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div v-for="category in categories" :key="category.id" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+      <div class="mb-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+        <article
+          v-for="category in categories"
+          :key="category.id"
+          class="interactive-lift rounded-2xl border border-slate-200 bg-white p-6"
+        >
+          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100">
+            <svg class="h-6 w-6 text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="category.icon" />
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ category.title }}</h3>
-          <p class="text-gray-600 text-sm">{{ category.description }}</p>
-        </div>
+          <h3 class="text-lg font-bold text-slate-900">{{ category.title }}</h3>
+          <p class="mt-1 text-sm text-slate-600">{{ category.description }}</p>
+        </article>
       </div>
-      
-      <!-- FAQ -->
-      <div class="max-w-3xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-        <div class="space-y-4">
-          <div v-for="(faq, index) in faqs" :key="index" class="bg-white rounded-xl shadow-md overflow-hidden">
-            <button @click="toggleFaq(index)" class="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50">
-              <span class="font-medium text-gray-900">{{ faq.question }}</span>
-              <svg class="w-5 h-5 text-gray-500 transition-transform" :class="{ 'rotate-180': openFaq === index }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+      <div class="mx-auto max-w-3xl">
+        <h2 class="mb-5 text-2xl font-bold text-slate-900">Frequently Asked Questions</h2>
+        <div class="space-y-3">
+          <article v-for="(faq, index) in faqs" :key="index" class="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <button @click="toggleFaq(index)" class="flex w-full items-center justify-between px-5 py-4 text-left">
+              <span class="font-semibold text-slate-900">{{ faq.question }}</span>
+              <svg class="h-5 w-5 text-slate-500 transition-transform" :class="{ 'rotate-180': openFaq === index }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-            <div v-show="openFaq === index" class="px-6 pb-4 text-gray-600">
+            <div v-show="openFaq === index" class="px-5 pb-4 text-sm text-slate-600">
               {{ faq.answer }}
             </div>
-          </div>
+          </article>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>

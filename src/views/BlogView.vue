@@ -1,7 +1,7 @@
 <template>
-  <section class="min-h-screen bg-slate-50 px-4 pb-16 pt-24">
+  <section class="min-h-screen px-4 pb-16">
     <div class="mx-auto max-w-7xl">
-      <header class="mb-10">
+      <header class="section-shell mb-10 p-6">
         <h1 class="text-3xl font-bold text-slate-900 md:text-4xl">Insights & Engineering Notes</h1>
         <p class="mt-2 max-w-2xl text-slate-600">Latest articles from the platform about learning strategy and development.</p>
       </header>
@@ -10,7 +10,7 @@
       <div v-else-if="error" class="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">{{ error }}</div>
 
       <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <article v-for="post in posts" :key="post.id" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <article v-for="post in posts" :key="post.id" class="section-shell interactive-lift rounded-xl p-5">
           <img :src="post.image" :alt="post.title" class="h-44 w-full rounded-lg object-cover" />
           <p class="mt-4 text-xs font-semibold uppercase tracking-wide text-sky-700">{{ post.category }}</p>
           <h2 class="mt-2 text-xl font-semibold text-slate-900">{{ post.title }}</h2>

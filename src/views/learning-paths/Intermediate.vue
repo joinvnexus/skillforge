@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 pt-29">
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <!-- Loading State -->
     <div v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -13,7 +13,7 @@
 
     <!-- Content -->
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2 bg-white shadow rounded-lg p-6">
+      <div class="section-shell lg:col-span-2 p-6">
         <div class="flex items-start space-x-4 mb-6">
           <img :src="currentPath.icon" :alt="currentPath.title" class="h-16 w-16 flex-shrink-0" />
           <div>
@@ -69,10 +69,7 @@
       </div>
 
       <div class="lg:col-span-1">
-        <router-link
-          to="/signup"
-          class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
-        >
+        <router-link to="/signup" class="btn-brand flex w-full items-center justify-center rounded-xl px-8 py-3 text-base font-medium md:px-10 md:py-4 md:text-lg">
           Enroll in Intermediate Path
         </router-link>
         <p class="mt-3 text-center text-gray-500 text-sm">Start learning today with a 7-day free trial</p>

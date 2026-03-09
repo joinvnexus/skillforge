@@ -1,13 +1,13 @@
 <!-- src/views/ couserlist -->
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen py-6">
     <HeroSection />
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <!-- Page Header -->
-      <div class="mb-8 text-center" data-aos="fade-in">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Explore Our Courses</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      <div class="section-shell mb-8 p-7 text-center" data-aos="fade-in">
+        <h1 class="mb-2 text-3xl font-bold text-slate-900 md:text-4xl">Explore Our Courses</h1>
+        <p class="mx-auto max-w-2xl text-lg text-slate-600">
           Find the perfect course to advance your skills
         </p>
       </div>
@@ -19,17 +19,17 @@
         <!-- Main Content Area - takes remaining space -->
         <main class="flex-1 min-w-0">
           <!-- Sorting and Results Count -->
-          <div class="flex flex-col sm:flex-row justify-between items-center mb-6" data-aos="fade-left">
-            <p class="text-gray-600 mb-2 sm:mb-0">
+          <div class="section-shell mb-6 flex flex-col items-center justify-between gap-3 p-4 sm:flex-row" data-aos="fade-left">
+            <p class="mb-2 text-slate-600 sm:mb-0">
               Showing {{ paginatedCourses.length }} of {{ courseCount }} courses
-              <span v-if="hasFilters" class="text-sm text-gray-500">(filtered)</span>
+              <span v-if="hasFilters" class="text-sm text-slate-500">(filtered)</span>
             </p>
             <div class="flex items-center">
-              <span class="mr-2 text-gray-600">Sort by:</span>
+              <span class="mr-2 text-slate-600">Sort by:</span>
               <select 
               v-model="sortBy"
                @change="updateSort"
-                class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-sky-500 focus:outline-none">
                 <option value="newest">Newest</option>
                 <option value="popular">Most Popular</option>
                 <option value="rated">Highest Rated</option>

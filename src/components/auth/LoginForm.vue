@@ -1,45 +1,45 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-    <div class="w-full max-w-md bg-white shadow-lg rounded-xl p-8 space-y-6">
-      <h2 class="text-2xl font-bold text-center text-gray-800">Log In</h2>
+  <div class="flex min-h-[72vh] items-center justify-center px-4 py-8">
+    <div class="section-shell glass-surface interactive-lift w-full max-w-md p-8">
+      <div class="mb-6 text-center">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Welcome Back</p>
+        <h2 class="mt-2 text-3xl font-bold text-slate-900">Log In</h2>
+      </div>
+
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+          <label class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
           <input
             v-model="email"
             type="email"
             placeholder="your@email.com"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
 
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Password</label>
+          <label class="mb-1 block text-sm font-semibold text-slate-700">Password</label>
           <input
             v-model="password"
             type="password"
-            placeholder="••••••••"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="********"
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
 
-        <button
-          type="submit"
-          :disabled="isLoading"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
-        >
+        <button type="submit" :disabled="isLoading" class="btn-brand w-full rounded-xl px-4 py-2.5 text-sm disabled:opacity-70">
           {{ isLoading ? 'Logging in...' : 'Log In' }}
         </button>
 
-        <p v-if="error" class="text-sm text-red-600 text-center mt-2">{{ error }}</p>
+        <p v-if="error" class="mt-2 text-center text-sm text-red-600">{{ error }}</p>
 
-        <p class="text-sm text-center">
-          <router-link to="/forgot-password" class="text-blue-600 hover:underline">Forgot password?</router-link>
+        <p class="text-center text-sm">
+          <router-link to="/forgot-password" class="font-semibold text-sky-700 hover:text-sky-900">Forgot password?</router-link>
         </p>
 
-        <p class="text-center text-sm text-gray-600">
+        <p class="text-center text-sm text-slate-600">
           Don't have an account?
-          <router-link to="/signup" class="text-blue-600 hover:underline">Sign up</router-link>
+          <router-link to="/signup" class="font-semibold text-sky-700 hover:text-sky-900">Sign up</router-link>
         </p>
       </form>
     </div>
@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       email: '',
-      password: '',
+      password: ''
     }
   },
   computed: {
@@ -74,5 +74,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>

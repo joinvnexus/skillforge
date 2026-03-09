@@ -1,61 +1,46 @@
 <template>
-  <footer class="bg-[#2c3e50] text-[#ecf0f1] py-10 px-5 text-center">
-    <!-- Footer Top: Links, Social Icons, and Newsletter Signup -->
-    <div class="footer-top">
-      <div class="max-w-[1200px] mx-auto flex flex-wrap justify-between gap-8">
-        <!-- Quick Links Section -->
-        <div class="footer-links">
-          <h4 class="text-blue-700 mb-4">Quick Links</h4>
-          <ul class="list-none p-0">
-            <li class="mb-2.5"><a href="#" class="text-[#ecf0f1] no-underline hover:text-blue-600 transition-colors duration-300">Courses</a></li>
-            <li class="mb-2.5"><a href="#" class="text-[#ecf0f1] no-underline hover:text-blue-600  transition-colors duration-300">Blog</a></li>
-            <li class="mb-2.5"><a href="#" class="text-[#ecf0f1] no-underline hover:text-blue-600   transition-colors duration-300">About Us</a></li>
-            <li class="mb-2.5"><a href="#" class="text-[#ecf0f1] no-underline hover:text-blue-600 transition-colors duration-300">Contact</a></li>
-          </ul>
-        </div>
+  <footer class="mt-16 border-t border-[var(--line)] bg-slate-950 text-slate-200">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 md:grid-cols-4">
+      <section class="md:col-span-2">
+        <h3 class="text-lg font-bold tracking-tight text-white">Build Real Skills, Ship Real Products.</h3>
+        <p class="mt-3 max-w-xl text-sm leading-6 text-slate-300">
+          Practice with guided paths, project-first lessons, and role-based workflows that mirror production teams.
+        </p>
+      </section>
 
-        <!-- Social Media Section -->
-        <div class="footer-social">
-          <h4 class="text-blue-600 mb-4">Follow Us</h4>
-          <ul class="flex justify-center list-none p-0">
-            <li class="mr-4"><a href="#" class="text-[#ecf0f1] text-2xl hover:text-blue-600 transition-colors duration-300"><i class="fab fa-twitter"></i></a></li>
-            <li class="mr-4"><a href="#" class="text-[#ecf0f1] text-2xl hover:text-blue-600 transition-colors duration-300"><i class="fab fa-linkedin"></i></a></li>
-            <li><a href="#" class="text-[#ecf0f1] text-2xl hover:text-blue-600 transition-colors duration-300"><i class="fab fa-facebook-f"></i></a></li>
-          </ul>
-        </div>
+      <section>
+        <h4 class="text-sm font-bold uppercase tracking-[0.16em] text-slate-400">Explore</h4>
+        <ul class="mt-4 space-y-2 text-sm">
+          <li><router-link class="hover:text-white" to="/courses">Courses</router-link></li>
+          <li><router-link class="hover:text-white" to="/blog">Blog</router-link></li>
+          <li><router-link class="hover:text-white" to="/support">Support</router-link></li>
+          <li><router-link class="hover:text-white" to="/contact">Contact</router-link></li>
+        </ul>
+      </section>
 
-        <!-- Newsletter Signup Section -->
-        <div class="footer-newsletter">
-          <h4 class="text-blue-600 mb-4">Stay Updated</h4>
-          <p class="mb-4 text-base">Subscribe to our newsletter for the latest updates on courses and blogs.</p>
-          <form @submit.prevent="subscribeNewsletter" class="flex flex-wrap justify-center">
-            <input 
-              type="email" 
-              v-model="email" 
-              placeholder="Enter your email" 
-              required
-              class="w-[250px] px-2.5 py-[10px] outline-0 border-2 rounded mr-2.5 mb-4 sm:mb-0 "
-            />
-            <button 
-              type="submit" 
-              class="px-5 py-[10px] bg-blue-600 text-white border-none rounded cursor-pointer hover:bg-[#e67e22] transition-colors duration-300"
-            >
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </div>
+      <section>
+        <h4 class="text-sm font-bold uppercase tracking-[0.16em] text-slate-400">Newsletter</h4>
+        <p class="mt-4 text-sm text-slate-300">Get a weekly learning digest.</p>
+        <form class="mt-3 flex gap-2" @submit.prevent="subscribeNewsletter">
+          <input
+            v-model="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            class="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white outline-none focus:border-sky-500"
+          />
+          <button type="submit" class="btn-brand rounded-lg px-3 py-2 text-sm font-bold">Join</button>
+        </form>
+      </section>
     </div>
 
-    <!-- Footer Bottom: Legal Information -->
-    <div class="bg-[#1a252f] py-5">
-      <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center">
-        <div class="legal-info mb-2 md:mb-0">
-          <a href="#" class="text-[#bdc3c7] no-underline hover:text-blue-600  transition-colors duration-300">Privacy Policy</a>
-          <span class="text-[#bdc3c7] mx-1.5">|</span>
-          <a href="#" class="text-[#bdc3c7] no-underline hover:text-blue-600  transition-colors duration-300">Terms of Service</a>
+    <div class="border-t border-slate-800">
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-slate-400 md:flex-row">
+        <p>&copy; {{ year }} Skillshare. All rights reserved.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-white">Privacy</a>
+          <a href="#" class="hover:text-white">Terms</a>
         </div>
-        <p class="text-[#bdc3c7]">&copy; 2024 Vue Academy. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -65,14 +50,15 @@
 export default {
   data() {
     return {
-      email: ''
-    };
+      email: '',
+      year: new Date().getFullYear()
+    }
   },
   methods: {
     subscribeNewsletter() {
-      alert(`Subscribed with: ${this.email}`);
-      this.email = ''; // Clear the input field after submission
+      alert(`Subscribed: ${this.email}`)
+      this.email = ''
     }
   }
-};
+}
 </script>

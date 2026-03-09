@@ -1,22 +1,22 @@
 <template>
-  <div class="min-h-screen bg-slate-50 pt-20">
+  <div class="min-h-screen">
     <div class="mx-auto grid max-w-7xl gap-6 px-4 py-6 md:grid-cols-[250px_1fr]">
-      <aside class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <aside class="section-shell p-4">
         <h2 class="px-3 py-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Workspace</h2>
         <nav class="mt-2 space-y-1">
           <router-link
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
-            active-class="bg-slate-900 text-white hover:bg-slate-900"
+            class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+            active-class="bg-gradient-to-r from-teal-600 to-sky-600 text-white hover:brightness-105"
           >
             {{ item.label }}
           </router-link>
         </nav>
       </aside>
 
-      <main class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <main class="section-shell p-6">
         <RouterView />
       </main>
     </div>

@@ -1,12 +1,12 @@
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-7xl pt-20">
+  <div class="mx-auto max-w-7xl px-4 py-8">
     <!-- Search Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div class="section-shell mb-8 flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+        <h1 class="text-2xl font-bold text-slate-900 md:text-3xl">
           Results for "{{ searchQuery }}"
         </h1>
-        <p class="text-gray-500 mt-1">
+        <p class="mt-1 text-slate-500">
           {{ filteredCourses.length }} {{ filteredCourses.length === 1 ? 'result' : 'results' }} found
         </p>
       </div>
@@ -18,7 +18,7 @@
             :value="sortBy"
             @change="onSortChange"
             id="sort"
-            class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            class="block w-full rounded-xl border border-slate-300 bg-white py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none sm:text-sm"
           >
             <option value="newest">Sort by: Relevance</option>
             <option value="createdAt">Sort by: Newest</option>
@@ -28,7 +28,7 @@
         </div>
         <button 
           @click="clearSearch"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="inline-flex items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
         >
           Clear Search
         </button>
@@ -39,8 +39,8 @@
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Filters Sidebar -->
       <div class="lg:w-64 space-y-6">
-        <div class="bg-white p-4 rounded-lg shadow-sm">
-          <h3 class="font-medium text-gray-900 mb-3">Filters</h3>
+        <div class="section-shell p-4">
+          <h3 class="mb-3 font-semibold text-slate-900">Filters</h3>
           
           <!-- Category Filter -->
           <div class="mb-4">
@@ -150,11 +150,11 @@
         </div>
         
       <!-- Results Grid -->
-        <div v-else class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div 
             v-for="course in paginatedCourses" 
             :key="course.id" 
-            class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300 border border-gray-100 flex flex-col"
+            class="section-shell interactive-lift overflow-hidden rounded-2xl border border-slate-100 bg-white flex flex-col"
           >
             <div class="relative">
               <img 

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-6xl mx-auto px-6 py-10 pt-20 ">
+  <div class="mx-auto max-w-6xl px-6 py-8">
     <!-- 🌀 Loading State -->
     <div v-if="isLoading" class="flex justify-center py-12">
       <div class="w-12 h-12 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
@@ -22,7 +22,7 @@
     <!-- 🌱 Content -->
     <div v-else>
       <!-- Header Section -->
-      <div class="bg-gray-50 rounded-2xl p-8 mb-10 shadow-sm">
+      <div class="section-shell mb-10 p-8">
         <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-6">
           <img
             :src="path.icon"
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Main Body -->
-      <div class="grid md:grid-cols-3 gap-10">
+      <div class="grid gap-10 md:grid-cols-3">
         <!-- 🎯 Features -->
         <div class="md:col-span-1">
           <h2 class="text-xl font-semibold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">
@@ -129,10 +129,10 @@
       </div>
 
       <!-- 🚀 Call to Action -->
-      <div class="text-center mt-10">
+      <div class="mt-10 text-center">
         <router-link
           to="/signup"
-          class="inline-block px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition"
+          class="btn-brand inline-block rounded-xl px-8 py-3"
         >
           Start Learning Now
         </router-link>

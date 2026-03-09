@@ -1,27 +1,30 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Resources</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Free resources to help you learn and grow as a developer.
-        </p>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div v-for="resource in resources" :key="resource.id" class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <section class="mx-auto max-w-7xl px-4 py-8">
+    <div class="section-shell p-7 md:p-10">
+      <header class="mb-8 text-center">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Resources</p>
+        <h1 class="mt-2 text-4xl font-bold text-slate-900">Learning Assets Library</h1>
+        <p class="mx-auto mt-3 max-w-2xl text-slate-600">Free downloads to speed up your coding workflow and course progress.</p>
+      </header>
+
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <article
+          v-for="resource in resources"
+          :key="resource.id"
+          class="interactive-lift rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100">
+            <svg class="h-6 w-6 text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="resource.icon" />
             </svg>
           </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ resource.title }}</h3>
-          <p class="text-gray-600 text-sm mb-4">{{ resource.description }}</p>
-          <a href="#" class="text-blue-600 hover:text-blue-700 font-medium text-sm">Download →</a>
-        </div>
+          <h3 class="text-lg font-bold text-slate-900">{{ resource.title }}</h3>
+          <p class="mt-2 text-sm text-slate-600">{{ resource.description }}</p>
+          <a href="#" class="mt-4 inline-block text-sm font-bold text-teal-700 hover:text-teal-900">Download</a>
+        </article>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>

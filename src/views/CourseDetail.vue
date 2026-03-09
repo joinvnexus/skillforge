@@ -1,5 +1,5 @@
 <template>
-  <div class="course-detail bg-gray-50 min-h-screen">
+  <div class="course-detail min-h-screen">
     <!-- Loading State -->
     <div v-if="loading" class="loading-spinner flex items-center justify-center min-h-[300px]">
       <LoadingSpinner />
@@ -21,16 +21,17 @@
       />
       
       <!-- Main Content -->
-      <div class="course-content py-10 md:py-16">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="course-content py-10 md:py-14">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left Column - Main Content -->
             <div class="w-full lg:w-8/12">
-              <CourseTabs 
-                :course="course"
-                :activeTab="activeTab"
-                @tab-change="changeTab"
-              />
+              <div class="section-shell p-4 sm:p-6">
+                <CourseTabs 
+                  :course="course"
+                  :activeTab="activeTab"
+                  @tab-change="changeTab"
+                />
               
               <div class="tab-content py-8">
                 <!-- Overview Tab -->
@@ -69,11 +70,12 @@
                   :reviews="course.reviews"
                 />
               </div>
+              </div>
             </div>
             
             <!-- Right Column - Sidebar -->
             <div class="w-full lg:w-4/12">
-              <div class="sticky top-6 space-y-6">
+              <div class="sticky top-24 space-y-6">
                 <CourseSidebar 
                   :course="course"
                   @enroll="handleEnroll"
@@ -85,7 +87,7 @@
       </div>
       
       <!-- Related Courses -->
-      <div class="pb-16 bg-white">
+      <div class="pb-16">
            <RelatedCourses :current-course-id="currentCourse.id" />
 
       </div>

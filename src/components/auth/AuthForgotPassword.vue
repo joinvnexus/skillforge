@@ -1,31 +1,31 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gray-100 px-4">
-    <div class="w-full max-w-md bg-white shadow-lg rounded-xl p-8 space-y-6">
-      <h2 class="text-2xl font-bold text-center text-gray-800">Reset Password</h2>
+  <div class="flex min-h-[72vh] items-center justify-center px-4 py-8">
+    <div class="section-shell glass-surface interactive-lift w-full max-w-md p-8">
+      <div class="mb-6 text-center">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Recovery</p>
+        <h2 class="mt-2 text-3xl font-bold text-slate-900">Reset Password</h2>
+      </div>
+
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+          <label class="mb-1 block text-sm font-semibold text-slate-700">Email</label>
           <input
             v-model="email"
             type="email"
             placeholder="your@email.com"
-            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-sky-500 focus:outline-none"
           />
         </div>
 
-        <button
-          type="submit"
-          :disabled="isLoading"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200 disabled:opacity-50"
-        >
+        <button type="submit" :disabled="isLoading" class="btn-brand w-full rounded-xl px-4 py-2.5 text-sm disabled:opacity-70">
           {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
         </button>
 
-        <p v-if="error" class="text-sm text-red-600 text-center">{{ error }}</p>
-        <p v-if="message" class="text-sm text-green-600 text-center">{{ message }}</p>
+        <p v-if="error" class="text-center text-sm text-red-600">{{ error }}</p>
+        <p v-if="message" class="text-center text-sm text-emerald-600">{{ message }}</p>
 
-        <p class="text-center text-sm text-gray-600">
-          <router-link to="/login" class="text-blue-600 hover:underline">Back to login</router-link>
+        <p class="text-center text-sm text-slate-600">
+          <router-link to="/login" class="font-semibold text-sky-700 hover:text-sky-900">Back to login</router-link>
         </p>
       </form>
     </div>

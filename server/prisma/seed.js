@@ -596,6 +596,7 @@ const main = async () => {
     ]
   });
 
+  // Blog posts
   await prisma.blogPost.upsert({
     where: {
       slug: "why-role-based-lms-architecture-matters"
