@@ -158,10 +158,10 @@ const router = createRouter({
           meta: { title: "User Settings" }
         },
         {
-          path: "instructor-courses",
-          name: "InstructorCourses",
-          component: () => import("@/views/dashboard/instructor/InstructorCourses.vue"),
-          meta: { title: "Instructor Courses", requiresRole: ["INSTRUCTOR"] }
+          path: "instructor-panel",
+          name: "InstructorPanel",
+          component: () => import("@/views/dashboard/instructor/InstructorPanel.vue"),
+          meta: { title: "Instructor Panel", requiresRole: ["INSTRUCTOR"] }
         },
         {
           path: "admin-panel",
@@ -206,6 +206,8 @@ router.beforeEach(async (to, from, next) => {
     next("/dashboard");
   } else if (to.path === "/dashboard" && role === "ADMIN") {
     next("/dashboard/admin-panel");
+  } else if (to.path === "/dashboard" && role === "INSTRUCTOR") {
+    next("/dashboard/instructor-panel");
   } else {
     next();
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen">
-    <RouterView v-if="isAdminPanel" />
+    <RouterView v-if="isAdminPanel || isInstructorPanel" />
 
     <div v-else class="mx-auto grid max-w-7xl gap-6 px-4 py-6 md:grid-cols-[250px_1fr]">
       <aside class="section-shell p-4">
@@ -34,6 +34,7 @@ const store = useStore()
 const route = useRoute()
 const role = computed(() => store.getters['auth/userRole'])
 const isAdminPanel = computed(() => route.name === 'AdminPanel')
+const isInstructorPanel = computed(() => route.name === 'InstructorPanel')
 
 const navItems = computed(() => {
   const common = [
@@ -47,7 +48,7 @@ const navItems = computed(() => {
   }
 
   if (role.value === 'INSTRUCTOR') {
-    return [...common, { label: 'Instructor Courses', to: '/dashboard/instructor-courses' }]
+    return [...common, { label: 'Instructor Panel', to: '/dashboard/instructor-panel' }]
   }
 
   return [...common, { label: 'My Courses', to: '/dashboard/my-courses' }]

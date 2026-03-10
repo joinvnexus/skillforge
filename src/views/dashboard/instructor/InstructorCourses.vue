@@ -12,9 +12,34 @@
       <div class="mt-4 grid gap-3 md:grid-cols-2">
         <input v-model="createForm.slug" type="text" placeholder="Slug (e.g. vue-for-beginners)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
         <input v-model="createForm.title" type="text" placeholder="Title" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model="createForm.subtitle" type="text" placeholder="Subtitle (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
         <input v-model="createForm.shortDescription" type="text" placeholder="Short description" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <textarea v-model="createForm.fullDescription" rows="3" placeholder="Full description (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2"></textarea>
         <input v-model="createForm.level" type="text" placeholder="Level (Beginner/Intermediate/Advanced)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
         <input v-model.number="createForm.price" type="number" min="0" step="0.01" placeholder="Price" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model.number="createForm.salePrice" type="number" min="0" step="0.01" placeholder="Sale price (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model="createForm.currency" type="text" placeholder="Currency (e.g. USD)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model="createForm.language" type="text" placeholder="Language (e.g. English)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model="createForm.durationText" type="text" placeholder="Duration text (e.g. 6 hours)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model.number="createForm.durationMinutes" type="number" min="0" placeholder="Duration minutes" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <input v-model="createForm.thumbnailUrl" type="text" placeholder="Thumbnail URL" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <input v-model="createForm.trailerUrl" type="text" placeholder="Trailer URL (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <input v-model="createForm.tagsText" type="text" placeholder="Tags (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <input v-model="createForm.featuresText" type="text" placeholder="Features (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <input v-model="createForm.prerequisitesText" type="text" placeholder="Prerequisites (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+        <input v-model="createForm.categoryId" type="text" placeholder="Category ID (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input v-model="createForm.isFeatured" type="checkbox" />
+          Featured
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+          <input v-model="createForm.isPopular" type="checkbox" />
+          Popular
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
+          <input v-model="createForm.certificateEnabled" type="checkbox" />
+          Certificate enabled
+        </label>
       </div>
       <button class="mt-4 rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" :disabled="actionLoading" @click="createCourse">
         {{ actionLoading ? "Saving..." : "Create Course" }}
@@ -63,9 +88,34 @@
         <div v-if="editingId === course.id" class="mt-4 grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 md:grid-cols-2">
           <input v-model="editForm.slug" type="text" placeholder="Slug" class="rounded border border-slate-300 px-3 py-2 text-sm" />
           <input v-model="editForm.title" type="text" placeholder="Title" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model="editForm.subtitle" type="text" placeholder="Subtitle (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
           <input v-model="editForm.shortDescription" type="text" placeholder="Short description" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <textarea v-model="editForm.fullDescription" rows="3" placeholder="Full description (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2"></textarea>
           <input v-model="editForm.level" type="text" placeholder="Level" class="rounded border border-slate-300 px-3 py-2 text-sm" />
           <input v-model.number="editForm.price" type="number" min="0" step="0.01" placeholder="Price" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model.number="editForm.salePrice" type="number" min="0" step="0.01" placeholder="Sale price" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model="editForm.currency" type="text" placeholder="Currency" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model="editForm.language" type="text" placeholder="Language" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model="editForm.durationText" type="text" placeholder="Duration text" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model.number="editForm.durationMinutes" type="number" min="0" placeholder="Duration minutes" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <input v-model="editForm.thumbnailUrl" type="text" placeholder="Thumbnail URL" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <input v-model="editForm.trailerUrl" type="text" placeholder="Trailer URL (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <input v-model="editForm.tagsText" type="text" placeholder="Tags (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <input v-model="editForm.featuresText" type="text" placeholder="Features (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <input v-model="editForm.prerequisitesText" type="text" placeholder="Prerequisites (comma separated)" class="rounded border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <input v-model="editForm.categoryId" type="text" placeholder="Category ID (optional)" class="rounded border border-slate-300 px-3 py-2 text-sm" />
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+            <input v-model="editForm.isFeatured" type="checkbox" />
+            Featured
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+            <input v-model="editForm.isPopular" type="checkbox" />
+            Popular
+          </label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
+            <input v-model="editForm.certificateEnabled" type="checkbox" />
+            Certificate enabled
+          </label>
           <div class="md:col-span-2 flex gap-2">
             <button class="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800" :disabled="actionLoading" @click="saveEdit(course.id)">
               Save Changes
@@ -227,16 +277,48 @@ const lessonEditor = ref({
 const editForm = ref({
   slug: "",
   title: "",
+  subtitle: "",
   shortDescription: "",
+  fullDescription: "",
   level: "",
-  price: 0
+  price: 0,
+  salePrice: "",
+  currency: "USD",
+  language: "English",
+  durationText: "",
+  durationMinutes: 0,
+  thumbnailUrl: "",
+  trailerUrl: "",
+  tagsText: "",
+  featuresText: "",
+  prerequisitesText: "",
+  categoryId: "",
+  isFeatured: false,
+  isPopular: false,
+  certificateEnabled: false
 });
 const createForm = ref({
   slug: "",
   title: "",
+  subtitle: "",
   shortDescription: "",
+  fullDescription: "",
   level: "Beginner",
-  price: 0
+  price: 0,
+  salePrice: "",
+  currency: "USD",
+  language: "English",
+  durationText: "",
+  durationMinutes: 0,
+  thumbnailUrl: "",
+  trailerUrl: "",
+  tagsText: "",
+  featuresText: "",
+  prerequisitesText: "",
+  categoryId: "",
+  isFeatured: false,
+  isPopular: false,
+  certificateEnabled: false
 });
 
 const sectionDraft = (sectionId) => {
@@ -292,6 +374,12 @@ const reload = async () => {
   }
 };
 
+const parseList = (value) =>
+  String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 const createCourse = async () => {
   actionLoading.value = true;
   error.value = null;
@@ -304,9 +392,38 @@ const createCourse = async () => {
     await apiRequest("/instructor/courses", {
       method: "POST",
       auth: true,
-      body: createForm.value
+      body: {
+        ...createForm.value,
+        tags: parseList(createForm.value.tagsText),
+        features: parseList(createForm.value.featuresText),
+        prerequisites: parseList(createForm.value.prerequisitesText),
+        salePrice: createForm.value.salePrice === "" ? null : Number(createForm.value.salePrice),
+        categoryId: createForm.value.categoryId || null
+      }
     });
-    createForm.value = { slug: "", title: "", shortDescription: "", level: "Beginner", price: 0 };
+    createForm.value = {
+      slug: "",
+      title: "",
+      subtitle: "",
+      shortDescription: "",
+      fullDescription: "",
+      level: "Beginner",
+      price: 0,
+      salePrice: "",
+      currency: "USD",
+      language: "English",
+      durationText: "",
+      durationMinutes: 0,
+      thumbnailUrl: "",
+      trailerUrl: "",
+      tagsText: "",
+      featuresText: "",
+      prerequisitesText: "",
+      categoryId: "",
+      isFeatured: false,
+      isPopular: false,
+      certificateEnabled: false
+    };
     await reload();
   } catch (err) {
     error.value = err.message;
@@ -321,9 +438,25 @@ const openEdit = (course) => {
   editForm.value = {
     slug: course.slug || "",
     title: course.title || "",
+    subtitle: course.subtitle || "",
     shortDescription: course.shortDescription || "",
+    fullDescription: course.fullDescription || "",
     level: course.level || "",
-    price: Number(course.price || 0)
+    price: Number(course.price || 0),
+    salePrice: course.salePrice ?? "",
+    currency: course.currency || "USD",
+    language: course.language || "English",
+    durationText: course.durationText || "",
+    durationMinutes: Number(course.durationMinutes || 0),
+    thumbnailUrl: course.thumbnailUrl || "",
+    trailerUrl: course.trailerUrl || "",
+    tagsText: Array.isArray(course.tags) ? course.tags.join(", ") : "",
+    featuresText: Array.isArray(course.features) ? course.features.join(", ") : "",
+    prerequisitesText: Array.isArray(course.prerequisites) ? course.prerequisites.join(", ") : "",
+    categoryId: course.categoryId || "",
+    isFeatured: Boolean(course.isFeatured),
+    isPopular: Boolean(course.isPopular),
+    certificateEnabled: Boolean(course.certificateEnabled)
   };
 };
 
@@ -344,7 +477,14 @@ const saveEdit = async (courseId) => {
     await apiRequest(`/instructor/courses/${courseId}`, {
       method: "PATCH",
       auth: true,
-      body: editForm.value
+      body: {
+        ...editForm.value,
+        tags: parseList(editForm.value.tagsText),
+        features: parseList(editForm.value.featuresText),
+        prerequisites: parseList(editForm.value.prerequisitesText),
+        salePrice: editForm.value.salePrice === "" ? null : Number(editForm.value.salePrice),
+        categoryId: editForm.value.categoryId || null
+      }
     });
     closeEdit();
     await reload();

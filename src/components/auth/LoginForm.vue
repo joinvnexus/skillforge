@@ -97,6 +97,10 @@ export default {
           this.$router.push('/dashboard/admin-panel')
           return
         }
+        if (role === 'INSTRUCTOR') {
+          this.$router.push('/dashboard/instructor-panel')
+          return
+        }
         this.$router.push(redirect)
       }
     }
