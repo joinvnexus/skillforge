@@ -91,7 +91,12 @@ export default {
       }
       const result = await this.$store.dispatch('auth/login', { email, password })
       if (result.success) {
+        const role = this.$store.getters['auth/userRole']
         const redirect = this.$route.query.redirect || '/dashboard'
+        if (role === 'ADMIN') {
+          this.$router.push('/dashboard/admin-panel')
+          return
+        }
         this.$router.push(redirect)
       }
     }

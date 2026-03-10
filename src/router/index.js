@@ -181,9 +181,11 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else {
-      return { top: 0 };
     }
+    if (to.hash) {
+      return { el: to.hash, top: 96, behavior: "smooth" };
+    }
+    return { top: 0 };
   }
 });
 // Navigation guard to check auth status
@@ -202,6 +204,8 @@ router.beforeEach(async (to, from, next) => {
     next("/dashboard");
   } else if (roleRequirement && !roleRequirement.includes(role)) {
     next("/dashboard");
+  } else if (to.path === "/dashboard" && role === "ADMIN") {
+    next("/dashboard/admin-panel");
   } else {
     next();
   }

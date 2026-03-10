@@ -17,6 +17,14 @@
   --accent: #0ea5e9;
   --line: #dbe4ee;
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --admin-bg: #0b1220;
+  --admin-ink: #0f172a;
+  --admin-surface: #ffffff;
+  --admin-surface-soft: #f6f8fb;
+  --admin-line: #e2e8f0;
+  --admin-accent: #14b8a6;
+  --admin-accent-strong: #0f766e;
+  --admin-glow: 0 20px 40px rgba(15, 23, 42, 0.14);
 }
 
 *,
@@ -131,4 +139,86 @@ textarea:focus-visible,
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(6px);
+}
+
+/* Admin UI system */
+.admin-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(20, 184, 166, 0.12), transparent 35%),
+    radial-gradient(circle at 85% 0%, rgba(14, 165, 233, 0.12), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 45%, #f1f5f9 100%);
+}
+
+.admin-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 18px 32px;
+}
+
+.admin-surface {
+  border: 1px solid var(--admin-line);
+  border-radius: 18px;
+  background: var(--admin-surface);
+  box-shadow: var(--admin-glow);
+}
+
+.admin-card {
+  border: 1px solid var(--admin-line);
+  border-radius: 18px;
+  background: var(--admin-surface);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.admin-topbar {
+  border-bottom: 1px solid var(--admin-line);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+}
+
+.admin-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.admin-nav-link:hover {
+  background: var(--admin-surface-soft);
+  color: #0f172a;
+}
+
+.admin-nav-link.is-active {
+  background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-strong));
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.24);
+}
+
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: rgba(20, 184, 166, 0.1);
+  color: #0f766e;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.admin-kpi {
+  border-radius: 16px;
+  border: 1px solid var(--admin-line);
+  background: var(--admin-surface-soft);
+  padding: 16px;
 }

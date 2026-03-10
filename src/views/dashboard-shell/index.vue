@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen">
-    <div class="mx-auto grid max-w-7xl gap-6 px-4 py-6 md:grid-cols-[250px_1fr]">
+    <RouterView v-if="isAdminPanel" />
+
+    <div v-else class="mx-auto grid max-w-7xl gap-6 px-4 py-6 md:grid-cols-[250px_1fr]">
       <aside class="section-shell p-4">
         <h2 class="px-3 py-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Workspace</h2>
         <nav class="mt-2 space-y-1">
@@ -25,10 +27,13 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
 const store = useStore()
+const route = useRoute()
 const role = computed(() => store.getters['auth/userRole'])
+const isAdminPanel = computed(() => route.name === 'AdminPanel')
 
 const navItems = computed(() => {
   const common = [
