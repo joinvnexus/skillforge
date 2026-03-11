@@ -87,6 +87,29 @@ npm run preview
 
 Locally preview the production build.
 
+## QA
+
+### Backend tests
+
+```sh
+cd server
+npm test
+```
+
+### Frontend E2E tests (Playwright)
+
+```sh
+npm run test:e2e
+```
+
+Notes:
+- E2E tests assume the app is running at `http://localhost:5173` by default.
+- To override base URL: set `E2E_BASE_URL`.
+
+### QA plan
+
+See `QA_PLAN.md` for the current checklist and progress.
+
 ## Project Structure
 
 ```txt
@@ -115,6 +138,8 @@ The repository ignores local runtime/build artifacts such as:
 - local env files (`.env`, `.env.local`, `.env.*.local`)
 
 Keep secrets only in local env files and do not commit generated logs.
+
+The repository also ignores Playwright artifacts (`playwright-report/`, `test-results/`).
 
 ## Recommended IDE Setup
 
