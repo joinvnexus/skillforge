@@ -13,12 +13,18 @@
     <div class="mt-4 grid gap-3 md:grid-cols-2">
       <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
         <p class="text-xs font-semibold text-slate-600">Bank Account</p>
-        <p class="mt-2 text-sm text-slate-600">Not connected</p>
+        <p class="mt-2 text-sm text-slate-600">{{ bankInfo.bankAccount || "Not connected" }}</p>
       </div>
       <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
         <p class="text-xs font-semibold text-slate-600">Tax Details</p>
-        <p class="mt-2 text-sm text-slate-600">Pending submission</p>
+        <p class="mt-2 text-sm text-slate-600">{{ bankInfo.taxInfo || "Pending submission" }}</p>
       </div>
     </div>
   </article>
 </template>
+
+<script setup>
+defineProps({
+  bankInfo: { type: Object, required: true }
+});
+</script>

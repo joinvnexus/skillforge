@@ -7,6 +7,7 @@ import { optionalTrimmedString, optionalUrl, requireTrimmedString } from "../lib
 import { requireAuth, requireRole } from "../middlewares/auth.js";
 
 const router = Router();
+const allowedNotificationTypes = ["SYSTEM", "ENROLLMENT", "COURSE", "PAYMENT", "BLOG", "REVIEW"];
 
 const editableCourseFields = [
   "slug",
@@ -647,6 +648,155 @@ router.get(
     });
 
     res.json({ data: enrollments });
+  })
+);
+
+router.get(
+  "/instructor/reviews",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+    const courseId = String(req.query.courseId || "").trim();
+
+    const where = {
+      course: {
+        is: {
+          instructorId: instructor.id,
+          ...(courseId ? { id: courseId } : {})
+        }
+      }
+    };
+
+    const reviews = await prisma.review.findMany({
+      where,
+      orderBy: [{ createdAt: "desc" }],
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+        course: { select: { id: true, title: true, slug: true } }
+      }
+    });
+
+    res.json({ data: reviews });
+  })
+);
+
+router.post(
+  "/instructor/reviews/:reviewId/reply",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+    const message = requireTrimmedString(req.body.message, "Reply message", { min: 3, max: 2000 });
+
+    const review = await prisma.review.findFirst({
+      where: {
+        id: req.params.reviewId,
+        course: { is: { instructorId: instructor.id } }
+      },
+      include: { user: { select: { id: true } }, course: { select: { title: true } } }
+    });
+
+    if (!review) {
+      throw new HttpError(404, "Review not found");
+    }
+
+    await prisma.notification.create({
+      data: {
+        userId: review.userId,
+        type: "REVIEW",
+        title: `Reply on ${review.course.title}`,
+        message
+      }
+    });
+
+    res.json({ data: { success: true } });
+  })
+);
+
+router.post(
+  "/instructor/announcements",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+    const title = requireTrimmedString(req.body.title, "Title", { min: 3, max: 120 });
+    const message = requireTrimmedString(req.body.message, "Message", { min: 3, max: 2000 });
+    const type = String(req.body.type || "COURSE").toUpperCase();
+    const courseId = req.body.courseId ? String(req.body.courseId) : null;
+
+    if (!allowedNotificationTypes.includes(type)) {
+      throw new HttpError(400, "Invalid notification type");
+    }
+
+    const enrollments = await prisma.enrollment.findMany({
+      where: {
+        course: {
+          is: {
+            instructorId: instructor.id,
+            ...(courseId ? { id: courseId } : {})
+          }
+        }
+      },
+      select: { userId: true }
+    });
+
+    const uniqueUserIds = Array.from(new Set(enrollments.map((item) => item.userId)));
+
+    if (!uniqueUserIds.length) {
+      throw new HttpError(404, "No enrolled students found");
+    }
+
+    await prisma.notification.createMany({
+      data: uniqueUserIds.map((userId) => ({
+        userId,
+        type,
+        title,
+        message
+      }))
+    });
+
+    res.status(201).json({ data: { sent: uniqueUserIds.length } });
+  })
+);
+
+router.get(
+  "/instructor/revenue/overview",
+  asyncHandler(async (req, res) => {
+    const instructor = await resolveInstructorProfile(req.auth.userId);
+
+    const orderItems = await prisma.orderItem.findMany({
+      where: {
+        order: { is: { status: "PAID" } },
+        course: { is: { instructorId: instructor.id } }
+      },
+      select: {
+        totalPrice: true
+      }
+    });
+
+    const totalRevenue = orderItems.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
+
+    res.json({
+      data: {
+        totalRevenue,
+        pendingBalance: 0,
+        lastPayout: null
+      }
+    });
+  })
+);
+
+router.get(
+  "/instructor/revenue/payouts",
+  asyncHandler(async (_req, res) => {
+    res.json({ data: [] });
+  })
+);
+
+router.get(
+  "/instructor/revenue/bank",
+  asyncHandler(async (_req, res) => {
+    res.json({
+      data: {
+        bankAccount: null,
+        taxInfo: null
+      }
+    });
   })
 );
 

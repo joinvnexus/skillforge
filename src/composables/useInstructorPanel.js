@@ -10,6 +10,14 @@ export const useInstructorPanel = () => {
     totalStudents: 0,
     totalReviews: 0
   });
+  const revenue = ref({
+    totalRevenue: 0,
+    pendingBalance: 0,
+    lastPayout: null
+  });
+  const payouts = ref([]);
+  const bankInfo = ref({ bankAccount: null, taxInfo: null });
+  const reviews = ref([]);
   const courses = ref([]);
   const profile = ref({
     title: "",
@@ -31,6 +39,26 @@ export const useInstructorPanel = () => {
   const reloadOverview = async () => {
     const response = await apiRequest("/instructor/dashboard/overview", { auth: true });
     overview.value = response.data || overview.value;
+  };
+
+  const reloadRevenue = async () => {
+    const response = await apiRequest("/instructor/revenue/overview", { auth: true });
+    revenue.value = response.data || revenue.value;
+  };
+
+  const reloadPayouts = async () => {
+    const response = await apiRequest("/instructor/revenue/payouts", { auth: true });
+    payouts.value = response.data || [];
+  };
+
+  const reloadBankInfo = async () => {
+    const response = await apiRequest("/instructor/revenue/bank", { auth: true });
+    bankInfo.value = response.data || bankInfo.value;
+  };
+
+  const reloadReviews = async () => {
+    const response = await apiRequest("/instructor/reviews", { auth: true });
+    reviews.value = response.data || [];
   };
 
   const reloadProfile = async () => {
@@ -76,7 +104,15 @@ export const useInstructorPanel = () => {
     loading.value = true;
     error.value = null;
     try {
-      await Promise.all([reloadOverview(), reloadCourses(), reloadProfile()]);
+      await Promise.all([
+        reloadOverview(),
+        reloadCourses(),
+        reloadProfile(),
+        reloadRevenue(),
+        reloadPayouts(),
+        reloadBankInfo(),
+        reloadReviews()
+      ]);
     } catch (err) {
       error.value = err.message;
     } finally {
@@ -153,6 +189,22 @@ export const useInstructorPanel = () => {
     }
   };
 
+  const sendAnnouncement = async (payload) => {
+    await apiRequest("/instructor/announcements", {
+      method: "POST",
+      auth: true,
+      body: payload
+    });
+  };
+
+  const replyToReview = async (reviewId, message) => {
+    await apiRequest(`/instructor/reviews/${reviewId}/reply`, {
+      method: "POST",
+      auth: true,
+      body: { message }
+    });
+  };
+
   const recentCourses = computed(() => courses.value.slice(0, 5));
   const healthCourses = computed(() => courses.value.slice(0, 3));
   const filteredCourses = computed(() => {
@@ -175,6 +227,10 @@ export const useInstructorPanel = () => {
     error,
     overview,
     courses,
+    revenue,
+    payouts,
+    bankInfo,
+    reviews,
     profile,
     courseFilters,
     courseEdits,
@@ -189,6 +245,8 @@ export const useInstructorPanel = () => {
     loadEnrollments,
     updateCourseFields,
     updateProfile,
-    createCourse
+    createCourse,
+    sendAnnouncement,
+    replyToReview
   };
 };

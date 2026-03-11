@@ -37,7 +37,8 @@
 import { ref, watch } from "vue";
 
 const props = defineProps({
-  open: { type: Boolean, default: false }
+  open: { type: Boolean, default: false },
+  review: { type: Object, default: null }
 });
 
 defineEmits(["close", "submit"]);

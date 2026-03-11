@@ -52,23 +52,23 @@
           />
           <InstructorStudentProgressDrawer :open="isStudentDrawerOpen" :enrollment="selectedEnrollment" @close="closeStudentDrawer" />
           <div class="mt-6">
-            <InstructorAnnouncementsCard />
+            <InstructorAnnouncementsCard :courses="courses" @send="handleSendAnnouncement" />
           </div>
         </div>
         <div v-show="activeTab === 'revenue'">
           <div class="space-y-6">
-            <InstructorRevenueSummary />
+            <InstructorRevenueSummary :revenue="revenue" />
             <div class="grid gap-5 lg:grid-cols-2">
-              <InstructorPayoutHistory />
-              <InstructorBankInfoCard />
+              <InstructorPayoutHistory :payouts="payouts" />
+              <InstructorBankInfoCard :bank-info="bankInfo" />
             </div>
           </div>
         </div>
         <div v-show="activeTab === 'reviews'">
           <div class="space-y-6">
-            <InstructorReviewsTable @open-reply="isReplyOpen = true" />
+            <InstructorReviewsTable :reviews="reviews" @open-reply="openReply" />
             <InstructorQnAThreadList />
-            <InstructorReplyModal :open="isReplyOpen" @close="closeReply" @submit="submitReply" />
+            <InstructorReplyModal :open="isReplyOpen" :review="selectedReview" @close="closeReply" @submit="submitReply" />
           </div>
         </div>
         <div v-show="activeTab === 'settings'">
@@ -121,6 +121,10 @@ const {
   courseFilters,
   courseEdits,
   filteredCourses,
+  revenue,
+  payouts,
+  bankInfo,
+  reviews,
   enrollments,
   enrollmentsLoading,
   selectedCourseId,
@@ -131,7 +135,9 @@ const {
   ,
   updateCourseFields,
   updateProfile,
-  createCourse
+  createCourse,
+  sendAnnouncement,
+  replyToReview
 } = useInstructorPanel();
 
 const route = useRoute();
@@ -146,6 +152,7 @@ const isCoursePreviewOpen = ref(false);
 const selectedEnrollment = ref(null);
 const isStudentDrawerOpen = ref(false);
 const isReplyOpen = ref(false);
+const selectedReview = ref(null);
 const showCreate = ref(false);
 const createLoading = ref(false);
 const createError = ref("");
@@ -186,11 +193,30 @@ const closeStudentDrawer = () => {
   selectedEnrollment.value = null;
 };
 
-const closeReply = () => {
-  isReplyOpen.value = false;
+const openReply = (review) => {
+  selectedReview.value = review;
+  isReplyOpen.value = true;
 };
 
-const submitReply = () => {
+const closeReply = () => {
+  isReplyOpen.value = false;
+  selectedReview.value = null;
+};
+
+const handleSendAnnouncement = async (payload) => {
+  try {
+    await sendAnnouncement(payload);
+    store.dispatch("ui/notify", { type: "success", message: "Announcement sent." });
+  } catch (_err) {}
+};
+
+const submitReply = async (message) => {
+  if (!selectedReview.value) {
+    isReplyOpen.value = false;
+    return;
+  }
+  await replyToReview(selectedReview.value.id, message);
+  store.dispatch("ui/notify", { type: "success", message: "Reply sent." });
   isReplyOpen.value = false;
 };
 
