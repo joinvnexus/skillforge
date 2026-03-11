@@ -36,6 +36,13 @@
         </div>
       </div>
 
+      <div class="border-t border-slate-200 px-6 py-4">
+        <p class="text-xs font-semibold text-slate-600">Reviewer Note</p>
+        <p class="mt-2 text-sm text-slate-600">
+          {{ course?.reviewerNote || "No reviewer note yet." }}
+        </p>
+      </div>
+
       <div class="border-t border-slate-200 px-6 py-4 text-right">
         <button class="rounded bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800" @click="$emit('close')">
           Done

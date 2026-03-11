@@ -405,26 +405,34 @@ router.get(
   })
 );
 
-router.patch(
-  "/admin/courses/:id/status",
-  asyncHandler(async (req, res) => {
-    const status = String(req.body.status || "").toUpperCase();
+  router.patch(
+    "/admin/courses/:id/status",
+    asyncHandler(async (req, res) => {
+      const status = String(req.body.status || "").toUpperCase();
+      const reviewerNote =
+        "note" in req.body ? optionalTrimmedString(req.body.note, { max: 2000 }) : undefined;
 
-    if (!allowedCourseStatuses.includes(status)) {
-      throw new HttpError(400, "Invalid course status");
-    }
+      if (!allowedCourseStatuses.includes(status)) {
+        throw new HttpError(400, "Invalid course status");
+      }
 
-    const course = await prisma.course.update({
-      where: {
-        id: req.params.id
-      },
-      data: {
+      const data = {
         status,
         publishedAt: status === "PUBLISHED" ? new Date() : undefined
-      }
-    });
+      };
 
-    await logAdminAction(req.auth.userId, "COURSE_STATUS_UPDATED", "Course", course.id, { status });
+      if (reviewerNote !== undefined) {
+        data.reviewerNote = reviewerNote;
+      }
+
+      const course = await prisma.course.update({
+        where: {
+          id: req.params.id
+        },
+        data
+      });
+
+      await logAdminAction(req.auth.userId, "COURSE_STATUS_UPDATED", "Course", course.id, { status });
 
     res.json({ data: course });
   })

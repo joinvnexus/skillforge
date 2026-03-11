@@ -40,6 +40,13 @@
             <input v-model="form.thumbnailUrl" type="text" placeholder="https://..." class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
           </div>
         </div>
+
+        <div class="mt-5 rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3">
+          <p class="text-xs font-semibold text-slate-600">Reviewer Note</p>
+          <p class="mt-2 text-sm text-slate-600">
+            {{ course?.reviewerNote || "No reviewer note yet." }}
+          </p>
+        </div>
       </div>
 
       <div class="border-t border-slate-200 px-6 py-4 text-right">
