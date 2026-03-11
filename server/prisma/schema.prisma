@@ -177,6 +177,7 @@ model Course {
   isFeatured         Boolean            @default(false)
   isPopular          Boolean            @default(false)
   certificateEnabled Boolean            @default(false)
+  reviewerNote      String?
   publishedAt        DateTime?
   categoryId         String?            @db.Uuid
   instructorId       String?            @db.Uuid

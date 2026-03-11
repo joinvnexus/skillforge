@@ -57,32 +57,36 @@
 2. `InstructorRecentEnrollments` ✅ (Recent Courses)
 3. `InstructorCourseHealth` (completion, dropoff, reviews) ✅
 
-### Phase 3: Courses Module (Partial)
+### Phase 3: Courses Module (Done)
 1. `InstructorCoursesTable` (status, enrollments, rating) ✅
-2. `CourseActions` (edit, publish, archive) ⏳ (status change only)
-3. `CoursePreviewModal` ⏳
+2. `CourseActions` (edit, publish, archive) ✅ (edit + status)
+3. `CoursePreviewModal` ✅
 
 ### Phase 4: Students Module (Partial)
 1. `StudentList` (filterable) ✅
-2. `StudentProgressDrawer` ⏳
-3. `Announcements` (send updates) ⏳
+2. `StudentProgressDrawer` ✅
+3. `Announcements` (send updates) ✅ (UI placeholder)
 
 ### Phase 5: Revenue & Payouts (Partial)
 1. `RevenueSummary` ✅ (UI placeholder)
-2. `PayoutHistory` ⏳
-3. `Tax/Bank Info` ⏳
+2. `PayoutHistory` ✅ (UI placeholder)
+3. `Tax/Bank Info` ✅ (UI placeholder)
 
 ### Phase 6: Reviews & Q&A (Partial)
 1. `ReviewsTable` ✅ (UI placeholder)
-2. `ReplyModal` ⏳
-3. `QnAThreadList` ⏳
+2. `ReplyModal` ✅
+3. `QnAThreadList` ✅ (UI placeholder)
 
-### Phase 7: Settings (Partial)
-1. `ProfileSettings` ✅ (UI placeholder)
+### Phase 7: Settings (Done)
+1. `ProfileSettings` ✅ (profile + account UI)
 2. `PayoutSettings` ✅ (UI placeholder)
 3. `NotificationSettings` ✅ (UI placeholder)
 
 ### Phase 8: Integration & Polish (Partial)
-1. API wiring ⏳
+1. API wiring ⏳ (announcements/revenue/reviews)
 2. Loading/empty states ✅
 3. UI polish ✅
+
+### Phase 9: Cleanup & Documentation (Partial)
+1. Wire API routes ✅ (announcements/revenue/reviews)
+2. Polish UI, empty states, loading states ✅
