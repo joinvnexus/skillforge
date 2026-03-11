@@ -37,11 +37,7 @@ const isAdminPanel = computed(() => route.name === 'AdminPanel')
 const isInstructorPanel = computed(() => route.name === 'InstructorPanel')
 
 const navItems = computed(() => {
-  const common = [
-    { label: 'Overview', to: '/dashboard' },
-    { label: 'Profile', to: '/dashboard/profile' },
-    { label: 'Settings', to: '/dashboard/settings' }
-  ]
+  const common = [{ label: 'Overview', to: '/dashboard' }]
 
   if (role.value === 'ADMIN') {
     return [...common, { label: 'Admin Panel', to: '/dashboard/admin-panel' }]

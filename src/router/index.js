@@ -146,18 +146,6 @@ const router = createRouter({
           meta: { title: "Order Details", requiresRole: ["STUDENT"] }
         },
         {
-          path: "profile",
-          name: "UserProfile",
-          component: () => import("@/views/dashboard/shared/UserProfile.vue"),
-          meta: { title: "User Profile" }
-        },
-        {
-          path: "settings",
-          name: "UserSettings",
-          component: () => import("@/views/dashboard/shared/UserSettings.vue"),
-          meta: { title: "User Settings" }
-        },
-        {
           path: "instructor-panel",
           name: "InstructorPanel",
           component: () => import("@/views/dashboard/instructor/InstructorPanel.vue"),
@@ -173,7 +161,7 @@ const router = createRouter({
     },
     {
       path: "/profile",
-      redirect: "/dashboard/profile"
+      redirect: "/dashboard/instructor-panel"
     }
   ],
   // Scroll behavior to scroll to the top of the page on navigation

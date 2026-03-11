@@ -72,7 +72,14 @@
           </div>
         </div>
         <div v-show="activeTab === 'settings'">
-          <InstructorSettingsCard :profile="profile" @save="updateProfile" />
+          <InstructorSettingsCard
+            :profile="profile"
+            :account-info="accountInfo"
+            @save="updateProfile"
+            @update-display-name="updateDisplayName"
+            @request-email-change="requestEmailChange"
+            @logout="logoutUser"
+          />
         </div>
       </div>
     </section>
@@ -101,7 +108,8 @@ import InstructorQnAThreadList from "@/components/dashboard/instructor/Instructo
 import InstructorReplyModal from "@/components/dashboard/instructor/InstructorReplyModal.vue";
 import { useInstructorPanel } from "@/composables/useInstructorPanel.js";
 import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const {
   loading,
@@ -127,6 +135,8 @@ const {
 } = useInstructorPanel();
 
 const route = useRoute();
+const router = useRouter();
+const store = useStore();
 const activeTab = computed(() => String(route.query.tab || "overview"));
 const noop = () => {};
 
@@ -182,6 +192,26 @@ const closeReply = () => {
 
 const submitReply = () => {
   isReplyOpen.value = false;
+};
+
+const accountInfo = computed(() => ({
+  displayName: store.getters["auth/userDisplayName"],
+  email: store.getters["auth/userEmail"]
+}));
+
+const updateDisplayName = async (displayName) => {
+  if (!displayName) return;
+  await store.dispatch("auth/updateProfile", { displayName });
+};
+
+const requestEmailChange = async (payload) => {
+  if (!payload?.email || !payload?.currentPassword) return;
+  await store.dispatch("auth/updateEmail", payload);
+};
+
+const logoutUser = async () => {
+  await store.dispatch("auth/logout");
+  router.push("/login");
 };
 
 const handleCreateCourse = async (payload) => {
