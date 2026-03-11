@@ -14,7 +14,9 @@ const prisma = {
   user: {
     findUnique: vi.fn(),
     create: vi.fn(),
-    update: vi.fn()
+    update: vi.fn(),
+    findMany: vi.fn(),
+    count: vi.fn()
   },
   authSession: {
     create: vi.fn(),
@@ -72,6 +74,7 @@ const prisma = {
   },
   review: {
     upsert: vi.fn(),
+    findFirst: vi.fn(),
     findMany: vi.fn(),
     aggregate: vi.fn(),
     update: vi.fn()
